@@ -74,29 +74,54 @@ Proyek ini telah terhubung langsung dengan backend **Supabase**:
 
 ---
 
-## 📂 Struktur File
+---
+
+## 📂 Struktur Proyek (Next.js + Supabase)
 
 ```
 Twin Bug/
-├── index.html          # Aplikasi utama (Login & Register dengan navigasi hash halus)
-├── login.html          # Shortcut akses langsung ke halaman login
-├── register.html       # Shortcut akses langsung ke halaman register
-├── css/
-│   └── style.css       # Design tokens, tipografi, layout, styling Figma, & animasi orbs
-├── js/
-│   └── app.js          # Logika form, password strength meter, show/hide pass, & demo autofill
-├── server.js           # Server Node.js zero-dependency untuk pengujian lokal
-└── package.json        # Konfigurasi proyek & skrip npm
+├── app/
+│   ├── layout.jsx            # Root layout Next.js, metadata, ambient orbs, dan ToastProvider
+│   ├── globals.css           # Design tokens Sage Theme, tipografi Literata & Nunito, animasi
+│   ├── page.jsx              # SPA Landing/Auth view switcher tersinkronisasi hash
+│   ├── login/page.jsx        # Route langsung ke halaman Login (/login)
+│   ├── register/page.jsx     # Route langsung ke halaman Register (/register)
+│   ├── forgot-password/page.jsx # Route pemulihan kata sandi (/forgot-password)
+│   ├── reset-password/page.jsx  # Route pengaturan sandi baru (/reset-password)
+│   └── dashboard/page.jsx    # Route dasbor sesi aktif (/dashboard)
+├── components/
+│   ├── LoginForm.jsx         # Komponen form login + quick demo autofill
+│   ├── RegisterForm.jsx      # Komponen form register + role picker + strength tracker
+│   ├── ForgotPasswordForm.jsx# Komponen form request reset kata sandi
+│   ├── ResetPasswordForm.jsx # Komponen form update password baru
+│   ├── DashboardView.jsx     # Komponen tampilan profil & status sesi Supabase
+│   └── Toast.jsx             # Sistem notifikasi toast interaktif berbasis React Context
+├── lib/
+│   └── supabase.js           # Supabase Client & Helper Services (@supabase/supabase-js)
+├── .env.local                # Kredensial lokal Supabase (URL & Anon Key)
+├── .env.example              # Template variabel lingkungan
+├── next.config.mjs           # Konfigurasi Next.js
+├── package.json              # Konfigurasi dependensi (Next.js 16, React 19, Supabase JS)
+└── README.md                 # Dokumentasi proyek
 ```
 
 ---
 
 ## 💻 Cara Menjalankan Secara Lokal
 
-1. Jalankan server lokal bawaan Node.js:
+1. **Jalankan development server Next.js:**
    ```bash
-   node server.js
+   npm run dev
    ```
-2. Buka browser pada:
-   - **Login**: [http://localhost:3000/#login](http://localhost:3000/#login) atau [http://localhost:3000/login.html](http://localhost:3000/login.html)
-   - **Register**: [http://localhost:3000/#register](http://localhost:3000/#register) atau [http://localhost:3000/register.html](http://localhost:3000/register.html)
+2. **Buka browser pada:**
+   - **Halaman Utama**: [http://localhost:3000](http://localhost:3000)
+   - **Login**: [http://localhost:3000/login](http://localhost:3000/login) atau `http://localhost:3000/#login`
+   - **Register**: [http://localhost:3000/register](http://localhost:3000/register) atau `http://localhost:3000/#register`
+   - **Lupa Password**: [http://localhost:3000/forgot-password](http://localhost:3000/forgot-password)
+   - **Dasbor**: [http://localhost:3000/dashboard](http://localhost:3000/dashboard)
+
+3. **Membangun versi produksi (Build):**
+   ```bash
+   npm run build
+   npm start
+   ```
