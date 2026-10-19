@@ -1,0 +1,59 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-serif: 'Literata', Georgia, 'Times New Roman', serif;
+
+    --color-parchment: #faf6f0;
+    --color-card: #ffffff;
+    --color-ink: #2e3230;
+    --color-body: #6b6358;
+    --color-label: #4a4e4a;
+    --color-divider: #eae6de;
+    --color-input: #f5f1ea;
+    --color-input-hover: #efe9df;
+    --color-ochre: #705c30;
+
+    --color-sage-50: #f3f8f4;
+    --color-sage-100: #e5f0e8;
+    --color-sage-200: #c8e8d0;
+    --color-sage-300: #a9cbb3;
+    --color-sage-500: #4a7c59;
+    --color-sage-600: #3d674a;
+    --color-sage-700: #32553c;
+
+    --color-gold-100: #f0e8db;
+    --color-gold-200: #f8e0a8;
+
+    --color-danger: #d9534f;
+    --color-warning: #f0ad4e;
+    --color-success: #007c00;
+
+    --shadow-card: 0 20px 25px -5px rgb(46 50 48 / 0.05), 0 8px 10px -6px rgb(46 50 48 / 0.05);
+    --shadow-cta: 0 4px 6px -1px rgb(74 124 89 / 0.25), 0 2px 4px -2px rgb(74 124 89 / 0.25);
+
+    --animate-orb-drift: orb-drift 18s ease-in-out infinite alternate;
+}
+
+@keyframes orb-drift {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(25px, 20px) scale(1.06);
+    }
+
+    100% {
+        transform: translate(-20px, 35px) scale(0.97);
+    }
+}
+
+::selection {
+    background-color: var(--color-sage-200);
+    color: var(--color-ink);
+}

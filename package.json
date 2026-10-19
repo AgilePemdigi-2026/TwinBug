@@ -1,25 +1,19 @@
 {
-  "name": "twin-bug-auth",
-  "version": "1.0.0",
-  "description": "TwinBug - Multimodal Bug Intelligence System Authentication Pages",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "server": "node server.js"
-  },
-  "keywords": [
-    "twinbug",
-    "multimodal",
-    "bug-intelligence",
-    "auth"
-  ],
-  "author": "TwinBug Team",
-  "license": "ISC",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.118.0",
-    "next": "^16.4.2",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
-  }
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.0.0",
+        "concurrently": "^10.0.3",
+        "laravel-vite-plugin": "^3.1",
+        "tailwindcss": "^4.0.0",
+        "vite": "^8.0.0"
+    },
+    "optionalDependencies": {
+        "@laravel/multiplex": "^0.4.1"
+    }
 }
