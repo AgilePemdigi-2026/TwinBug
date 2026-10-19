@@ -1,6 +1,6 @@
 @php
     $isError = session()->has('error');
-    $message = session('error') ?? session('status');
+    $message = session('error') ?? session('success') ?? session('status');
 @endphp
 
 <div
