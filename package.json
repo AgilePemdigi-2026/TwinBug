@@ -3,10 +3,23 @@
   "version": "1.0.0",
   "description": "TwinBug - Multimodal Bug Intelligence System Authentication Pages",
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "server": "node server.js"
   },
-  "keywords": ["twinbug", "multimodal", "bug-intelligence", "auth"],
+  "keywords": [
+    "twinbug",
+    "multimodal",
+    "bug-intelligence",
+    "auth"
+  ],
   "author": "TwinBug Team",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "next": "^16.4.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  }
 }
