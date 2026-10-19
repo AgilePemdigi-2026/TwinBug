@@ -1,0 +1,934 @@
+/* ==========================================================================
+   TwinBug - Design System & Stylesheet (Sage Theme)
+   Multimodal Bug Intelligence System
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   CSS Variables & Design Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* Palette */
+  --color-bg: #FAF6F0;
+  --color-card: #FFFFFF;
+  --color-primary: #4A7C59;
+  --color-primary-hover: #3D674A;
+  --color-primary-active: #32553C;
+  --color-primary-light: rgba(74, 124, 89, 0.08);
+  --color-primary-glow: rgba(74, 124, 89, 0.25);
+  
+  --color-text-title: #2E3230;
+  --color-text-body: #6B6358;
+  --color-text-label: #4A4E4A;
+  --color-text-ochre: #705C30;
+  --color-text-dark: #1E1A13;
+  --color-text-muted: rgba(107, 99, 88, 0.8);
+  
+  --color-input-bg: #F5F1EA;
+  --color-input-hover: #EFE9DF;
+  --color-input-focus-border: #4A7C59;
+  
+  --color-pill-bg: #F0ECE4;
+  --color-pill-gold-bg: #F0E8DB;
+  --color-divider: #EAE6DE;
+  
+  --color-role-reporter-bg: rgba(200, 232, 208, 0.35);
+  --color-role-reporter-border: rgba(74, 124, 89, 0.4);
+  --color-role-default-bg: #F5F1EA;
+  --color-role-default-border: transparent;
+  
+  --color-strength-active: #007C00;
+  --color-strength-empty: #E4E0D8;
+  --color-strength-weak: #D9534F;
+  --color-strength-medium: #F0AD4E;
+  
+  /* Typography */
+  --font-serif: 'Literata', Georgia, serif;
+  --font-sans: 'Nunito Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  /* Shadows */
+  --shadow-login-card: 0px 20px 25px -5px rgba(46, 50, 48, 0.05), 0px 8px 10px -6px rgba(46, 50, 48, 0.05);
+  --shadow-register-card: 0px 20px 25px -5px rgba(219, 215, 207, 0.4), 0px 8px 10px -6px rgba(219, 215, 207, 0.4);
+  --shadow-btn-primary: 0px 4px 6px -1px rgba(74, 124, 89, 0.25), 0px 2px 4px -2px rgba(74, 124, 89, 0.25);
+  --shadow-subtle: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  
+  /* Transitions */
+  --transition-smooth: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   Reset & Base Styles
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+  color: var(--color-text-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Ambient Orbs & Background Scene
+   -------------------------------------------------------------------------- */
+.bg-ambient-wrapper {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(48px);
+  will-change: transform, opacity;
+  animation: orbDrift 16s ease-in-out infinite alternate;
+}
+
+.orb-top-left {
+  width: 440px;
+  height: 440px;
+  left: -120px;
+  top: -140px;
+  background: #C8E8D0;
+  opacity: 0.55;
+  animation-duration: 20s;
+}
+
+.orb-bottom-right {
+  width: 480px;
+  height: 480px;
+  right: -110px;
+  bottom: -160px;
+  background: #F8E0A8;
+  opacity: 0.45;
+  animation-duration: 18s;
+  animation-delay: -5s;
+}
+
+.orb-center-glow {
+  width: 720px;
+  height: 720px;
+  left: calc(50% - 360px);
+  top: calc(50% - 360px);
+  background: rgba(74, 124, 89, 0.08);
+  filter: blur(80px);
+  opacity: 0.6;
+}
+
+@keyframes orbDrift {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(25px, 20px) scale(1.06); }
+  100% { transform: translate(-20px, 35px) scale(0.97); }
+}
+
+/* --------------------------------------------------------------------------
+   Layout Containers
+   -------------------------------------------------------------------------- */
+.app-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px 60px;
+  z-index: 1;
+}
+
+/* Viewport wrappers */
+.auth-views-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-view {
+  display: none;
+  opacity: 0;
+  transform: translateY(12px) scale(0.99);
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+}
+
+.auth-view.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* --------------------------------------------------------------------------
+   Cards (Login & Register)
+   -------------------------------------------------------------------------- */
+.auth-card {
+  position: relative;
+  background: var(--color-card);
+  border: 1px solid rgba(234, 230, 222, 0.6);
+  border-radius: 20px;
+  width: 100%;
+  padding: 40px 36px 36px;
+  box-sizing: border-box;
+}
+
+/* Login Card specific */
+.auth-card--login {
+  max-width: 448px;
+  box-shadow: var(--shadow-login-card);
+  border-radius: 20px;
+}
+
+/* Register Card specific */
+.auth-card--register {
+  max-width: 672px;
+  box-shadow: var(--shadow-register-card);
+  border-radius: 24px;
+  padding: 44px 48px 40px;
+}
+
+/* --------------------------------------------------------------------------
+   Card Header Components
+   -------------------------------------------------------------------------- */
+.card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.brand-logo-text {
+  font-family: var(--font-serif);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 32px;
+  letter-spacing: -0.6px;
+  color: var(--color-text-title);
+  margin-bottom: 6px;
+}
+
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--color-pill-bg);
+  padding: 5px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-ochre);
+  letter-spacing: 0.3px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(220, 214, 200, 0.5);
+}
+
+.badge-pill--register {
+  background: var(--color-pill-gold-bg);
+  color: var(--color-text-dark);
+  text-transform: uppercase;
+  font-size: 11.5px;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.badge-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--color-primary);
+  border-radius: 9999px;
+  display: inline-block;
+  box-shadow: 0 0 0 2px rgba(74, 124, 89, 0.2);
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.6px;
+  color: var(--color-text-title);
+  margin-bottom: 6px;
+}
+
+.card-title--large {
+  font-size: 34px;
+  line-height: 42px;
+  letter-spacing: -0.9px;
+  margin-bottom: 4px;
+}
+
+.card-subtitle {
+  font-size: 13.5px;
+  line-height: 19px;
+  color: var(--color-text-body);
+  max-width: 320px;
+}
+
+/* --------------------------------------------------------------------------
+   Forms & Controls
+   -------------------------------------------------------------------------- */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.form-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--color-text-label);
+}
+
+.form-label--register {
+  font-size: 13.5px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--color-text-title);
+}
+
+.label-hint {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-body);
+}
+
+.form-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.form-link:hover {
+  text-decoration: underline;
+  color: var(--color-primary-hover);
+}
+
+/* Input Fields */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: var(--transition-smooth);
+}
+
+.form-input {
+  width: 100%;
+  height: 44px;
+  background: var(--color-input-bg);
+  border: 1.5px solid transparent;
+  border-radius: 24px;
+  padding: 12px 18px 12px 42px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  color: #111111;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.form-input--register {
+  border-radius: 16px;
+}
+
+.form-input::placeholder {
+  color: #8C8478;
+}
+
+.form-input:hover {
+  background: var(--color-input-hover);
+}
+
+.form-input:focus {
+  background: #FFFFFF;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.15);
+}
+
+.input-wrapper:focus-within .input-icon {
+  color: var(--color-primary);
+}
+
+/* Password eye button */
+.btn-toggle-password {
+  position: absolute;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-body);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-toggle-password:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--color-text-title);
+}
+
+.form-input.has-toggle {
+  padding-right: 44px;
+}
+
+/* Custom Checkbox */
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  margin-top: 2px;
+}
+
+.checkbox-custom {
+  position: relative;
+  width: 17px;
+  height: 17px;
+  min-width: 17px;
+  margin-top: 2px;
+  background: #FFFFFF;
+  border: 1.5px solid #8A857D;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox-input:checked + .checkbox-custom {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkbox-input:checked + .checkbox-custom svg {
+  display: block;
+}
+
+.checkbox-custom svg {
+  display: none;
+  width: 11px;
+  height: 11px;
+  color: #FFFFFF;
+  stroke-width: 3;
+}
+
+.checkbox-label-text {
+  font-size: 12.5px;
+  line-height: 18px;
+  color: var(--color-text-body);
+  font-weight: 500;
+}
+
+.checkbox-label-text a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.checkbox-label-text a:hover {
+  text-decoration: underline;
+}
+
+/* Primary Submit CTA */
+.btn-primary-cta {
+  width: 100%;
+  height: 48px;
+  background: var(--color-primary);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 24px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn-primary);
+  transition: var(--transition-smooth);
+  margin-top: 6px;
+}
+
+.btn-primary-cta--register {
+  height: 52px;
+  border-radius: 16px;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+}
+
+.btn-primary-cta:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0px 6px 12px -2px rgba(74, 124, 89, 0.35);
+}
+
+.btn-primary-cta:active {
+  background: var(--color-primary-active);
+  transform: translateY(0);
+}
+
+.btn-primary-cta svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btn-primary-cta:hover svg {
+  transform: translateX(3px);
+}
+
+/* Divider & Demo Buttons (Login) */
+.divider-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 6px;
+}
+
+.divider-line {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: var(--color-divider);
+}
+
+.divider-badge {
+  position: relative;
+  background: #FFFFFF;
+  padding: 0 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: var(--color-text-body);
+}
+
+.demo-access-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.demo-access-title {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--color-text-body);
+}
+
+.demo-buttons-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-demo-role {
+  height: 38px;
+  background: var(--color-pill-bg);
+  border: 1px solid transparent;
+  border-radius: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-title);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.btn-demo-role:hover {
+  background: #E8E2D6;
+  border-color: rgba(74, 124, 89, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-demo-role svg {
+  width: 14px;
+  height: 14px;
+  color: var(--color-primary);
+}
+
+/* Switch link (Belum memiliki akun? / Sudah memiliki akun?) */
+.card-footer-switch {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--color-text-body);
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(234, 230, 222, 0.6);
+  width: 100%;
+}
+
+.card-footer-switch a {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 4px;
+  transition: var(--transition-smooth);
+}
+
+.card-footer-switch a:hover {
+  text-decoration: underline;
+  color: var(--color-primary-hover);
+}
+
+/* --------------------------------------------------------------------------
+   Register Page Specific Elements
+   -------------------------------------------------------------------------- */
+.form-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Role Selector Radio Cards */
+.role-selector-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.role-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+.role-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  background: var(--color-role-default-bg);
+  border: 1.5px solid transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: var(--shadow-subtle);
+  transition: var(--transition-smooth);
+  user-select: none;
+}
+
+.role-card:hover {
+  background: #EEE7DD;
+}
+
+.role-card.active {
+  background: var(--color-role-reporter-bg);
+  border-color: var(--color-role-reporter-border);
+  box-shadow: 0 2px 6px rgba(74, 124, 89, 0.12);
+}
+
+.role-card-icon-box {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  background: #FFFFFF;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B6358;
+  box-shadow: var(--shadow-subtle);
+  transition: var(--transition-smooth);
+}
+
+.role-card.active .role-card-icon-box {
+  color: var(--color-primary);
+}
+
+.role-card-icon-box svg {
+  width: 18px;
+  height: 18px;
+}
+
+.role-card-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.role-card-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-title);
+}
+
+.role-card-radio-indicator {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #8E8A83;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+.role-card.active .role-card-radio-indicator {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.role-card.active .role-card-radio-indicator svg {
+  display: block;
+}
+
+.role-card-radio-indicator svg {
+  display: none;
+  width: 11px;
+  height: 11px;
+  color: #FFFFFF;
+  stroke-width: 3;
+}
+
+/* Password Strength Meter */
+.password-strength-card {
+  background: var(--color-input-bg);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.strength-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.strength-label {
+  font-weight: 500;
+  color: var(--color-text-body);
+}
+
+.strength-status-text {
+  font-weight: 700;
+  color: var(--color-text-ochre);
+  transition: var(--transition-smooth);
+}
+
+.strength-bars-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  width: 100%;
+  height: 6px;
+}
+
+.strength-bar {
+  height: 6px;
+  background: var(--color-strength-empty);
+  border-radius: 9999px;
+  transition: background-color 0.3s ease;
+}
+
+.strength-bar.filled-green {
+  background: var(--color-strength-active);
+}
+
+.strength-bar.filled-orange {
+  background: var(--color-strength-medium);
+}
+
+.strength-bar.filled-red {
+  background: var(--color-strength-weak);
+}
+
+.strength-requirements-text {
+  font-size: 11.5px;
+  line-height: 15px;
+  color: var(--color-text-body);
+}
+
+/* --------------------------------------------------------------------------
+   Global Bottom Micro-Credits & Trust Badges
+   -------------------------------------------------------------------------- */
+.bottom-microcredits {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+  flex-wrap: wrap;
+}
+
+.credit-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.credit-item svg {
+  width: 12px;
+  height: 12px;
+  color: var(--color-text-body);
+}
+
+.credit-dot {
+  color: var(--color-divider);
+  font-size: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive Toast Notification System
+   -------------------------------------------------------------------------- */
+.toast-notification {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #FFFFFF;
+  color: var(--color-text-title);
+  padding: 14px 20px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(74, 124, 89, 0.2);
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 9999;
+  max-width: 380px;
+}
+
+.toast-notification.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.toast-title {
+  font-weight: 700;
+  font-size: 13.5px;
+}
+
+.toast-desc {
+  font-size: 12px;
+  color: var(--color-text-body);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .app-container {
+    padding: 24px 14px 40px;
+  }
+
+  .auth-card--login,
+  .auth-card--register {
+    padding: 28px 20px 24px;
+    border-radius: 18px;
+  }
+
+  .form-grid-2col,
+  .role-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .card-title--large {
+    font-size: 26px;
+    line-height: 32px;
+  }
+
+  .demo-buttons-row {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-microcredits {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .credit-dot {
+    display: none;
+  }
+}
