@@ -13,7 +13,6 @@ return [
     | "mailers" array. Examples of each type of mailer are provided.
     |
     */
-
     'default' => env('MAIL_MAILER', 'log'),
 
     /*
@@ -34,7 +33,6 @@ return [
     |            "failover", "roundrobin"
     |
     */
-
     'mailers' => [
 
         'smtp' => [
@@ -96,7 +94,13 @@ return [
             ],
             'retry_after' => 60,
         ],
+    ],
 
+    'markdown' => [
+        'theme' => 'default',
+        'paths' => [
+            resource_path('views/emails'),
+        ],
     ],
 
     /*
@@ -109,10 +113,8 @@ return [
     | used globally for all emails that are sent by your application.
     |
     */
-
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
-
 ];
