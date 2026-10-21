@@ -1,7 +1,16 @@
-@component('mail::message', ['theme' => 'default'])
-<h1>{{ $title }}</h1>
-<p>Kode verifikasi OTP Anda adalah: <strong style="font-size:24px; letter-spacing:5px;">{{ $otp }}</strong></p>
-<p>Kode ini akan expired dalam {{ $expires }}.</p>
-<p>Jika Anda tidak meminta kode ini, abaikan email ini.</p>
-{{-- Alamat email pengirim akan tampil di klien email Anda --}}
-@endcomponent
+<x-mail::message>
+# {{ $title }}
+
+Kode verifikasi OTP Anda adalah:
+
+<x-mail::panel>
+<span style="font-size: 24px; letter-spacing: 5px; font-weight: 700;">{{ $otp }}</span>
+</x-mail::panel>
+
+Kode ini akan kedaluwarsa dalam {{ $expires }}.
+
+Jika Anda tidak meminta kode ini, abaikan email ini.
+
+Terima kasih,<br>
+{{ config('app.name') }}
+</x-mail::message>

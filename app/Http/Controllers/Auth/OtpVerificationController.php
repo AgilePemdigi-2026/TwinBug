@@ -3,14 +3,22 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\OTPToken;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class OtpVerificationController extends Controller
 {
-    public function create(): View
+    public function create(Request $request): View|RedirectResponse
     {
+        if (! $request->session()->has('pending_user_data')) {
+            return to_route('register')
+                ->withErrors(['email' => 'Silakan daftar terlebih dahulu.']);
+        }
+
         return view('auth.otp-verify');
     }
 
@@ -21,28 +29,34 @@ class OtpVerificationController extends Controller
         ]);
 
         $email = $request->session()->get('pending_otp_email');
+        $pendingUserData = $request->session()->get('pending_user_data');
 
-        $otpToken = DB::table('otp_tokens')->where('email', $email)->first();
-
-        if (! $otpToken || ! Hash::check($request->otp_code, $otpToken->otp_code)) {
-            return back()
-                ->withInput()
-                ->withErrors(['otp_code' => 'Kode OTP salah atau sudah expired.']);
+        if (! $email || ! $pendingUserData) {
+            return to_route('register')
+                ->withErrors(['email' => 'Sesi verifikasi telah berakhir. Silakan daftar ulang.']);
         }
 
-        if ($otpToken->expires_at < now()) {
-            DB::table('otp_tokens')->where('email', $email)->delete();
+        $otpToken = OTPToken::where('email', $email)->first();
+
+        if (! $otpToken || ! Hash::check($request->input('otp_code'), $otpToken->otp_code)) {
+            return back()
+                ->withInput()
+                ->withErrors(['otp_code' => 'Kode OTP salah atau sudah kedaluwarsa.']);
+        }
+
+        if ($otpToken->expires_at->isPast()) {
+            $otpToken->delete();
 
             return back()
                 ->withInput()
-                ->withErrors(['otp_code' => 'Kode OTP telah expired.']);
+                ->withErrors(['otp_code' => 'Kode OTP telah kedaluwarsa.']);
         }
 
-        // Create the user account
-        User::create($request->session()->get('pending_user_data'));
+        User::create($pendingUserData);
 
-        // Delete the used OTP token
-        DB::table('otp_tokens')->where('email', $email)->delete();
+        $otpToken->delete();
+
+        $request->session()->forget(['pending_user_data', 'pending_otp_email']);
 
         return to_route('otp.success')
             ->with('status', 'Akun berhasil dibuat dan diverifikasi. Selamat datang!');
