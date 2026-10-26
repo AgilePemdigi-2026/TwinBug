@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\PasswordResetLinkRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
+use Throwable;
 
 class PasswordResetLinkController extends Controller
 {
@@ -17,7 +18,15 @@ class PasswordResetLinkController extends Controller
 
     public function store(PasswordResetLinkRequest $request): RedirectResponse
     {
-        $status = Password::sendResetLink($request->validated());
+        try {
+            $status = Password::sendResetLink($request->validated());
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Tautan pemulihan gagal dikirim. Silakan coba lagi.']);
+        }
 
         if (in_array($status, [Password::RESET_LINK_SENT, Password::INVALID_USER])) {
             return back()
