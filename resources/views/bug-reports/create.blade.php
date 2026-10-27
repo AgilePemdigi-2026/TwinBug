@@ -202,231 +202,45 @@
                 {{-- =============== COLUMN RIGHT (4 cols) =============== --}}
                 <div class="col-span-12 flex flex-col gap-6 lg:col-span-4">
 
-                    {{-- CARD 3: Screenshot Upload --}}
-                    <div class="rounded-3xl bg-white p-6 shadow-sm">
-                        <div class="mb-5 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="grid size-7 place-items-center rounded-2xl bg-divider font-serif text-xs font-bold text-sage-500">03</span>
-                                <h2 class="font-serif text-lg font-bold text-ink">Tangkapan Layar UI</h2>
-                            </div>
-                            <span class="rounded-full bg-divider px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-label">Opsional</span>
-                        </div>
+                    @include('bug-reports.screenshot-uploader')
 
-                        {{-- Drop zone --}}
-                        <div
-                            id="drop-zone"
-                            class="relative mb-4 flex cursor-pointer flex-col items-center justify-center rounded-3xl bg-input px-6 py-8 transition hover:bg-input-hover"
-                            role="button"
-                            tabindex="0"
-                            aria-label="Klik atau seret file untuk mengunggah screenshot"
-                        >
-                            <div class="mb-3 grid size-12 place-items-center rounded-3xl bg-white shadow-sm text-sage-500">
-                                <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
-                                    <path d="M12 12v9"/>
-                                    <path d="m16 16-4-4-4 4"/>
-                                </svg>
-                            </div>
-                            <p class="text-xs font-semibold text-ink">Seret tangkapan layar ke sini</p>
-                            <p class="mt-0.5 text-[11px] font-bold text-sage-500">atau Pilih Berkas (PNG, JPG hingga 5MB)</p>
-                            <p class="mt-1 text-[10px] text-label">Rekomendasi resolusi minimal 720p</p>
-                            <input
-                                type="file"
-                                id="screenshot"
-                                name="screenshot"
-                                accept="image/png,image/jpeg,image/gif,image/webp"
-                                class="absolute inset-0 cursor-pointer opacity-0"
-                                aria-label="Unggah screenshot"
-                            >
-                        </div>
+                </div>
+            </div>
 
-                        {{-- Preview (hidden by default, shown via JS) --}}
-                        <div id="screenshot-preview" class="mb-4 hidden rounded-3xl bg-input p-3.5">
-                            <div class="flex items-start gap-3">
-                                {{-- Thumbnail --}}
-                                <div class="relative size-16 shrink-0 overflow-hidden rounded-2xl bg-divider">
-                                    <img id="preview-img" src="" alt="Preview screenshot" class="size-full object-cover">
-                                    <div class="absolute inset-x-0 bottom-0 flex justify-center bg-ink/60 py-0.5">
-                                        <span id="preview-ext" class="font-mono text-[9px] text-parchment/90">PNG</span>
-                                    </div>
-                                </div>
+                {{-- ======================== STICKY ACTION BAR ======================== --}}
+                <div class="mt-6 rounded-3xl bg-white/95 p-5 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.08),0_4px_6px_-4px_rgba(0,0,0,0.08)] backdrop-blur-sm">
+                    <div class="flex items-center justify-between gap-4">
 
-                                {{-- Meta --}}
-                                <div class="min-w-0 flex-1">
-                                    <div class="flex items-start justify-between gap-2">
-                                        <p id="preview-name" class="truncate font-serif text-xs font-semibold text-ink"></p>
-                                        <x-auth.icon name="check" class="size-3.5 shrink-0 text-sage-500" />
-                                    </div>
-                                    <p id="preview-meta" class="mt-0.5 font-mono text-[11px] text-label"></p>
-                                    <div class="mt-2 flex items-center gap-3">
-                                        <button
-                                            type="button"
-                                            id="btn-replace"
-                                            class="flex items-center gap-1 text-[11px] font-semibold text-sage-500 hover:underline"
-                                            onclick="document.getElementById('screenshot').click()"
-                                        >
-                                            <x-auth.icon name="eye" class="size-2.5" />
-                                            Ganti
-                                        </button>
-                                        <button
-                                            type="button"
-                                            id="btn-remove"
-                                            class="flex items-center gap-1 text-[11px] font-semibold text-danger hover:underline"
-                                        >
-                                            <x-auth.icon name="alert" class="size-2.5" />
-                                            Hapus
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        @error('screenshot')
-                            <p class="mb-3 text-xs font-medium text-danger" role="alert">{{ $message }}</p>
-                        @enderror
-
-                        {{-- Fallback note --}}
-                        <div class="flex items-start gap-2.5 rounded-2xl bg-gold-100/60 p-3">
-                            <span class="mt-0.5 shrink-0 text-ochre">
-                                <x-auth.icon name="alert" class="size-4" />
-                            </span>
-                            <p class="text-xs font-semibold leading-snug text-ink">
-                                Catatan: Laporan tanpa gambar tetap didukung penuh menggunakan kemiripan teks semantik.
+                        {{-- Left: privacy note --}}
+                        <div class="flex items-center gap-2 text-label">
+                            <x-auth.icon name="shield" class="size-4 shrink-0 text-sage-500" />
+                            <p class="text-xs">
+                                Semua input dienkripsi dan diproses secara aman dalam klaster lokal.
                             </p>
                         </div>
-                    </div>
 
-                </div>
-            </div>
-
-            {{-- ======================== STICKY ACTION BAR ======================== --}}
-            <div class="mt-6 rounded-3xl bg-white/95 p-5 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.08),0_4px_6px_-4px_rgba(0,0,0,0.08)] backdrop-blur-sm">
-                <div class="flex items-center justify-between gap-4">
-
-                    {{-- Left: privacy note --}}
-                    <div class="flex items-center gap-2 text-label">
-                        <x-auth.icon name="shield" class="size-4 shrink-0 text-sage-500" />
-                        <p class="text-xs">
-                            Semua input dienkripsi dan diproses secara aman dalam klaster lokal.
-                        </p>
-                    </div>
-
-                    {{-- Right: buttons --}}
-                    <div class="flex items-center gap-3">
-                        <a
-                            href="{{ route('dashboard') }}"
-                            id="btn-cancel"
-                            class="rounded-3xl bg-divider px-6 py-2.5 text-sm font-bold text-label transition hover:bg-input-hover hover:text-ink"
-                        >
-                            Batal
-                        </a>
-                        <button
-                            type="submit"
-                            id="btn-submit"
-                            class="group relative flex items-center gap-2.5 overflow-hidden rounded-3xl bg-sage-500 px-7 py-3 text-sm font-bold text-white shadow-[0_4px_6px_-1px_rgba(74,124,89,0.25),0_2px_4px_-2px_rgba(74,124,89,0.2)] transition hover:bg-sage-600 active:scale-95"
-                        >
-                            <x-auth.icon name="sparkles" class="size-5 shrink-0" />
-                            <span>Kirim &amp; Analisis Duplikasi</span>
-                        </button>
+                        {{-- Right: buttons --}}
+                        <div class="flex items-center gap-3">
+                            <a
+                                href="{{ route('dashboard') }}"
+                                id="btn-cancel"
+                                class="rounded-3xl bg-divider px-6 py-2.5 text-sm font-bold text-label transition hover:bg-input-hover hover:text-ink"
+                            >
+                                Batal
+                            </a>
+                            <button
+                                type="submit"
+                                id="btn-submit"
+                                class="group relative flex items-center gap-2.5 overflow-hidden rounded-3xl bg-sage-500 px-7 py-3 text-sm font-bold text-white shadow-[0_4px_6px_-1px_rgba(74,124,89,0.25),0_2px_4px_-2px_rgba(74,124,89,0.2)] transition hover:bg-sage-600 active:scale-95"
+                            >
+                                <x-auth.icon name="sparkles" class="size-5 shrink-0" />
+                                <span>Kirim &amp; Analisis Duplikasi</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
         </form>
     </div>
 
 </x-layouts.app>
-
-@push('scripts')
-<script>
-(function () {
-    'use strict';
-
-    const input = document.getElementById('screenshot');
-    const dropZone = document.getElementById('drop-zone');
-    const preview = document.getElementById('screenshot-preview');
-    const previewImg = document.getElementById('preview-img');
-    const previewName = document.getElementById('preview-name');
-    const previewMeta = document.getElementById('preview-meta');
-    const previewExt = document.getElementById('preview-ext');
-    const btnRemove = document.getElementById('btn-remove');
-
-    function formatBytes(bytes) {
-        if (bytes < 1024) return bytes + ' B';
-        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-        return (bytes / 1048576).toFixed(1) + ' MB';
-    }
-
-    function handleFile(file) {
-        if (!file || !file.type.startsWith('image/')) return;
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            previewImg.src = e.target.result;
-
-            const img = new Image();
-            img.onload = function () {
-                previewMeta.textContent = formatBytes(file.size) + ' • ' + img.width + '×' + img.height;
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-
-        previewName.textContent = file.name;
-        previewExt.textContent = file.name.split('.').pop().toUpperCase();
-        preview.classList.remove('hidden');
-        dropZone.classList.add('hidden');
-    }
-
-    input.addEventListener('change', function () {
-        if (this.files[0]) handleFile(this.files[0]);
-    });
-
-    btnRemove.addEventListener('click', function () {
-        input.value = '';
-        preview.classList.add('hidden');
-        dropZone.classList.remove('hidden');
-        previewImg.src = '';
-    });
-
-    // Drag-and-drop
-    ['dragenter', 'dragover'].forEach(function (event) {
-        dropZone.addEventListener(event, function (e) {
-            e.preventDefault();
-            dropZone.classList.add('ring-2', 'ring-sage-500/50', 'bg-sage-50');
-        });
-    });
-
-    ['dragleave', 'drop'].forEach(function (event) {
-        dropZone.addEventListener(event, function (e) {
-            e.preventDefault();
-            dropZone.classList.remove('ring-2', 'ring-sage-500/50', 'bg-sage-50');
-        });
-    });
-
-    dropZone.addEventListener('drop', function (e) {
-        const file = e.dataTransfer.files[0];
-        if (file) {
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            input.files = dataTransfer.files;
-            handleFile(file);
-        }
-    });
-
-    // Keyboard accessibility for drop zone
-    dropZone.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            input.click();
-        }
-    });
-
-    // Character counter initial sync for old() values
-    const desc = document.getElementById('description');
-    if (desc && desc.value) {
-        document.getElementById('char-count').textContent = desc.value.length + ' karakter';
-    }
-})();
-</script>
-@endpush

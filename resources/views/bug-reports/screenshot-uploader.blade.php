@@ -6,7 +6,7 @@
 
     Dipakai di: resources/views/bug-reports/create.blade.php
 --}}
-<div class="col-span-12 rounded-3xl bg-white p-8 shadow-sm" id="screenshot-section">
+<div class="rounded-3xl bg-white p-6 shadow-sm" id="screenshot-section">
     <div class="mb-6 flex items-center justify-between gap-4">
         <div class="flex items-center gap-2.5">
             <span class="grid size-7 place-items-center rounded-2xl bg-divider font-serif text-xs font-bold text-sage-500">03</span>
