@@ -1,12 +1,11 @@
 <div align="center">
 
-<img src="docs/assets/twinbug-logo.svg" alt="TwinBug — Sistem Manajemen &amp; Pelaporan Bug Berbasis Web" width="560">
+<img src="docs/assets/twinbug-logo.svg" alt="TwinBug — Sistem Manajemen &amp; Pelaporan Bug Berbasis Web" width="620">
 
 <p><strong>Platform Manajemen &amp; Pelaporan Bug Berbasis Web dengan Deteksi Duplikasi Cerdas</strong><br>
 Solusi pelaporan isu yang terstruktur, bukti visual terintegrasi, dan alur penanganan transparan antara pelapor dan pengembang.</p>
 
 <p>
-  <img alt="Sprint" src="https://img.shields.io/badge/sprint-1%20aktif-4A7C59">
   <img alt="Versi" src="https://img.shields.io/badge/versi-0.1.0-2D5A3D">
   <img alt="Laravel" src="https://img.shields.io/badge/Laravel-12%2F13-FF2D20?logo=laravel&logoColor=white">
   <img alt="PHP" src="https://img.shields.io/badge/PHP-8.3%2B-777BB4?logo=php&logoColor=white">
