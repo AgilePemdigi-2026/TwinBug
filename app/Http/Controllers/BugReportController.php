@@ -76,6 +76,16 @@ class BugReportController extends Controller
     }
 
     /**
+     * Display the specified bug report.
+     */
+    public function show(BugReport $bugReport): View
+    {
+        $bugReport->load('user');
+
+        return view('bug-reports.show', ['report' => $bugReport]);
+    }
+
+    /**
      * Store a newly created bug report.
      */
     public function store(StoreBugReportRequest $request): RedirectResponse

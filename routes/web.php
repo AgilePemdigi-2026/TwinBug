@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BugReportController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,7 +44,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::view('/dashboard', 'dashboard')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     // Profile
@@ -55,4 +56,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/bug-reports', [BugReportController::class, 'index'])->name('bug-reports.index');
     Route::get('/bug-reports/create', [BugReportController::class, 'create'])->name('bug-reports.create');
     Route::post('/bug-reports', [BugReportController::class, 'store'])->name('bug-reports.store');
+    Route::get('/bug-reports/{bugReport}', [BugReportController::class, 'show'])->name('bug-reports.show');
 });
