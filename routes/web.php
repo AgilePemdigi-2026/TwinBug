@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BugReportController;
@@ -22,9 +23,9 @@ Route::middleware('guest')->group(function () {
         ->middleware('throttle:6,1')
         ->name('register.store');
 
-    Route::get('/otp/verify', [App\Http\Controllers\Auth\OtpVerificationController::class, 'create'])
+    Route::get('/otp/verify', [OtpVerificationController::class, 'create'])
         ->name('otp.verify');
-    Route::post('/otp/verify', [App\Http\Controllers\Auth\OtpVerificationController::class, 'store'])
+    Route::post('/otp/verify', [OtpVerificationController::class, 'store'])
         ->middleware('throttle:3,1')
         ->name('otp.verify.submit');
     Route::get('/otp/success', function () {
@@ -45,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     // Bug Reports
+    Route::get('/bug-reports', [BugReportController::class, 'index'])->name('bug-reports.index');
     Route::get('/bug-reports/create', [BugReportController::class, 'create'])->name('bug-reports.create');
     Route::post('/bug-reports', [BugReportController::class, 'store'])->name('bug-reports.store');
 });

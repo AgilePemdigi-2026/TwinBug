@@ -31,16 +31,16 @@
             {{-- Nav --}}
             <nav class="flex items-center gap-1.5 rounded-[20px] bg-input p-1.5" aria-label="Navigasi utama">
                 <a href="{{ route('dashboard') }}"
-                   class="rounded-2xl px-4 py-2 text-sm font-medium text-label transition hover:bg-white/60 hover:text-ink {{ request()->routeIs('dashboard') ? 'bg-white text-ink shadow-sm' : '' }}">
+                   class="rounded-2xl px-4 py-2 text-sm font-medium transition hover:bg-white/60 hover:text-ink {{ request()->routeIs('dashboard') ? 'bg-white text-ink shadow-sm font-semibold' : 'text-label' }}">
                     Dashboard
                 </a>
-                <a href="{{ route('bug-reports.create') }}"
-                   class="rounded-2xl px-4 py-2.5 text-base font-semibold transition {{ request()->routeIs('bug-reports.*') ? 'bg-sage-500 text-white shadow-[0_2px_10px_rgba(74,124,89,0.3)]' : 'text-label hover:bg-white/60 hover:text-ink' }}">
-                    Buat Laporan
+                <a href="{{ route('bug-reports.index') }}"
+                   class="rounded-2xl px-4 py-2 text-sm font-medium transition hover:bg-white/60 hover:text-ink {{ request()->routeIs('bug-reports.index') ? 'bg-white text-ink shadow-sm font-semibold' : 'text-label' }}">
+                    Daftar Laporan
                 </a>
-                <a href="#"
-                   class="rounded-2xl px-4 py-2 text-sm font-medium text-label transition hover:bg-white/60 hover:text-ink">
-                    Histori Laporan
+                <a href="{{ route('bug-reports.create') }}"
+                   class="rounded-2xl px-4 py-2 text-sm font-medium transition {{ request()->routeIs('bug-reports.create') ? 'bg-sage-500 text-white shadow-[0_2px_10px_rgba(74,124,89,0.3)] font-semibold' : 'text-label hover:bg-white/60 hover:text-ink' }}">
+                    + Buat Laporan
                 </a>
             </nav>
 

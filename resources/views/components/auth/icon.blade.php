@@ -91,6 +91,19 @@
             <polyline points="9 22 9 12 15 12 15 22"/>
             @break
 
+        @case('search')
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+            @break
+
+        @case('filter')
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            @break
+
+        @case('x')
+            <path d="M18 6 6 18M6 6l12 12" />
+            @break
+
         @case('user')
         @default
             <circle cx="12" cy="8" r="4" />

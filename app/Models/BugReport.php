@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\BugSeverity;
 use App\Enums\BugStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -52,5 +53,43 @@ class BugReport extends Model
     public function hasScreenshot(): bool
     {
         return $this->screenshot_path !== null;
+    }
+
+    /**
+     * Scope a query to apply report filters.
+     *
+     * @param  Builder  $query
+     * @param  array<string, mixed>  $filters
+     * @return Builder
+     */
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when(filled($filters['q'] ?? null), function ($q) use ($filters) {
+                $search = trim((string) $filters['q']);
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })
+            ->when(filled($filters['severity'] ?? null) && $filters['severity'] !== 'all', function ($q) use ($filters) {
+                $q->where('severity', $filters['severity']);
+            })
+            ->when(filled($filters['status'] ?? null) && $filters['status'] !== 'all', function ($q) use ($filters) {
+                $q->where('status', $filters['status']);
+            })
+            ->when(filled($filters['module'] ?? null) && $filters['module'] !== 'all', function ($q) use ($filters) {
+                $q->where('module', $filters['module']);
+            })
+            ->when(filled($filters['has_screenshot'] ?? null) && $filters['has_screenshot'] !== 'all', function ($q) use ($filters) {
+                if ($filters['has_screenshot'] === 'yes') {
+                    $q->whereNotNull('screenshot_path');
+                } elseif ($filters['has_screenshot'] === 'no') {
+                    $q->whereNull('screenshot_path');
+                }
+            })
+            ->when(($filters['scope'] ?? null) === 'my' && auth()->check(), function ($q) {
+                $q->where('user_id', auth()->id());
+            });
     }
 }

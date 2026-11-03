@@ -133,12 +133,21 @@
                     <h2 class="font-serif text-xl font-bold text-ink">Laporan Bug Terkini Anda</h2>
                     <p class="mt-0.5 text-xs text-label">Daftar laporan bug yang baru saja Anda buat dan status analisisnya</p>
                 </div>
-                <a
-                    href="{{ route('bug-reports.create') }}"
-                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-sage-600 transition hover:text-sage-700 hover:underline"
-                >
-                    + Buat Laporan Baru
-                </a>
+                <div class="flex items-center gap-2.5">
+                    <a
+                        href="{{ route('bug-reports.index') }}"
+                        class="inline-flex items-center gap-1.5 rounded-xl border border-divider bg-input px-3.5 py-2 text-xs font-semibold text-ink transition hover:border-sage-300 hover:bg-sage-50"
+                    >
+                        <x-auth.icon name="sparkles" class="size-3.5 text-sage-600" />
+                        <span>Filter &amp; Semua Laporan</span>
+                    </a>
+                    <a
+                        href="{{ route('bug-reports.create') }}"
+                        class="inline-flex items-center gap-1.5 rounded-xl bg-sage-500 px-3.5 py-2 text-xs font-semibold text-white shadow-cta transition hover:bg-sage-600"
+                    >
+                        + Buat Baru
+                    </a>
+                </div>
             </div>
 
             @if ($recentReports->isEmpty())
