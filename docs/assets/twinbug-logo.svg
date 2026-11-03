@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 130" width="560" height="130" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E2A22" />
+      <stop offset="50%" stop-color="#141E18" />
+      <stop offset="100%" stop-color="#0F1712" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5FA875" />
+      <stop offset="100%" stop-color="#3D7A50" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F2C94C" />
+      <stop offset="100%" stop-color="#D4A72C" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Card -->
+  <rect width="560" height="130" rx="20" fill="url(#bgGrad)" stroke="#2D4233" stroke-width="1.5" />
+
+  <!-- Ambient Glow Circles -->
+  <circle cx="50" cy="20" r="45" fill="#4A7C59" opacity="0.15" />
+  <circle cx="510" cy="110" r="55" fill="#5FA875" opacity="0.12" />
+
+  <!-- Decorative Grid Lines -->
+  <path d="M 0 45 L 560 45 M 0 85 L 560 85" stroke="#FFFFFF" stroke-opacity="0.03" stroke-width="1" />
+
+  <!-- Left Icon Container -->
+  <g transform="translate(42, 31)">
+    <!-- Icon Box -->
+    <rect width="68" height="68" rx="18" fill="url(#accentGrad)" filter="url(#glow)" />
+    <!-- Bug Icon Graphic -->
+    <g transform="translate(18, 18)" stroke="#FFFFFF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <!-- Bug Body -->
+      <path d="M8 4a4 4 0 0 1 8 0v4a4 4 0 0 1 4 4v6a8 8 0 0 1-16 0v-6a4 4 0 0 1 4-4V4z" fill="#FFFFFF" fill-opacity="0.15"/>
+      <path d="M4 14h16" />
+      <path d="M12 8v12" />
+      <!-- Antennae -->
+      <path d="M9 4.5L5 1.5" />
+      <path d="M15 4.5L19 1.5" />
+      <!-- Legs Left -->
+      <path d="M4 11L1 9.5" />
+      <path d="M4 17L1 18.5" />
+      <!-- Legs Right -->
+      <path d="M20 11L23 9.5" />
+      <path d="M20 17L23 18.5" />
+    </g>
+    <!-- Twin Bug indicator: Small twin dot badge -->
+    <circle cx="56" cy="12" r="5" fill="url(#goldGrad)" />
+    <circle cx="56" cy="12" r="2" fill="#141E18" />
+  </g>
+
+  <!-- Typography Brand -->
+  <g transform="translate(130, 42)">
+    <!-- Brand Name -->
+    <text x="0" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="34" font-weight="800" fill="#FFFFFF" letter-spacing="-0.8">
+      Twin<tspan fill="#64B87E">Bug</tspan>
+    </text>
+
+    <!-- Version Pill -->
+    <rect x="156" y="11" width="58" height="22" rx="11" fill="#24382A" stroke="#3D5A45" stroke-width="1" />
+    <text x="185" y="26" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="700" fill="#7FD199" letter-spacing="0.5">BETA</text>
+
+    <!-- Subtitle / Tagline -->
+    <text x="0" y="58" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="500" fill="#95AC9E" letter-spacing="0.2">
+      Sistem Manajemen &amp; Pelaporan Bug Berbasis Web
+    </text>
+  </g>
+
+  <!-- Right Decorative Feature Badges -->
+  <g transform="translate(430, 36)">
+    <rect width="90" height="26" rx="8" fill="#18241D" stroke="#2B3D30" stroke-width="1" />
+    <circle cx="14" cy="13" r="3.5" fill="#5FA875" />
+    <text x="25" y="17" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#C5D6CC">Agile 2026</text>
+
+    <rect y="33" width="90" height="26" rx="8" fill="#18241D" stroke="#2B3D30" stroke-width="1" />
+    <circle cx="14" cy="46" r="3.5" fill="#F2C94C" />
+    <text x="25" y="50" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10.5" font-weight="600" fill="#C5D6CC">Sprint 1</text>
+  </g>
+</svg>
