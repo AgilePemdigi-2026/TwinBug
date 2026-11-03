@@ -177,14 +177,20 @@
                                 <th class="pb-3 px-4">Keparahan</th>
                                 <th class="pb-3 px-4">Status</th>
                                 <th class="pb-3 px-4">Screenshot</th>
+                                <th class="pb-3 px-4 text-right">Aksi</th>
                                 <th class="pb-3 pl-4 text-right">Tanggal</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-divider">
                             @foreach ($recentReports as $report)
                                 <tr class="transition hover:bg-input/40">
-                                    <td class="py-4 pr-4 font-semibold text-ink">
-                                        {{ $report->title }}
+                                    <td class="py-4 pr-4">
+                                        <a
+                                            href="{{ route('bug-reports.show', $report) }}"
+                                            class="font-semibold text-ink transition hover:text-sage-600"
+                                        >
+                                            {{ $report->title }}
+                                        </a>
                                     </td>
                                     <td class="py-4 px-4 text-xs text-body">
                                         {{ $report->module ?? '-' }}
@@ -209,6 +215,15 @@
                                         @else
                                             <span class="text-label/50">-</span>
                                         @endif
+                                    </td>
+                                    <td class="py-4 px-4 text-right">
+                                        <a
+                                            href="{{ route('bug-reports.show', $report) }}"
+                                            class="inline-flex items-center gap-1.5 rounded-lg border border-sage-200 bg-sage-50 px-2.5 py-1 text-[11px] font-semibold text-sage-700 transition hover:bg-sage-100"
+                                        >
+                                            <x-auth.icon name="eye" class="size-3" />
+                                            <span>Lihat Detail</span>
+                                        </a>
                                     </td>
                                     <td class="py-4 pl-4 text-right text-xs text-label">
                                         {{ $report->created_at->format('d/m/Y H:i') }}

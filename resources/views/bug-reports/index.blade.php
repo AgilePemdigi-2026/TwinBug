@@ -388,9 +388,13 @@
                                 <tr class="transition hover:bg-input/40">
                                     {{-- Title & Summary --}}
                                     <td class="py-4 pr-4">
-                                        <div class="font-semibold text-ink line-clamp-1">
+                                        <a
+                                            href="{{ route('bug-reports.show', $report) }}"
+                                            title="Lihat detail laporan"
+                                            class="block font-semibold text-ink line-clamp-1 transition hover:text-sage-600"
+                                        >
                                             {{ $report->title }}
-                                        </div>
+                                        </a>
                                         <div class="mt-0.5 text-xs text-label line-clamp-2 max-w-md">
                                             {{ $report->description }}
                                         </div>
