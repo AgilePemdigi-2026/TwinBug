@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BugReportController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\EnsureUserHasApplication;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +54,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::middleware(EnsureUserHasApplication::class)->group(function () {
+        // Profile
+        Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         // Bug Reports

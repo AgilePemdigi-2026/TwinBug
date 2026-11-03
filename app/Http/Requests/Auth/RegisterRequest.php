@@ -26,7 +26,7 @@ class RegisterRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
-            'role' => ['required', Rule::enum(UserRole::class)],
+            'role' => ['required', Rule::enum(UserRole::class)->only([UserRole::Reporter, UserRole::Developer])],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'application_name' => $isDeveloper
                 ? ['required', 'string', 'max:255', 'unique:applications,name']
