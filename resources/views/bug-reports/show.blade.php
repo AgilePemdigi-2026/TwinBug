@@ -111,6 +111,10 @@
 
                     <dl class="mt-4 space-y-3 text-sm">
                         <div class="rounded-2xl bg-input p-4">
+                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Aplikasi</dt>
+                            <dd class="mt-1 font-semibold text-ink">{{ $report->application?->name ?? '-' }}</dd>
+                        </div>
+                        <div class="rounded-2xl bg-input p-4">
                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Modul / Komponen</dt>
                             <dd class="mt-1 font-semibold text-ink">{{ $report->module ?? 'Lainnya' }}</dd>
                         </div>

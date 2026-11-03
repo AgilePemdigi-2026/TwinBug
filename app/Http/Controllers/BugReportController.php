@@ -26,7 +26,10 @@ class BugReportController extends Controller
             'scope' => $request->query('scope', 'all'),
         ];
 
+        $applicationId = $request->user()->application_id;
+
         $reports = BugReport::query()
+            ->where('application_id', $applicationId)
             ->with('user')
             ->filter($filters)
             ->latest()
@@ -45,11 +48,11 @@ class BugReportController extends Controller
             || ($filters['scope'] !== 'all');
 
         $stats = [
-            'total' => BugReport::count(),
-            'open' => BugReport::where('status', BugStatus::Open)->count(),
-            'in_progress' => BugReport::where('status', BugStatus::InProgress)->count(),
-            'resolved' => BugReport::where('status', BugStatus::Resolved)->count(),
-            'critical' => BugReport::where('severity', BugSeverity::Critical)->count(),
+            'total' => BugReport::where('application_id', $applicationId)->count(),
+            'open' => BugReport::where('application_id', $applicationId)->where('status', BugStatus::Open)->count(),
+            'in_progress' => BugReport::where('application_id', $applicationId)->where('status', BugStatus::InProgress)->count(),
+            'resolved' => BugReport::where('application_id', $applicationId)->where('status', BugStatus::Resolved)->count(),
+            'critical' => BugReport::where('application_id', $applicationId)->where('severity', BugSeverity::Critical)->count(),
         ];
 
         return view('bug-reports.index', compact(
@@ -66,21 +69,24 @@ class BugReportController extends Controller
     /**
      * Show the create bug report form.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        $totalReports = BugReport::count();
+        $application = $request->user()->application;
+        $totalReports = BugReport::where('application_id', $application->id)->count();
         $modules = $this->availableModules();
         $severities = BugSeverity::cases();
 
-        return view('bug-reports.create', compact('totalReports', 'modules', 'severities'));
+        return view('bug-reports.create', compact('application', 'totalReports', 'modules', 'severities'));
     }
 
     /**
      * Display the specified bug report.
      */
-    public function show(BugReport $bugReport): View
+    public function show(Request $request, BugReport $bugReport): View
     {
-        $bugReport->load('user');
+        abort_unless($bugReport->application_id === $request->user()->application_id, 404);
+
+        $bugReport->load(['user', 'application']);
 
         return view('bug-reports.show', ['report' => $bugReport]);
     }
@@ -109,6 +115,7 @@ class BugReportController extends Controller
 
         BugReport::create([
             'user_id' => $request->user()->id,
+            'application_id' => $request->user()->application_id,
             'title' => $data['title'],
             'module' => $data['module'] ?? null,
             'description' => $data['description'],

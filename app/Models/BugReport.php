@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'user_id',
+    'application_id',
     'title',
     'module',
     'description',
@@ -25,6 +26,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BugReport extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::creating(function (BugReport $report): void {
+            if ($report->application_id === null && $report->user_id !== null) {
+                $report->application_id = User::whereKey($report->user_id)->value('application_id');
+            }
+        });
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -45,6 +55,14 @@ class BugReport extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the application this report belongs to.
+     */
+    public function application(): BelongsTo
+    {
+        return $this->belongsTo(Application::class);
     }
 
     /**

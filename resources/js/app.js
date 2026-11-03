@@ -116,3 +116,38 @@ if (strengthInput && strengthRoot) {
     strengthInput.addEventListener('input', updateStrength);
     updateStrength();
 }
+
+const applicationFields = document.querySelectorAll('[data-application-field]');
+
+if (applicationFields.length > 0) {
+    const roleInputs = document.querySelectorAll('input[name="role"]');
+
+    const syncApplicationFields = () => {
+        const selected = document.querySelector('input[name="role"]:checked')?.value;
+
+        applicationFields.forEach((field) => {
+            const isActive = field.dataset.applicationField === selected;
+            const input = field.querySelector('input');
+
+            field.classList.toggle('hidden', !isActive);
+
+            if (input) {
+                input.disabled = !isActive;
+            }
+        });
+    };
+
+    roleInputs.forEach((input) => input.addEventListener('change', syncApplicationFields));
+    syncApplicationFields();
+}
+
+document.querySelectorAll('[data-copy]').forEach((button) => {
+    button.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(button.dataset.copy);
+            showToast('Kode disalin', `Kode undangan ${button.dataset.copy} siap dibagikan.`);
+        } catch {
+            showToast('Gagal menyalin', 'Salin kode undangan secara manual.');
+        }
+    });
+});

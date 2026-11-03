@@ -24,6 +24,10 @@
                     Sistem multimodal TwinBug akan otomatis menganalisis kemiripan semantik teks dan visual screenshot
                     dengan arsip historis begitu laporan dikirimkan.
                 </p>
+                <span class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-sage-100 px-3 py-1 text-xs font-semibold text-sage-700">
+                    <x-auth.icon name="code" class="size-3.5" />
+                    {{ $application->name }}
+                </span>
             </div>
 
             {{-- Quick Metametric Badge --}}

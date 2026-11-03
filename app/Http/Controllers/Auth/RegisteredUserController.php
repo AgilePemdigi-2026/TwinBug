@@ -25,6 +25,7 @@ class RegisteredUserController extends Controller
     public function store(RegisterRequest $request): RedirectResponse
     {
         $data = $request->safe()->only(['name', 'email', 'role', 'password']);
+        $application = $request->safe()->only(['application_name', 'application_join']);
 
         $otpCode = (string) random_int(100000, 999999);
 
@@ -40,6 +41,7 @@ class RegisteredUserController extends Controller
 
         Session::put('pending_user_data', $data);
         Session::put('pending_otp_email', $data['email']);
+        Session::put('pending_application', $application);
 
         try {
             Mail::to($data['email'])->send(new OtpVerificationCode(
@@ -50,7 +52,7 @@ class RegisteredUserController extends Controller
             report($exception);
 
             return back()
-                ->withInput($request->only('name', 'email', 'role'))
+                ->withInput($request->only('name', 'email', 'role', 'application_name', 'application_join'))
                 ->withErrors([
                     'email' => 'Kode OTP gagal dikirim. Silakan coba lagi.',
                 ]);

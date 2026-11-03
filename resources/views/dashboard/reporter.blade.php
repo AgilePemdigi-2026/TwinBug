@@ -223,6 +223,8 @@
             @endif
         </div>
 
+        <x-dashboard.application-info :user="$user" />
+
         <x-dashboard.account-info :user="$user" />
 
     </div>

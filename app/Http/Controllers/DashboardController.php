@@ -18,6 +18,7 @@ class DashboardController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
+        $user->loadMissing('application');
 
         return $user->role === UserRole::Developer
             ? $this->developerDashboard($user)
@@ -49,14 +50,17 @@ class DashboardController extends Controller
      */
     private function developerDashboard(User $user): View
     {
+        $applicationId = $user->application_id;
+
         $stats = [
-            'total' => BugReport::count(),
-            'open' => BugReport::where('status', BugStatus::Open)->count(),
-            'in_progress' => BugReport::where('status', BugStatus::InProgress)->count(),
-            'critical' => BugReport::where('severity', BugSeverity::Critical)->count(),
+            'total' => BugReport::where('application_id', $applicationId)->count(),
+            'open' => BugReport::where('application_id', $applicationId)->where('status', BugStatus::Open)->count(),
+            'in_progress' => BugReport::where('application_id', $applicationId)->where('status', BugStatus::InProgress)->count(),
+            'critical' => BugReport::where('application_id', $applicationId)->where('severity', BugSeverity::Critical)->count(),
         ];
 
-        $recentReports = BugReport::with('user')
+        $recentReports = BugReport::where('application_id', $applicationId)
+            ->with('user')
             ->latest()
             ->take(8)
             ->get();

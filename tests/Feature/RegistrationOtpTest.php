@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\UserRole;
 use App\Mail\OtpVerificationCode;
+use App\Models\Application;
 use App\Models\OTPToken;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,12 +19,15 @@ class RegistrationOtpTest extends TestCase
 
     private function registerPayload(): array
     {
+        $application = Application::factory()->create(['name' => 'TwinBug Test']);
+
         return [
             'name' => 'Budi Santoso',
             'email' => 'budi@example.com',
             'role' => UserRole::Reporter->value,
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'application_join' => $application->name,
             'terms' => 'on',
         ];
     }
@@ -88,6 +92,10 @@ class RegistrationOtpTest extends TestCase
 
         $this->assertNotNull($user);
         $this->assertTrue(Hash::check('password123', $user->password));
+        $this->assertSame(
+            Application::where('name', 'TwinBug Test')->value('id'),
+            $user->application_id,
+        );
         $this->assertDatabaseMissing('otp_tokens', ['email' => 'budi@example.com']);
     }
 

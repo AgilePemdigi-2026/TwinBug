@@ -66,6 +66,28 @@
                     @enderror
                 </fieldset>
 
+                <div data-application-field="reporter" @class(['hidden' => old('role', 'reporter') !== 'reporter'])>
+                    <x-auth.field
+                        name="application_join"
+                        label="Nama atau kode aplikasi"
+                        icon="key"
+                        placeholder="Contoh: TwinBug atau KODE1234"
+                        hint="Minta ke developer"
+                        :required="false"
+                    />
+                </div>
+
+                <div data-application-field="developer" @class(['hidden' => old('role', 'reporter') !== 'developer'])>
+                    <x-auth.field
+                        name="application_name"
+                        label="Nama aplikasi baru"
+                        icon="code"
+                        placeholder="Contoh: Toko Online Kampus"
+                        hint="Kode undangan dibuat otomatis"
+                        :required="false"
+                    />
+                </div>
+
                 <div class="grid gap-5 sm:grid-cols-2">
                     <x-auth.field
                         name="password"

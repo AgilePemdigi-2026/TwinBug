@@ -9,6 +9,7 @@
     'value' => null,
     'hint' => null,
     'strength' => false,
+    'required' => true,
 ])
 
 @php
@@ -47,7 +48,7 @@
                 'pr-4' => ! $toggle,
                 'border-danger/50 bg-danger/5 focus:border-danger focus:ring-danger/20' => $hasError,
             ])
-            required
+            @if ($required) required @endif
         >
 
         @if ($toggle)
