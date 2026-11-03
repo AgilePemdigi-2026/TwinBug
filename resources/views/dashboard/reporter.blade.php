@@ -147,7 +147,7 @@
                     <table class="w-full text-left text-sm">
                         <thead>
                             <tr class="border-b border-divider text-[11px] font-bold uppercase tracking-wider text-label">
-                                <th class="pb-3 pr-4">Judul Bug</th>
+                                <th class="pb-3 pr-4">Judul &amp; Ringkasan Bug</th>
                                 <th class="pb-3 px-4">Modul</th>
                                 <th class="pb-3 px-4">Keparahan</th>
                                 <th class="pb-3 px-4">Status</th>
@@ -166,6 +166,12 @@
                                         >
                                             {{ $report->title }}
                                         </a>
+                                        <div class="mt-0.5 line-clamp-2 max-w-md text-xs text-label">
+                                            {{ $report->description }}
+                                        </div>
+                                        <div class="mt-1 text-[10px] font-medium text-label/70">
+                                            #{{ $report->id }}
+                                        </div>
                                     </td>
                                     <td class="py-4 px-4 text-xs text-body">
                                         {{ $report->module ?? '-' }}
@@ -181,14 +187,20 @@
                                             {{ $report->status->label() }}
                                         </span>
                                     </td>
-                                    <td class="py-4 px-4 text-xs text-label">
+                                    <td class="py-4 px-4 text-xs">
                                         @if ($report->hasScreenshot())
-                                            <span class="inline-flex items-center gap-1 text-sage-600">
-                                                <x-auth.icon name="check" class="size-3" />
-                                                Ada
-                                            </span>
+                                            <a
+                                                href="{{ asset('storage/' . $report->screenshot_path) }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="group inline-flex items-center gap-1.5 rounded-lg border border-sage-200 bg-sage-50 px-2 py-1 text-[11px] font-semibold text-sage-700 transition hover:bg-sage-100"
+                                                title="Lihat screenshot resolusi penuh ({{ $report->screenshot_dimensions ?? 'Unknown dim' }})"
+                                            >
+                                                <x-auth.icon name="check" class="size-3 text-sage-600" />
+                                                <span>Ada ({{ $report->screenshot_dimensions ?? 'Lihat' }})</span>
+                                            </a>
                                         @else
-                                            <span class="text-label/50">-</span>
+                                            <span class="text-label/50 text-[11px] italic">Tidak ada</span>
                                         @endif
                                     </td>
                                     <td class="py-4 px-4 text-right">

@@ -49,6 +49,8 @@ class BugReportDetailTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee(route('bug-reports.show', $report));
         $response->assertSee('Lihat Detail');
+        $response->assertSee('Checkout gagal saat memilih metode QRIS');
+        $response->assertSee('Kode QRIS tidak muncul setelah tombol bayar diklik.');
     }
 
     public function test_detail_page_renders_screenshot_metadata(): void
