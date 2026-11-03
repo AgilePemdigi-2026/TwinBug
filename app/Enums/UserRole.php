@@ -6,12 +6,14 @@ enum UserRole: string
 {
     case Reporter = 'reporter';
     case Developer = 'developer';
+    case Admin = 'admin';
 
     public function label(): string
     {
         return match ($this) {
             self::Reporter => 'Reporter',
             self::Developer => 'Developer',
+            self::Admin => 'Administrator',
         };
     }
 
@@ -20,6 +22,7 @@ enum UserRole: string
         return match ($this) {
             self::Reporter => 'Melaporkan bug dengan detail dan langkah reproduksi yang jelas.',
             self::Developer => 'Menelusuri, memperbaiki, dan memverifikasi laporan bug.',
+            self::Admin => 'Mengelola pengguna, memantau metrik sistem, dan mengawasi sprint.',
         };
     }
 }
