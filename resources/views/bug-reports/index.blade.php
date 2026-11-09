@@ -144,7 +144,6 @@
                         <select
                             name="severity"
                             id="filter-severity"
-                            onchange="this.form.submit()"
                             class="w-full rounded-xl bg-input px-3.5 py-2.5 text-xs font-medium text-ink transition focus:outline-none focus:ring-2 focus:ring-sage-500/40"
                         >
                             <option value="all" @selected(($filters['severity'] ?? 'all') === 'all')>Semua Tingkat Keparahan</option>
@@ -164,7 +163,6 @@
                         <select
                             name="status"
                             id="filter-status"
-                            onchange="this.form.submit()"
                             class="w-full rounded-xl bg-input px-3.5 py-2.5 text-xs font-medium text-ink transition focus:outline-none focus:ring-2 focus:ring-sage-500/40"
                         >
                             <option value="all" @selected(($filters['status'] ?? 'all') === 'all')>Semua Status</option>
@@ -184,7 +182,6 @@
                         <select
                             name="module"
                             id="filter-module"
-                            onchange="this.form.submit()"
                             class="w-full rounded-xl bg-input px-3.5 py-2.5 text-xs font-medium text-ink transition focus:outline-none focus:ring-2 focus:ring-sage-500/40"
                         >
                             <option value="all" @selected(($filters['module'] ?? 'all') === 'all')>Semua Modul</option>
@@ -204,7 +201,6 @@
                         <select
                             name="has_screenshot"
                             id="filter-screenshot"
-                            onchange="this.form.submit()"
                             class="w-full rounded-xl bg-input px-3.5 py-2.5 text-xs font-medium text-ink transition focus:outline-none focus:ring-2 focus:ring-sage-500/40"
                         >
                             <option value="all" @selected(($filters['has_screenshot'] ?? 'all') === 'all')>Semua Laporan</option>
@@ -221,7 +217,6 @@
                         <select
                             name="scope"
                             id="filter-scope"
-                            onchange="this.form.submit()"
                             class="w-full rounded-xl bg-input px-3.5 py-2.5 text-xs font-medium text-ink transition focus:outline-none focus:ring-2 focus:ring-sage-500/40"
                         >
                             <option value="all" @selected(($filters['scope'] ?? 'all') === 'all')>Semua Pelapor</option>
@@ -310,7 +305,8 @@
 
                         <button
                             type="submit"
-                            class="inline-flex items-center gap-2 rounded-xl bg-sage-500 px-4 py-2 text-xs font-bold text-white shadow-cta transition hover:bg-sage-600 active:scale-95"
+                            id="filter-submit-btn"
+                            class="inline-flex items-center gap-2 rounded-xl bg-sage-500 px-4 py-2 text-xs font-bold text-white shadow-cta transition hover:bg-sage-600 active:scale-95 cursor-pointer"
                         >
                             <x-auth.icon name="filter" class="size-3.5" />
                             <span>Terapkan Filter</span>

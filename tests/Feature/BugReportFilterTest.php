@@ -214,4 +214,85 @@ class BugReportFilterTest extends TestCase
         $response->assertSee('Laporan dari User A');
         $response->assertDontSee('Laporan dari User B');
     }
+
+    public function test_filter_select_inputs_do_not_auto_submit_on_change_and_filter_button_is_present(): void
+    {
+        $user = User::factory()->create(['role' => UserRole::Reporter]);
+
+        $response = $this->actingAs($user)->get(route('bug-reports.index'));
+
+        $response->assertStatus(200);
+        $response->assertDontSee('onchange="this.form.submit()"', false);
+        $response->assertSee('id="filter-submit-btn"', false);
+        $response->assertSee('Terapkan Filter');
+    }
+
+    public function test_can_filter_bug_reports_by_multiple_criteria_simultaneously(): void
+    {
+        $user = User::factory()->create(['role' => UserRole::Developer]);
+
+        BugReport::create([
+            'user_id' => $user->id,
+            'title' => 'Laporan kritis open dengan screenshot pada modul API',
+            'module' => 'API & Integrasi',
+            'description' => 'Kendala crash pada endpoint sinkronisasi.',
+            'severity' => BugSeverity::Critical->value,
+            'status' => BugStatus::Open->value,
+            'screenshot_path' => 'screenshots/api_crash.png',
+        ]);
+
+        BugReport::create([
+            'user_id' => $user->id,
+            'title' => 'Laporan low open dengan screenshot pada modul API',
+            'module' => 'API & Integrasi',
+            'description' => 'Tampilan log sedikit lambat.',
+            'severity' => BugSeverity::Low->value,
+            'status' => BugStatus::Open->value,
+            'screenshot_path' => 'screenshots/api_low.png',
+        ]);
+
+        BugReport::create([
+            'user_id' => $user->id,
+            'title' => 'Laporan kritis resolved dengan screenshot pada modul API',
+            'module' => 'API & Integrasi',
+            'description' => 'Sudah diperbaiki kemarin.',
+            'severity' => BugSeverity::Critical->value,
+            'status' => BugStatus::Resolved->value,
+            'screenshot_path' => 'screenshots/api_resolved.png',
+        ]);
+
+        BugReport::create([
+            'user_id' => $user->id,
+            'title' => 'Laporan kritis open dengan screenshot pada modul Dashboard',
+            'module' => 'Dashboard',
+            'description' => 'Crash di dashboard.',
+            'severity' => BugSeverity::Critical->value,
+            'status' => BugStatus::Open->value,
+            'screenshot_path' => 'screenshots/dash_crash.png',
+        ]);
+
+        BugReport::create([
+            'user_id' => $user->id,
+            'title' => 'Laporan kritis open tanpa screenshot pada modul API',
+            'module' => 'API & Integrasi',
+            'description' => 'Crash tanpa foto.',
+            'severity' => BugSeverity::Critical->value,
+            'status' => BugStatus::Open->value,
+            'screenshot_path' => null,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('bug-reports.index', [
+            'severity' => 'critical',
+            'status' => 'open',
+            'module' => 'API & Integrasi',
+            'has_screenshot' => 'yes',
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Laporan kritis open dengan screenshot pada modul API');
+        $response->assertDontSee('Laporan low open dengan screenshot pada modul API');
+        $response->assertDontSee('Laporan kritis resolved dengan screenshot pada modul API');
+        $response->assertDontSee('Laporan kritis open dengan screenshot pada modul Dashboard');
+        $response->assertDontSee('Laporan kritis open tanpa screenshot pada modul API');
+    }
 }
