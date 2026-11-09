@@ -29,7 +29,7 @@
         <div class="mx-auto flex h-full max-w-screen-xl items-center justify-between px-12">
 
             {{-- Logo --}}
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
+            <a href="{{ auth()->check() ? route('dashboard') : url('/') }}" class="flex items-center gap-3">
                 <span class="grid size-8 place-items-center rounded-xl bg-sage-500 text-white shadow-cta">
                     <x-auth.icon name="bug" class="size-4" />
                 </span>
@@ -38,18 +38,33 @@
 
             {{-- Nav --}}
             <nav class="flex items-center gap-1.5 rounded-[20px] bg-input p-1.5" aria-label="Navigasi utama">
-                <a href="{{ route('dashboard') }}"
-                    class="rounded-2xl px-4 py-2 text-sm font-medium transition hover:bg-white/60 hover:text-ink {{ request()->routeIs('dashboard') ? 'bg-white text-ink shadow-sm font-semibold' : 'text-label' }}">
-                    Dashboard
+                @auth
+                    <a href="{{ route('dashboard') }}"
+                        class="rounded-2xl px-4 py-2 text-sm font-medium transition hover:bg-white/60 hover:text-ink {{ request()->routeIs('dashboard') ? 'bg-white text-ink shadow-sm font-semibold' : 'text-label' }}">
+                        Dashboard
+                    </a>
+                    <a href="{{ route('bug-reports.index') }}"
+                        class="rounded-2xl px-4 py-2 text-sm font-medium transition hover:bg-white/60 hover:text-ink {{ request()->routeIs('bug-reports.index') ? 'bg-white text-ink shadow-sm font-semibold' : 'text-label' }}">
+                        Daftar Laporan
+                    </a>
+                @endauth
+
+                <a href="{{ route('about') }}"
+                    class="rounded-2xl px-4 py-2 text-sm font-medium transition hover:bg-white/60 hover:text-ink {{ request()->routeIs('about') ? 'bg-white text-ink shadow-sm font-semibold' : 'text-label' }}">
+                    Tentang Kami
                 </a>
-                <a href="{{ route('bug-reports.index') }}"
-                    class="rounded-2xl px-4 py-2 text-sm font-medium transition hover:bg-white/60 hover:text-ink {{ request()->routeIs('bug-reports.index') ? 'bg-white text-ink shadow-sm font-semibold' : 'text-label' }}">
-                    Daftar Laporan
+
+                <a href="{{ route('faq') }}"
+                    class="rounded-2xl px-4 py-2 text-sm font-medium transition hover:bg-white/60 hover:text-ink {{ request()->routeIs('faq') ? 'bg-white text-ink shadow-sm font-semibold' : 'text-label' }}">
+                    Bantuan & FAQ
                 </a>
-                <a href="{{ route('bug-reports.create') }}"
-                    class="rounded-2xl px-4 py-2 text-sm font-medium transition {{ request()->routeIs('bug-reports.create') ? 'bg-sage-500 text-white shadow-[0_2px_10px_rgba(74,124,89,0.3)] font-semibold' : 'text-label hover:bg-white/60 hover:text-ink' }}">
-                    + Buat Laporan
-                </a>
+
+                @auth
+                    <a href="{{ route('bug-reports.create') }}"
+                        class="rounded-2xl px-4 py-2 text-sm font-medium transition {{ request()->routeIs('bug-reports.create') ? 'bg-sage-500 text-white shadow-[0_2px_10px_rgba(74,124,89,0.3)] font-semibold' : 'text-label hover:bg-white/60 hover:text-ink' }}">
+                        + Buat Laporan
+                    </a>
+                @endauth
             </nav>
 
             {{-- User info + logout --}}
@@ -75,6 +90,14 @@
                             <x-auth.icon name="logout" class="size-4" />
                         </button>
                     </form>
+                @else
+                    <a href="{{ route('login') }}" class="text-sm font-medium text-label transition hover:text-ink">
+                        Masuk
+                    </a>
+                    <a href="{{ route('register') }}"
+                        class="rounded-xl bg-sage-500 px-4 py-2 text-sm font-semibold text-white shadow-cta transition hover:bg-sage-600">
+                        Daftar
+                    </a>
                 @endauth
             </div>
         </div>
@@ -99,10 +122,10 @@
                     Multimodal.</span>
             </div>
             <nav class="flex items-center gap-6" aria-label="Footer">
+                <a href="{{ route('about') }}" class="text-xs text-label transition hover:text-ink">Tentang Kami</a>
                 <a href="#" class="text-xs text-label transition hover:text-ink">Dokumentasi API</a>
-                <a href="#" class="text-xs text-label transition hover:text-ink">Kamus Model Duplikasi</a>
                 <a href="#" class="text-xs text-label transition hover:text-ink">Status Sistem</a>
-                <a href="#" class="text-xs text-label transition hover:text-ink">Bantuan & FAQ</a>
+                <a href="{{ route('faq') }}" class="text-xs text-label transition hover:text-ink">Bantuan & FAQ</a>
             </nav>
         </div>
     </footer>
