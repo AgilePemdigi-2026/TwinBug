@@ -72,6 +72,10 @@
                 Belum punya akun?
                 <a href="{{ route('register') }}" class="font-semibold text-sage-600 transition hover:text-sage-700 hover:underline">Daftar sekarang</a>
             </p>
+            <p class="mt-2 text-center text-xs text-body/80">
+                Butuh bantuan?
+                <a href="{{ route('faq') }}" class="font-medium text-sage-600 transition hover:text-sage-700 hover:underline">Kunjungi Pusat Bantuan & FAQ</a>
+            </p>
         </div>
 
         <p class="mt-5 text-center text-[11px] leading-5 text-body/60">Dibuat untuk tim yang peduli kualitas perangkat lunak.</p>
