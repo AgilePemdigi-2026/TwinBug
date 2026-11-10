@@ -31,6 +31,13 @@
                     <x-auth.icon name="search" class="size-4 shrink-0" />
                     <span>Telusuri Antrean Bug</span>
                 </a>
+                <a
+                    href="{{ route('bug-reports.index') }}"
+                    class="inline-flex items-center gap-2 rounded-xl border border-divider bg-white px-4 py-3 text-sm font-medium text-ink transition hover:bg-input"
+                >
+                    <x-auth.icon name="bug" class="size-3.5" />
+                    <span>Deteksi Duplikasi</span>
+                </a>
             </div>
         </div>
 
@@ -136,15 +143,16 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead>
-                            <tr class="border-b border-divider text-[11px] font-bold uppercase tracking-wider text-label">
-                                <th class="pb-3 pr-4">Judul Bug</th>
-                                <th class="pb-3 px-4">Pelapor</th>
-                                <th class="pb-3 px-4">Modul</th>
-                                <th class="pb-3 px-4">Keparahan</th>
-                                <th class="pb-3 px-4">Status</th>
-                                <th class="pb-3 px-4 text-right">Aksi</th>
-                                <th class="pb-3 pl-4 text-right">Tanggal</th>
-                            </tr>
+                                <tr class="border-b border-divider text-[11px] font-bold uppercase tracking-wider text-label">
+                                    <th class="pb-3 pr-4">Judul Bug</th>
+                                    <th class="pb-3 px-4">Pelapor</th>
+                                    <th class="pb-3 px-4">Modul</th>
+                                    <th class="pb-3 px-4">Keparahan</th>
+                                    <th class="pb-3 px-4">Status</th>
+                                    <th class="pb-3 px-4 text-center">Deteksi</th>
+                                    <th class="pb-3 px-4 text-right">Aksi</th>
+                                    <th class="pb-3 pl-4 text-right">Tanggal</th>
+                                </tr>
                         </thead>
                         <tbody class="divide-y divide-divider">
                             @foreach ($recentReports as $report)
@@ -181,6 +189,15 @@
                                             {{ $report->status->label() }}
                                         </span>
                                     </td>
+                                    <td class="py-4 px-4 text-center">
+                                        @if ($report->detection_results_count > 0)
+                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold bg-sage-100 text-sage-800">
+                                                {{ $report->detection_results_count }}
+                                            </span>
+                                        @else
+                                            <span class="text-label/50 text-[11px] italic">-</span>
+                                        @endif
+                                    </td>
                                     <td class="py-4 px-4 text-right">
                                         <a
                                             href="{{ route('bug-reports.show', $report) }}"
@@ -189,6 +206,15 @@
                                             <x-auth.icon name="eye" class="size-3" />
                                             <span>Lihat Detail</span>
                                         </a>
+                                        @if ($report->detection_results_count > 0)
+                                            <a
+                                                href="{{ route('bug-reports.detection', $report) }}"
+                                                class="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-divider bg-white px-2.5 py-1 text-[11px] font-semibold text-ink transition hover:bg-input"
+                                            >
+                                                <x-auth.icon name="bug" class="size-3" />
+                                                <span>Deteksi</span>
+                                            </a>
+                                        @endif
                                     </td>
                                     <td class="py-4 pl-4 text-right text-xs text-label whitespace-nowrap">
                                         <div class="font-medium text-ink">{{ $report->created_at->format('d M Y') }}</div>

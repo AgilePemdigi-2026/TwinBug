@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Enums\BugSeverity;
 use App\Enums\BugStatus;
 use App\Http\Requests\StoreBugReportRequest;
+use App\Jobs\AnalyzeBugReport;
 use App\Models\BugReport;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Throwable;
 
 class BugReportController extends Controller
 {
@@ -113,7 +116,7 @@ class BugReportController extends Controller
             $screenshotDimensions = "{$width}×{$height}";
         }
 
-        BugReport::create([
+        $bugReport = BugReport::create([
             'user_id' => $request->user()->id,
             'application_id' => $request->user()->application_id,
             'title' => $data['title'],
@@ -125,6 +128,14 @@ class BugReportController extends Controller
             'screenshot_size' => $screenshotSize,
             'screenshot_dimensions' => $screenshotDimensions,
         ]);
+
+        try {
+            AnalyzeBugReport::dispatch($bugReport)->afterCommit();
+        } catch (Throwable $e) {
+            Log::warning('Failed to dispatch duplicate detection job', [
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return to_route('bug-reports.create')
             ->with('success', 'Laporan bug berhasil dikirim dan sedang dianalisis oleh sistem TwinBug.');

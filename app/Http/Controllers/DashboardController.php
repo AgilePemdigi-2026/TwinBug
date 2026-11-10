@@ -61,6 +61,7 @@ class DashboardController extends Controller
 
         $recentReports = BugReport::where('application_id', $applicationId)
             ->with('user')
+            ->withCount('detectionResults')
             ->latest()
             ->take(8)
             ->get();

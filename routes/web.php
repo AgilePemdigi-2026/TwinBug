@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BugReportController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DetectionController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\EnsureUserHasApplication;
@@ -71,5 +72,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/bug-reports/create', [BugReportController::class, 'create'])->name('bug-reports.create');
         Route::post('/bug-reports', [BugReportController::class, 'store'])->name('bug-reports.store');
         Route::get('/bug-reports/{bugReport}', [BugReportController::class, 'show'])->name('bug-reports.show');
+        Route::get('/bug-reports/{bugReport}/detection', [DetectionController::class, 'show'])
+            ->name('bug-reports.detection');
+        Route::post('/bug-reports/{bugReport}/detection/rerun', [DetectionController::class, 'rerun'])
+            ->name('bug-reports.detection.rerun');
     });
 });
