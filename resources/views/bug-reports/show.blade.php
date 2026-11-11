@@ -45,6 +45,16 @@
                 <x-auth.icon name="arrow-left" class="size-3.5" />
                 <span>Kembali</span>
             </a>
+
+            @if(auth()->user()->role->value === 'developer' && $report->application_id === auth()->user()->application_id)
+                <a
+                    href="{{ route('bug-reports.detection', $report) }}"
+                    class="inline-flex shrink-0 items-center gap-2 rounded-xl border border-divider bg-white px-4 py-2.5 text-xs font-bold text-ink shadow-sm transition hover:bg-input"
+                >
+                    <x-auth.icon name="bug" class="size-3.5" />
+                    <span>Deteksi Duplikasi</span>
+                </a>
+            @endif
         </div>
 
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">

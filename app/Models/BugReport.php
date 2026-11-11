@@ -4,11 +4,13 @@ namespace App\Models;
 
 use App\Enums\BugSeverity;
 use App\Enums\BugStatus;
+use App\Enums\DetectionStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'user_id',
@@ -22,6 +24,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'screenshot_name',
     'screenshot_size',
     'screenshot_dimensions',
+    'detection_status',
+    'detection_error',
+    'detected_at',
+    'detection_threshold',
 ])]
 class BugReport extends Model
 {
@@ -46,6 +52,8 @@ class BugReport extends Model
         return [
             'severity' => BugSeverity::class,
             'status' => BugStatus::class,
+            'detection_status' => DetectionStatus::class,
+            'detected_at' => 'datetime',
         ];
     }
 
@@ -63,6 +71,16 @@ class BugReport extends Model
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class);
+    }
+
+    /**
+     * Get the detection results for this report.
+     *
+     * @return HasMany<DetectionResult, $this>
+     */
+    public function detectionResults(): HasMany
+    {
+        return $this->hasMany(DetectionResult::class)->orderBy('rank');
     }
 
     /**
