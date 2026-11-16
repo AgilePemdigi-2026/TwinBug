@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Enums\BugSeverity;
 use App\Enums\BugStatus;
 use App\Http\Requests\StoreBugReportRequest;
+use App\Http\Requests\UpdateBugReportStatusRequest;
 use App\Jobs\AnalyzeBugReport;
 use App\Models\BugReport;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Throwable;
@@ -89,9 +91,37 @@ class BugReportController extends Controller
     {
         abort_unless($bugReport->application_id === $request->user()->application_id, 404);
 
-        $bugReport->load(['user', 'application']);
+        $bugReport->load(['user', 'application', 'statusHistories.changedBy']);
 
         return view('bug-reports.show', ['report' => $bugReport]);
+    }
+
+    /**
+     * Advance the report to its next status.
+     */
+    public function updateStatus(UpdateBugReportStatusRequest $request, BugReport $bugReport): RedirectResponse
+    {
+        $target = BugStatus::from($request->validated('status'));
+
+        if (! $bugReport->status->canTransitionTo($target)) {
+            return back()->withErrors([
+                'status' => 'Status laporan hanya dapat dilanjutkan ke tahap berikutnya.',
+            ]);
+        }
+
+        DB::transaction(function () use ($bugReport, $request, $target): void {
+            $from = $bugReport->status;
+
+            $bugReport->update(['status' => $target]);
+
+            $bugReport->statusHistories()->create([
+                'changed_by' => $request->user()->id,
+                'from_status' => $from,
+                'to_status' => $target,
+            ]);
+        });
+
+        return back()->with('success', 'Status laporan berhasil diperbarui menjadi '.$target->label().'.');
     }
 
     /**

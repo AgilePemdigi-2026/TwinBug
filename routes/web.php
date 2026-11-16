@@ -72,6 +72,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/bug-reports/create', [BugReportController::class, 'create'])->name('bug-reports.create');
         Route::post('/bug-reports', [BugReportController::class, 'store'])->name('bug-reports.store');
         Route::get('/bug-reports/{bugReport}', [BugReportController::class, 'show'])->name('bug-reports.show');
+        Route::patch('/bug-reports/{bugReport}/status', [BugReportController::class, 'updateStatus'])
+            ->name('bug-reports.status.update');
         Route::get('/bug-reports/{bugReport}/detection', [DetectionController::class, 'show'])
             ->name('bug-reports.detection');
         Route::post('/bug-reports/{bugReport}/detection/rerun', [DetectionController::class, 'rerun'])

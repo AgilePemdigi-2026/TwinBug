@@ -28,4 +28,19 @@ enum BugStatus: string
             self::Closed => 'bg-slate-200 text-slate-700',
         };
     }
+
+    public function next(): ?self
+    {
+        return match ($this) {
+            self::Open => self::InProgress,
+            self::InProgress => self::Resolved,
+            self::Resolved => self::Closed,
+            self::Closed => null,
+        };
+    }
+
+    public function canTransitionTo(self $target): bool
+    {
+        return $this->next() === $target;
+    }
 }

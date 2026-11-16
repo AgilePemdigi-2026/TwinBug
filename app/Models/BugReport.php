@@ -87,6 +87,16 @@ class BugReport extends Model
     }
 
     /**
+     * Get the status change history for this report.
+     *
+     * @return HasMany<BugReportStatusHistory, $this>
+     */
+    public function statusHistories(): HasMany
+    {
+        return $this->hasMany(BugReportStatusHistory::class)->latest()->latest('id');
+    }
+
+    /**
      * Check whether this report has an attached screenshot.
      */
     public function hasScreenshot(): bool
