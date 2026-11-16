@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'screenshot_name',
     'screenshot_size',
     'screenshot_dimensions',
+    'image_description',
+    'image_analyzed_at',
     'detection_status',
     'detection_error',
     'detected_at',
@@ -54,6 +56,7 @@ class BugReport extends Model
             'status' => BugStatus::class,
             'detection_status' => DetectionStatus::class,
             'detected_at' => 'datetime',
+            'image_analyzed_at' => 'datetime',
         ];
     }
 
@@ -89,6 +92,14 @@ class BugReport extends Model
     public function hasScreenshot(): bool
     {
         return $this->screenshot_path !== null;
+    }
+
+    /**
+     * Check whether this report has an AI-generated screenshot description.
+     */
+    public function hasImageDescription(): bool
+    {
+        return filled($this->image_description);
     }
 
     /**

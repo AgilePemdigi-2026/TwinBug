@@ -32,19 +32,22 @@ class DetectionController extends Controller
             ->get();
 
         $selectedCandidateId = $request->query('candidate');
-        $selectedCandidate = null;
+        $selectedResult = $selectedCandidateId
+            ? $results->firstWhere('candidate_report_id', (int) $selectedCandidateId)
+            : null;
 
-        if ($selectedCandidateId && $results->contains('candidate_report_id', $selectedCandidateId)) {
-            $selectedCandidate = $results->firstWhere('candidate_report_id', $selectedCandidateId)->candidateReport;
-        } elseif ($results->isNotEmpty()) {
-            $selectedCandidate = $results->first()->candidateReport;
+        if ($selectedResult === null && $results->isNotEmpty()) {
+            $selectedResult = $results->first();
         }
+
+        $selectedCandidate = $selectedResult?->candidateReport;
 
         $config = config('detection', []);
 
         return view('bug-reports.detection', compact(
             'bugReport',
             'results',
+            'selectedResult',
             'selectedCandidate',
             'config'
         ));

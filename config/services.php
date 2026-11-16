@@ -43,4 +43,11 @@ return [
         'model' => env('ML_SERVICE_MODEL', 'paraphrase-multilingual-MiniLM-L12-v2'),
     ],
 
+    'vision' => [
+        'url' => env('VISION_SERVICE_URL', 'https://api.openai.com/v1/chat/completions'),
+        'key' => env('VISION_SERVICE_KEY'),
+        'model' => env('VISION_SERVICE_MODEL', 'gpt-4o-mini'),
+        'timeout' => (int) env('VISION_SERVICE_TIMEOUT', 60),
+    ],
+
 ];

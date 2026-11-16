@@ -11,6 +11,7 @@ use App\Models\BugReport;
 use App\Models\DetectionResult;
 use App\Models\User;
 use App\Services\DuplicateDetectionClient;
+use App\Services\ScreenshotAnalysisClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
@@ -121,7 +122,7 @@ class DuplicateDetectionTest extends TestCase
         });
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
 
         $this->assertSame(DetectionStatus::Completed, $source->fresh()->detection_status);
         $this->assertSame(0.5097, $source->fresh()->detection_threshold);
@@ -151,7 +152,7 @@ class DuplicateDetectionTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
 
         $this->assertSame(DetectionStatus::Completed, $source->fresh()->detection_status);
         $this->assertSame(0.50, $source->fresh()->detection_threshold);
@@ -174,7 +175,7 @@ class DuplicateDetectionTest extends TestCase
         $job = new AnalyzeBugReport($source);
 
         try {
-            $job->handle(DuplicateDetectionClient::fromConfig());
+            $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
         } catch (\Throwable $e) {
             $job->failed($e);
         }
@@ -199,7 +200,7 @@ class DuplicateDetectionTest extends TestCase
         $job = new AnalyzeBugReport($source);
 
         try {
-            $job->handle(DuplicateDetectionClient::fromConfig());
+            $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
         } catch (\Throwable $e) {
             $job->failed($e);
         }
@@ -235,13 +236,60 @@ class DuplicateDetectionTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
 
         $this->assertArrayNotHasKey('threshold', $captured);
         $this->assertSame('', $captured['description']);
         foreach ($captured['candidates'] as $candidatePayload) {
             $this->assertIsString($candidatePayload['description']);
         }
+    }
+
+    public function test_payload_includes_stored_visual_context(): void
+    {
+        $captured = null;
+        Http::fake(function ($request) use (&$captured) {
+            $captured = json_decode($request->body(), true);
+
+            return Http::response(['threshold_used' => 0.5, 'results' => []], 200);
+        });
+
+        $application = Application::factory()->create();
+        $source = $this->createBugReport($application, [
+            'title' => 'Sumber',
+            'description' => 'Deskripsi sumber.',
+            'screenshot_path' => 'screenshots/source.png',
+            'image_description' => 'Screenshot menampilkan halaman checkout.',
+        ]);
+        $describedCandidate = $this->createBugReport($application, [
+            'title' => 'Kandidat visual',
+            'description' => 'Deskripsi kandidat.',
+            'image_description' => 'Screenshot menampilkan modal pembayaran.',
+        ]);
+        $plainCandidate = $this->createBugReport($application, [
+            'title' => 'Kandidat teks',
+            'description' => 'Deskripsi kandidat teks.',
+        ]);
+
+        $job = new AnalyzeBugReport($source);
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+
+        $this->assertStringContainsString(
+            'Konteks visual screenshot: Screenshot menampilkan halaman checkout.',
+            $captured['description']
+        );
+        $this->assertStringContainsString('Deskripsi sumber.', $captured['description']);
+
+        $candidates = collect($captured['candidates'])->keyBy('id');
+
+        $this->assertStringContainsString(
+            'Konteks visual screenshot: Screenshot menampilkan modal pembayaran.',
+            $candidates[$describedCandidate->id]['description']
+        );
+        $this->assertStringNotContainsString(
+            'Konteks visual screenshot:',
+            $candidates[$plainCandidate->id]['description']
+        );
     }
 
     public function test_candidates_only_from_same_application_and_not_self(): void
@@ -269,7 +317,7 @@ class DuplicateDetectionTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
 
         $candidateIds = array_map(fn (array $c) => (int) $c['id'], $captured['candidates']);
         $this->assertNotContains($source->id, $candidateIds);
@@ -304,7 +352,7 @@ class DuplicateDetectionTest extends TestCase
         }
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
 
         $this->assertSame(3, count($captured['candidates']));
     }
@@ -331,8 +379,8 @@ class DuplicateDetectionTest extends TestCase
         });
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig());
-        $job->handle(DuplicateDetectionClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
 
         $this->assertCount(1, $source->fresh()->detectionResults);
         $this->assertSame(DetectionStatus::Completed, $source->fresh()->detection_status);

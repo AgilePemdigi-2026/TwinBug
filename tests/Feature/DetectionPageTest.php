@@ -184,6 +184,117 @@ class DetectionPageTest extends TestCase
         $response->assertSeeInOrder(['Kandidat Tertinggi', 'Kandidat Kedua']);
     }
 
+    public function test_comparison_shows_score_screenshots_and_visual_descriptions(): void
+    {
+        $application = Application::factory()->create();
+        $developer = User::factory()->create([
+            'role' => UserRole::Developer,
+            'application_id' => $application->id,
+        ]);
+        $source = $this->createBugReport($application, [
+            'title' => 'Laporan Sumber',
+            'detection_status' => DetectionStatus::Completed->value,
+            'detected_at' => now(),
+            'screenshot_path' => 'screenshots/source.png',
+            'image_description' => 'Halaman checkout sumber menampilkan error pembayaran.',
+        ]);
+        $candidate = $this->createBugReport($application, [
+            'title' => 'Kandidat Mirip',
+            'detection_status' => DetectionStatus::Completed->value,
+            'screenshot_path' => 'screenshots/candidate.png',
+            'image_description' => 'Modal pembayaran kandidat menampilkan pesan gagal.',
+        ]);
+        DetectionResult::create([
+            'bug_report_id' => $source->id,
+            'candidate_report_id' => $candidate->id,
+            'rank' => 1,
+            'text_score' => 0.92,
+            'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
+        ]);
+
+        $response = $this->actingAs($developer)->get(route('bug-reports.detection', [
+            'bugReport' => $source,
+            'candidate' => $candidate->id,
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Perbandingan Sampingan');
+        $response->assertSee('Skor Kemiripan');
+        $response->assertSee('92.0%');
+        $response->assertSee('Analisis Visual Screenshot (AI)');
+        $response->assertSee('Halaman checkout sumber menampilkan error pembayaran.');
+        $response->assertSee('Modal pembayaran kandidat menampilkan pesan gagal.');
+        $response->assertSee(asset('storage/screenshots/source.png'));
+        $response->assertSee(asset('storage/screenshots/candidate.png'));
+    }
+
+    public function test_comparison_handles_reports_without_screenshots(): void
+    {
+        $application = Application::factory()->create();
+        $developer = User::factory()->create([
+            'role' => UserRole::Developer,
+            'application_id' => $application->id,
+        ]);
+        $source = $this->createBugReport($application, [
+            'title' => 'Sumber Tanpa Screenshot',
+            'detection_status' => DetectionStatus::Completed->value,
+            'detected_at' => now(),
+        ]);
+        $candidate = $this->createBugReport($application, [
+            'title' => 'Kandidat Tanpa Screenshot',
+        ]);
+        DetectionResult::create([
+            'bug_report_id' => $source->id,
+            'candidate_report_id' => $candidate->id,
+            'rank' => 1,
+            'text_score' => 0.75,
+            'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
+        ]);
+
+        $response = $this->actingAs($developer)->get(route('bug-reports.detection', [
+            'bugReport' => $source,
+            'candidate' => $candidate->id,
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Perbandingan Sampingan');
+        $response->assertSee('Tidak ada screenshot');
+        $response->assertSee('Tidak ada screenshot untuk dianalisis.');
+    }
+
+    public function test_comparison_shows_pending_visual_analysis_for_undescribed_screenshot(): void
+    {
+        $application = Application::factory()->create();
+        $developer = User::factory()->create([
+            'role' => UserRole::Developer,
+            'application_id' => $application->id,
+        ]);
+        $source = $this->createBugReport($application, [
+            'title' => 'Sumber Screenshot',
+            'detection_status' => DetectionStatus::Completed->value,
+            'detected_at' => now(),
+            'screenshot_path' => 'screenshots/source.png',
+        ]);
+        $candidate = $this->createBugReport($application, [
+            'title' => 'Kandidat Tanpa Screenshot',
+        ]);
+        DetectionResult::create([
+            'bug_report_id' => $source->id,
+            'candidate_report_id' => $candidate->id,
+            'rank' => 1,
+            'text_score' => 0.75,
+            'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
+        ]);
+
+        $response = $this->actingAs($developer)->get(route('bug-reports.detection', [
+            'bugReport' => $source,
+            'candidate' => $candidate->id,
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Belum ada analisis visual. Jalankan analisis ulang atau command backfill.');
+    }
+
     public function test_completed_empty_renders_no_duplicates_message(): void
     {
         $application = Application::factory()->create();

@@ -6,6 +6,7 @@ use App\Enums\DetectionStatus;
 use App\Models\BugReport;
 use App\Models\DetectionResult;
 use App\Services\DuplicateDetectionClient;
+use App\Services\ScreenshotAnalysisClient;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,7 +33,7 @@ class AnalyzeBugReport implements ShouldQueue
     /**
      * The maximum time (in seconds) the job can run.
      */
-    public $timeout = 90;
+    public $timeout = 180;
 
     /**
      * Create a new job instance.
@@ -46,7 +47,7 @@ class AnalyzeBugReport implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(DuplicateDetectionClient $client): void
+    public function handle(DuplicateDetectionClient $client, ScreenshotAnalysisClient $vision): void
     {
         $this->bugReport->refresh();
 
@@ -54,6 +55,8 @@ class AnalyzeBugReport implements ShouldQueue
             'detection_status' => DetectionStatus::Processing->value,
             'detection_error' => null,
         ]);
+
+        $this->ensureImageDescription($vision);
 
         $applicationId = $this->bugReport->application_id;
         $candidates = BugReport::where('application_id', $applicationId)
@@ -64,14 +67,14 @@ class AnalyzeBugReport implements ShouldQueue
             ->map(fn (BugReport $report) => [
                 'id' => $report->id,
                 'summary' => $report->title,
-                'description' => $report->description ?? '',
+                'description' => $this->similarityText($report),
             ])
             ->values()
             ->all();
 
         $source = [
             'summary' => $this->bugReport->title,
-            'description' => $this->bugReport->description ?? '',
+            'description' => $this->similarityText($this->bugReport),
         ];
 
         $result = $client->detect($source, $candidates);
@@ -102,6 +105,48 @@ class AnalyzeBugReport implements ShouldQueue
                 'detected_at' => now(),
             ]);
         });
+    }
+
+    /**
+     * Ensure the source report has an AI-generated screenshot description.
+     */
+    private function ensureImageDescription(ScreenshotAnalysisClient $vision): void
+    {
+        if (! $this->bugReport->hasScreenshot() || $this->bugReport->hasImageDescription()) {
+            return;
+        }
+
+        if (! $vision->configured()) {
+            return;
+        }
+
+        try {
+            $description = $vision->analyze($this->bugReport);
+
+            $this->bugReport->update([
+                'image_description' => $description,
+                'image_analyzed_at' => now(),
+            ]);
+        } catch (Throwable $e) {
+            Log::warning('Screenshot analysis failed for bug report {id}', [
+                'id' => $this->bugReport->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * Build the text sent to the similarity model, including visual context.
+     */
+    private function similarityText(BugReport $report): string
+    {
+        $description = $report->description ?? '';
+
+        if (! $report->hasImageDescription()) {
+            return $description;
+        }
+
+        return "Konteks visual screenshot: {$report->image_description}\n\n{$description}";
     }
 
     /**

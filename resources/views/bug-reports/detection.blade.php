@@ -331,6 +331,19 @@
                             </a>
                         </div>
 
+                        <div class="mb-6 rounded-2xl border border-divider bg-input p-4">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-label">Skor Kemiripan</p>
+                                    <p class="mt-1 font-serif text-3xl font-bold text-ink">{{ number_format((float) $selectedResult->text_score * 100, 1) }}%</p>
+                                </div>
+                                <p class="max-w-md text-xs leading-relaxed text-label">
+                                    Dihitung dari judul, deskripsi, dan konteks visual screenshot bila tersedia.
+                                    Peringkat {{ $selectedResult->rank }} dari {{ $results->count() }} kandidat.
+                                </p>
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
                             {{-- Source report --}}
                             <div class="space-y-4">
@@ -367,6 +380,49 @@
                                 <div class="rounded-xl bg-white p-4 border border-divider">
                                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Deskripsi Sumber</dt>
                                     <dd class="mt-2 whitespace-pre-line text-sm leading-relaxed text-body">{{ $bugReport->description }}</dd>
+                                </div>
+                                <div class="rounded-xl bg-white p-4 border border-divider">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Screenshot</dt>
+                                        @if ($bugReport->hasScreenshot())
+                                            <a
+                                                href="{{ asset('storage/' . $bugReport->screenshot_path) }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="inline-flex items-center gap-1 text-[11px] font-semibold text-sage-700 transition hover:text-sage-800"
+                                            >
+                                                <x-auth.icon name="eye" class="size-3" />
+                                                <span>Buka Penuh</span>
+                                            </a>
+                                        @endif
+                                    </div>
+                                    @if ($bugReport->hasScreenshot())
+                                        <a
+                                            href="{{ asset('storage/' . $bugReport->screenshot_path) }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="mt-2 block overflow-hidden rounded-xl border border-divider bg-input"
+                                        >
+                                            <img
+                                                src="{{ asset('storage/' . $bugReport->screenshot_path) }}"
+                                                alt="Screenshot laporan sumber {{ $bugReport->title }}"
+                                                class="max-h-64 w-full object-contain"
+                                            >
+                                        </a>
+                                    @else
+                                        <p class="mt-2 rounded-xl bg-input px-4 py-8 text-center text-xs text-label">Tidak ada screenshot</p>
+                                    @endif
+                                </div>
+                                <div class="rounded-xl bg-white p-4 border border-divider">
+                                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Analisis Visual Screenshot (AI)</dt>
+                                    @if ($bugReport->hasImageDescription())
+                                        <dd class="mt-2 whitespace-pre-line text-sm leading-relaxed text-body">{{ $bugReport->image_description }}</dd>
+                                        <p class="mt-2 text-[10px] text-label/60">Dihasilkan otomatis oleh LLM sebagai konteks tambahan untuk perbandingan.</p>
+                                    @elseif ($bugReport->hasScreenshot())
+                                        <dd class="mt-2 text-xs text-label">Belum ada analisis visual. Jalankan analisis ulang atau command backfill.</dd>
+                                    @else
+                                        <dd class="mt-2 text-xs text-label">Tidak ada screenshot untuk dianalisis.</dd>
+                                    @endif
                                 </div>
                             </div>
 
@@ -405,6 +461,49 @@
                                 <div class="rounded-xl bg-white p-4 border border-divider">
                                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Deskripsi Kandidat</dt>
                                     <dd class="mt-2 whitespace-pre-line text-sm leading-relaxed text-body">{{ $selectedCandidate->description }}</dd>
+                                </div>
+                                <div class="rounded-xl bg-white p-4 border border-divider">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Screenshot</dt>
+                                        @if ($selectedCandidate->hasScreenshot())
+                                            <a
+                                                href="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="inline-flex items-center gap-1 text-[11px] font-semibold text-sage-700 transition hover:text-sage-800"
+                                            >
+                                                <x-auth.icon name="eye" class="size-3" />
+                                                <span>Buka Penuh</span>
+                                            </a>
+                                        @endif
+                                    </div>
+                                    @if ($selectedCandidate->hasScreenshot())
+                                        <a
+                                            href="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="mt-2 block overflow-hidden rounded-xl border border-divider bg-input"
+                                        >
+                                            <img
+                                                src="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}"
+                                                alt="Screenshot kandidat {{ $selectedCandidate->title }}"
+                                                class="max-h-64 w-full object-contain"
+                                            >
+                                        </a>
+                                    @else
+                                        <p class="mt-2 rounded-xl bg-input px-4 py-8 text-center text-xs text-label">Tidak ada screenshot</p>
+                                    @endif
+                                </div>
+                                <div class="rounded-xl bg-white p-4 border border-divider">
+                                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Analisis Visual Screenshot (AI)</dt>
+                                    @if ($selectedCandidate->hasImageDescription())
+                                        <dd class="mt-2 whitespace-pre-line text-sm leading-relaxed text-body">{{ $selectedCandidate->image_description }}</dd>
+                                        <p class="mt-2 text-[10px] text-label/60">Dihasilkan otomatis oleh LLM sebagai konteks tambahan untuk perbandingan.</p>
+                                    @elseif ($selectedCandidate->hasScreenshot())
+                                        <dd class="mt-2 text-xs text-label">Belum ada analisis visual. Jalankan analisis ulang atau command backfill.</dd>
+                                    @else
+                                        <dd class="mt-2 text-xs text-label">Tidak ada screenshot untuk dianalisis.</dd>
+                                    @endif
                                 </div>
                             </div>
                         </div>
