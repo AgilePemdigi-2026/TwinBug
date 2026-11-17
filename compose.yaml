@@ -1,0 +1,52 @@
+services:
+  app:
+    build: .
+    image: twinbug-app
+    restart: unless-stopped
+    ports:
+      - "8080"
+    env_file: .env
+    environment:
+      AUTORUN_ENABLED: "true"
+    volumes:
+      - screenshots:/var/www/html/storage/app/public
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  worker:
+    build: .
+    image: twinbug-app
+    restart: unless-stopped
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=200", "--max-time=3600"]
+    env_file: .env
+    volumes:
+      - screenshots:/var/www/html/storage/app/public
+    depends_on:
+      app:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-twinbug}
+      POSTGRES_USER: ${DB_USERNAME:-twinbug}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD wajib diisi}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  screenshots:
+  db_data:
