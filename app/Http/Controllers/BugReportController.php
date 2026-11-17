@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BugResolution;
 use App\Enums\BugSeverity;
 use App\Enums\BugStatus;
 use App\Http\Requests\StoreBugReportRequest;
 use App\Http\Requests\UpdateBugReportStatusRequest;
 use App\Jobs\AnalyzeBugReport;
 use App\Models\BugReport;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +38,7 @@ class BugReportController extends Controller
 
         $reports = BugReport::query()
             ->where('application_id', $applicationId)
-            ->with('user')
+            ->with(['user', 'duplicateOf'])
             ->filter($filters)
             ->latest()
             ->paginate(10)
@@ -91,9 +94,25 @@ class BugReportController extends Controller
     {
         abort_unless($bugReport->application_id === $request->user()->application_id, 404);
 
-        $bugReport->load(['user', 'application', 'statusHistories.changedBy']);
+        $bugReport->load([
+            'user',
+            'application',
+            'statusHistories.changedBy',
+            'detectionResults.candidateReport',
+            'duplicateOf.user',
+            'duplicates.user',
+        ]);
 
-        return view('bug-reports.show', ['report' => $bugReport]);
+        $similarReports = $bugReport->findSimilarReports(5);
+        $statuses = BugStatus::cases();
+        $resolutions = BugResolution::cases();
+
+        return view('bug-reports.show', [
+            'report' => $bugReport,
+            'similarReports' => $similarReports,
+            'statuses' => $statuses,
+            'resolutions' => $resolutions,
+        ]);
     }
 
     /**
@@ -112,7 +131,11 @@ class BugReportController extends Controller
         DB::transaction(function () use ($bugReport, $request, $target): void {
             $from = $bugReport->status;
 
-            $bugReport->update(['status' => $target]);
+            $bugReport->update([
+                'status' => $target,
+                'resolved_at' => $target === BugStatus::Resolved ? now() : ($target === BugStatus::Closed ? $bugReport->resolved_at : null),
+                'closed_at' => $target === BugStatus::Closed ? now() : null,
+            ]);
 
             $bugReport->statusHistories()->create([
                 'changed_by' => $request->user()->id,
@@ -153,6 +176,12 @@ class BugReportController extends Controller
             'module' => $data['module'] ?? null,
             'description' => $data['description'],
             'severity' => $data['severity'],
+            'environment' => $data['environment'] ?? 'production',
+            'steps_to_reproduce' => $data['steps_to_reproduce'] ?? null,
+            'expected_result' => $data['expected_result'] ?? null,
+            'actual_result' => $data['actual_result'] ?? null,
+            'url' => $data['url'] ?? null,
+            'device_metadata' => $data['device_metadata'] ?? null,
             'screenshot_path' => $screenshotPath,
             'screenshot_name' => $screenshotName,
             'screenshot_size' => $screenshotSize,
@@ -169,6 +198,58 @@ class BugReportController extends Controller
 
         return to_route('bug-reports.create')
             ->with('success', 'Laporan bug berhasil dikirim dan sedang dianalisis oleh sistem TwinBug.');
+    }
+
+    /**
+     * Check for similar bug reports in real-time (JSON response for form live preview).
+     */
+    public function checkSimilar(Request $request): JsonResponse
+    {
+        $title = trim((string) $request->query('title', ''));
+        $module = trim((string) $request->query('module', ''));
+
+        if (mb_strlen($title) < 3) {
+            return response()->json(['similar' => []]);
+        }
+
+        $applicationId = $request->user()->application_id;
+        $keywords = BugReport::extractKeywords($title);
+
+        $reports = BugReport::query()
+            ->where('application_id', $applicationId)
+            ->where(function (Builder $query) use ($keywords, $module) {
+                if (filled($module)) {
+                    $query->where('module', $module);
+                }
+
+                if (! empty($keywords)) {
+                    $query->orWhere(function (Builder $sub) use ($keywords) {
+                        foreach ($keywords as $word) {
+                            $sub->orWhere('title', 'like', "%{$word}%");
+                        }
+                    });
+                }
+            })
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        $similar = $reports->map(function (BugReport $report): array {
+            return [
+                'id' => $report->id,
+                'title' => $report->title,
+                'module' => $report->module,
+                'status' => $report->status->value,
+                'status_label' => $report->status->label(),
+                'status_classes' => $report->status->badgeClasses(),
+                'severity' => $report->severity->value,
+                'severity_label' => $report->severity->label(),
+                'severity_classes' => $report->severity->badgeClasses(),
+                'url' => route('bug-reports.show', $report),
+            ];
+        });
+
+        return response()->json(['similar' => $similar]);
     }
 
     /**

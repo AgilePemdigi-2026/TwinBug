@@ -18,6 +18,35 @@
             <span class="rounded-full bg-divider px-2.5 py-1 text-[11px] font-semibold text-ink">Detail Laporan</span>
         </nav>
 
+        {{-- ======================== TWIN BUG ALERTS ======================== --}}
+        @if ($report->isDuplicate())
+            <div class="rounded-3xl border border-purple-200 bg-purple-50/80 p-5 shadow-xs">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="grid size-9 shrink-0 place-items-center rounded-2xl bg-purple-200 text-purple-800">
+                            <x-auth.icon name="sparkles" class="size-4" />
+                        </span>
+                        <div>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-purple-700">Laporan Duplikat (Twin Bug)</span>
+                            <p class="text-sm font-semibold text-purple-950">
+                                Laporan ini ditandai sebagai duplikat dari laporan
+                                <a href="{{ route('bug-reports.show', $report->duplicate_of_id) }}" class="underline decoration-purple-400 hover:text-purple-700">
+                                    #{{ $report->duplicate_of_id }} - {{ $report->duplicateOf?->title }}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    <a
+                        href="{{ route('bug-reports.show', $report->duplicate_of_id) }}"
+                        class="inline-flex shrink-0 items-center gap-1.5 rounded-2xl bg-purple-600 px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-purple-700"
+                    >
+                        <span>Buka Bug Master</span>
+                        <x-auth.icon name="arrow-left" class="size-3 rotate-180" />
+                    </a>
+                </div>
+            </div>
+        @endif
+
         {{-- ======================== HEADER ======================== --}}
         <div class="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div class="max-w-3xl">
@@ -29,6 +58,13 @@
                         <span class="size-1.5 rounded-full bg-current opacity-80"></span>
                         {{ $report->status->label() }}
                     </span>
+
+                    @if ($report->environment)
+                        <span class="inline-flex items-center rounded-full bg-input px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-label">
+                            Env: {{ $report->environment }}
+                        </span>
+                    @endif
+
                     <span class="text-xs text-label">•</span>
                     <span class="text-xs font-semibold text-label">#{{ $report->id }}</span>
                 </div>
@@ -38,23 +74,25 @@
                 </p>
             </div>
 
-            <a
-                href="{{ route('bug-reports.index') }}"
-                class="inline-flex shrink-0 items-center gap-2 rounded-xl border border-divider bg-white px-4 py-2.5 text-xs font-bold text-ink shadow-sm transition hover:bg-input"
-            >
-                <x-auth.icon name="arrow-left" class="size-3.5" />
-                <span>Kembali</span>
-            </a>
+            <div class="flex flex-wrap items-center gap-2">
+                @if (auth()->user()->role->value === 'developer')
+                    <a
+                        href="{{ route('bug-reports.detection', $report) }}"
+                        class="inline-flex shrink-0 items-center gap-2 rounded-xl border border-divider bg-white px-4 py-2.5 text-xs font-bold text-ink shadow-sm transition hover:bg-input"
+                    >
+                        <x-auth.icon name="bug" class="size-3.5" />
+                        <span>Deteksi Duplikasi</span>
+                    </a>
+                @endif
 
-            @if(auth()->user()->role->value === 'developer' && $report->application_id === auth()->user()->application_id)
                 <a
-                    href="{{ route('bug-reports.detection', $report) }}"
+                    href="{{ route('bug-reports.index') }}"
                     class="inline-flex shrink-0 items-center gap-2 rounded-xl border border-divider bg-white px-4 py-2.5 text-xs font-bold text-ink shadow-sm transition hover:bg-input"
                 >
-                    <x-auth.icon name="bug" class="size-3.5" />
-                    <span>Deteksi Duplikasi</span>
+                    <x-auth.icon name="arrow-left" class="size-3.5" />
+                    <span>Kembali</span>
                 </a>
-            @endif
+            </div>
         </div>
 
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -64,6 +102,43 @@
                     <h2 class="font-serif text-xl font-bold text-ink">Deskripsi Bug</h2>
                     <p class="mt-3 whitespace-pre-line text-sm leading-relaxed text-body">{{ $report->description }}</p>
                 </div>
+
+                {{-- ======================== STRUCTURED REPRODUCTION ======================== --}}
+                @if ($report->steps_to_reproduce || $report->expected_result || $report->actual_result)
+                    <div class="rounded-3xl bg-white p-8 shadow-sm">
+                        <div class="mb-5 flex items-center gap-2">
+                            <span class="grid size-6 place-items-center rounded-full bg-sage-100 text-sage-700">
+                                <x-auth.icon name="code" class="size-3" />
+                            </span>
+                            <h2 class="font-serif text-xl font-bold text-ink">Rincian Teknis &amp; Reproduksi</h2>
+                        </div>
+
+                        <div class="space-y-5 text-sm">
+                            @if ($report->steps_to_reproduce)
+                                <div class="rounded-2xl bg-input p-4">
+                                    <h3 class="text-xs font-bold uppercase tracking-wider text-label">Langkah Reproduksi</h3>
+                                    <p class="mt-2 whitespace-pre-line text-sm leading-relaxed text-ink">{{ $report->steps_to_reproduce }}</p>
+                                </div>
+                            @endif
+
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                @if ($report->expected_result)
+                                    <div class="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
+                                        <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-800">Hasil yang Diharapkan</h3>
+                                        <p class="mt-2 text-sm leading-relaxed text-emerald-950">{{ $report->expected_result }}</p>
+                                    </div>
+                                @endif
+
+                                @if ($report->actual_result)
+                                    <div class="rounded-2xl border border-rose-100 bg-rose-50/50 p-4">
+                                        <h3 class="text-xs font-bold uppercase tracking-wider text-rose-800">Hasil Aktual / Galat</h3>
+                                        <p class="mt-2 text-sm leading-relaxed text-rose-950">{{ $report->actual_result }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 {{-- ======================== SCREENSHOT ======================== --}}
                 @if ($report->hasScreenshot())
@@ -114,7 +189,7 @@
                 @endif
             </div>
 
-            {{-- ======================== METADATA ======================== --}}
+            {{-- ======================== SIDEBAR ======================== --}}
             <aside class="space-y-6">
                 @php
                     $nextStatus = $report->status->next();
@@ -160,6 +235,7 @@
                     @endif
                 </div>
 
+                {{-- ======================== RIWAYAT STATUS ======================== --}}
                 <div class="rounded-3xl bg-white p-6 shadow-sm">
                     <h2 class="font-serif text-lg font-bold text-ink">Riwayat Status</h2>
 
@@ -186,6 +262,7 @@
                     @endforelse
                 </div>
 
+                {{-- ======================== INFORMASI LAPORAN ======================== --}}
                 <div class="rounded-3xl bg-white p-6 shadow-sm">
                     <h2 class="font-serif text-lg font-bold text-ink">Informasi Laporan</h2>
 
@@ -198,6 +275,49 @@
                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Modul / Komponen</dt>
                             <dd class="mt-1 font-semibold text-ink">{{ $report->module ?? 'Lainnya' }}</dd>
                         </div>
+
+                        @if ($report->environment)
+                            <div class="rounded-2xl bg-input p-4">
+                                <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Environment</dt>
+                                <dd class="mt-1 font-semibold text-ink capitalize">{{ $report->environment }}</dd>
+                            </div>
+                        @endif
+
+                        @if ($report->url)
+                            <div class="rounded-2xl bg-input p-4">
+                                <dt class="text-[10px] font-bold uppercase tracking-wider text-label">URL Kejadian</dt>
+                                <dd class="mt-1 break-all text-xs font-medium text-sage-700 underline">
+                                    <a href="{{ $report->url }}" target="_blank" rel="noopener noreferrer">{{ $report->url }}</a>
+                                </dd>
+                            </div>
+                        @endif
+
+                        @if ($report->device_metadata)
+                            <div class="rounded-2xl bg-input p-4">
+                                <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Metadata Perangkat</dt>
+                                <dd class="mt-1 space-y-1 text-xs">
+                                    @if (! empty($report->device_metadata['browser']))
+                                        <div class="flex justify-between">
+                                            <span class="text-label">Browser:</span>
+                                            <span class="font-semibold text-ink">{{ $report->device_metadata['browser'] }}</span>
+                                        </div>
+                                    @endif
+                                    @if (! empty($report->device_metadata['os']))
+                                        <div class="flex justify-between">
+                                            <span class="text-label">OS:</span>
+                                            <span class="font-semibold text-ink">{{ $report->device_metadata['os'] }}</span>
+                                        </div>
+                                    @endif
+                                    @if (! empty($report->device_metadata['screen']))
+                                        <div class="flex justify-between">
+                                            <span class="text-label">Layar:</span>
+                                            <span class="font-semibold text-ink">{{ $report->device_metadata['screen'] }}</span>
+                                        </div>
+                                    @endif
+                                </dd>
+                            </div>
+                        @endif
+
                         <div class="rounded-2xl bg-input p-4">
                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Pelapor</dt>
                             <dd class="mt-1 flex items-center gap-2">

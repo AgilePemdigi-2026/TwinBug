@@ -29,6 +29,13 @@ class StoreBugReportRequest extends FormRequest
             'module' => ['nullable', 'string', 'max:100'],
             'description' => ['required', 'string', 'min:20', 'max:10000'],
             'severity' => ['required', new Enum(BugSeverity::class)],
+            'environment' => ['nullable', 'string', 'in:production,staging,testing,local'],
+            'steps_to_reproduce' => ['nullable', 'string', 'max:5000'],
+            'expected_result' => ['nullable', 'string', 'max:5000'],
+            'actual_result' => ['nullable', 'string', 'max:5000'],
+            'url' => ['nullable', 'string', 'max:1000'],
+            'device_metadata' => ['nullable', 'array'],
+            'device_metadata.*' => ['nullable', 'string', 'max:500'],
             'screenshot' => ['nullable', 'file', 'mimes:jpeg,jpg,png,gif,webp', 'max:5120'],
         ];
     }
@@ -47,6 +54,7 @@ class StoreBugReportRequest extends FormRequest
             'description.required' => 'Deskripsi bug wajib diisi.',
             'description.min' => 'Deskripsi bug harus minimal :min karakter.',
             'severity.required' => 'Tingkat keparahan wajib dipilih.',
+            'environment.in' => 'Environment harus bernilai production, staging, testing, atau local.',
             'screenshot.mimes' => 'Screenshot harus berformat PNG, JPG, atau GIF.',
             'screenshot.max' => 'Ukuran screenshot tidak boleh melebihi 5MB.',
         ];
