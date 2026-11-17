@@ -60,8 +60,8 @@
 
             <div class="grid grid-cols-12 gap-6">
 
-                {{-- =============== COLUMN LEFT (8 cols) =============== --}}
-                <div class="col-span-12 flex flex-col gap-6 lg:col-span-8">
+                {{-- =============== COLUMN LEFT (7 cols) =============== --}}
+                <div class="col-span-12 flex flex-col gap-6 lg:col-span-7">
 
                     {{-- CARD 1: Primary Details --}}
                     <div class="rounded-3xl bg-white p-8 shadow-sm">
@@ -320,10 +320,58 @@
 
                 </div>
 
-                {{-- =============== COLUMN RIGHT (4 cols) =============== --}}
-                <div class="col-span-12 flex flex-col gap-6 lg:col-span-4">
+                {{-- =============== COLUMN RIGHT (5 cols) =============== --}}
+                <div class="col-span-12 flex flex-col gap-6 lg:col-span-5">
 
                     @include('bug-reports.screenshot-uploader')
+
+                    {{-- Panduan Pelaporan Efektif --}}
+                    <div class="rounded-3xl border border-sage-200 bg-sage-50/60 p-6 shadow-sm">
+                        <div class="mb-4 flex items-center gap-2.5">
+                            <span class="grid size-7 place-items-center rounded-2xl bg-sage-200 text-sage-700">
+                                <x-auth.icon name="sparkles" class="size-3.5" />
+                            </span>
+                            <h3 class="text-sm font-bold text-sage-900">Panduan Laporan Efektif</h3>
+                        </div>
+
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-sage-200 text-[9px] font-bold text-sage-800">1</span>
+                                <div>
+                                    <p class="text-xs font-semibold text-ink">Judul yang spesifik</p>
+                                    <p class="mt-0.5 text-[11px] leading-relaxed text-label">Sebutkan komponen, platform, dan tindakan. Contoh: <span class="font-medium text-ink">"Tombol QRIS tidak merespons di iOS Safari"</span></p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-sage-200 text-[9px] font-bold text-sage-800">2</span>
+                                <div>
+                                    <p class="text-xs font-semibold text-ink">Pilih modul yang tepat</p>
+                                    <p class="mt-0.5 text-[11px] leading-relaxed text-label">Memudahkan developer menemukan lokasi kode dan mempercepat triase bug.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-sage-200 text-[9px] font-bold text-sage-800">3</span>
+                                <div>
+                                    <p class="text-xs font-semibold text-ink">Langkah reproduksi rinci</p>
+                                    <p class="mt-0.5 text-[11px] leading-relaxed text-label">Tulis langkah langkah-per-langkah. Bug yang bisa direproduksi lebih cepat diperbaiki.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-sage-200 text-[9px] font-bold text-sage-800">4</span>
+                                <div>
+                                    <p class="text-xs font-semibold text-ink">Sertakan pesan error konsol</p>
+                                    <p class="mt-0.5 text-[11px] leading-relaxed text-label">Buka DevTools → Console, salin pesan merah dan tempel di deskripsi.</p>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <div class="mt-5 rounded-2xl border border-sage-200 bg-white/70 p-3">
+                            <p class="flex items-center gap-1.5 text-[11px] font-semibold text-sage-700">
+                                <x-auth.icon name="shield" class="size-3.5 shrink-0" />
+                                TwinBug mendeteksi laporan serupa secara otomatis — periksa peringatan yang muncul saat Anda mengetik judul.
+                            </p>
+                        </div>
+                    </div>
 
                 </div>
             </div>

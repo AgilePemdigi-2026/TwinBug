@@ -58,17 +58,10 @@
                     class="rounded-2xl px-4 py-2 text-sm font-medium transition hover:bg-white/60 hover:text-ink {{ request()->routeIs('faq') ? 'bg-white text-ink shadow-sm font-semibold' : 'text-label' }}">
                     Bantuan & FAQ
                 </a>
-
-                @auth
-                    <a href="{{ route('bug-reports.create') }}"
-                        class="rounded-2xl px-4 py-2 text-sm font-medium transition {{ request()->routeIs('bug-reports.create') ? 'bg-sage-500 text-white shadow-[0_2px_10px_rgba(74,124,89,0.3)] font-semibold' : 'text-label hover:bg-white/60 hover:text-ink' }}">
-                        + Buat Laporan
-                    </a>
-                @endauth
             </nav>
 
-            {{-- User info + logout --}}
-            <div class="flex items-center gap-4">
+            {{-- CTA + User info + logout --}}
+            <div class="flex items-center gap-3">
                 @auth
                     <a href="{{ route('profile') }}"
                         class="flex items-center gap-3 rounded-2xl bg-input px-2 py-1 pr-3 transition hover:bg-input-hover">

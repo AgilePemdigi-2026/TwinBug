@@ -99,8 +99,24 @@
             <div class="space-y-6 lg:col-span-2">
                 {{-- ======================== DESCRIPTION ======================== --}}
                 <div class="rounded-3xl bg-white p-8 shadow-sm">
-                    <h2 class="font-serif text-xl font-bold text-ink">Deskripsi Bug</h2>
-                    <p class="mt-3 whitespace-pre-line text-sm leading-relaxed text-body">{{ $report->description }}</p>
+                    <div class="mb-4 flex items-center gap-2.5">
+                        <span class="grid size-6 place-items-center rounded-full bg-input text-label">
+                            <x-auth.icon name="bug" class="size-3" />
+                        </span>
+                        <h2 class="font-serif text-xl font-bold text-ink">Deskripsi Bug</h2>
+                    </div>
+                    <p class="min-h-[4rem] whitespace-pre-line text-sm leading-relaxed text-body">{{ $report->description }}</p>
+
+                    @if ($report->url)
+                        <div class="mt-5 flex items-center gap-2 rounded-2xl bg-input px-4 py-3">
+                            <x-auth.icon name="eye" class="size-3.5 shrink-0 text-label" />
+                            <span class="text-[11px] font-semibold text-label">URL:</span>
+                            <a href="{{ $report->url }}" target="_blank" rel="noopener noreferrer"
+                                class="truncate text-xs font-medium text-sage-700 underline hover:text-sage-900">
+                                {{ $report->url }}
+                            </a>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- ======================== STRUCTURED REPRODUCTION ======================== --}}
@@ -187,10 +203,46 @@
                         </dl>
                     </div>
                 @endif
+
+                {{-- ======================== LAPORAN SERUPA ======================== --}}
+                @if ($similarReports->isNotEmpty())
+                    <div class="rounded-3xl bg-white p-8 shadow-sm">
+                        <div class="mb-5 flex items-center gap-2">
+                            <span class="grid size-6 place-items-center rounded-full bg-purple-100 text-purple-700">
+                                <x-auth.icon name="sparkles" class="size-3" />
+                            </span>
+                            <h2 class="font-serif text-xl font-bold text-ink">Laporan Serupa (Twin Bug)</h2>
+                        </div>
+                        <ul class="space-y-3">
+                            @foreach ($similarReports as $similar)
+                                <li>
+                                    <a href="{{ route('bug-reports.show', $similar) }}"
+                                        class="flex items-start gap-3 rounded-2xl bg-input p-4 transition hover:bg-input-hover">
+                                        <span class="mt-0.5 font-mono text-xs font-bold text-purple-600">#{{ $similar->id }}</span>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="truncate text-sm font-semibold text-ink">{{ $similar->title }}</p>
+                                            <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold {{ $similar->severity->badgeClasses() }}">
+                                                    {{ $similar->severity->label() }}
+                                                </span>
+                                                <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold {{ $similar->status->badgeClasses() }}">
+                                                    <span class="size-1.5 rounded-full bg-current opacity-80"></span>
+                                                    {{ $similar->status->label() }}
+                                                </span>
+                                                <span class="text-[10px] text-label">{{ $similar->module }}</span>
+                                            </div>
+                                        </div>
+                                        <x-auth.icon name="arrow-left" class="mt-1 size-3 shrink-0 rotate-180 text-label" />
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
 
             {{-- ======================== SIDEBAR ======================== --}}
-            <aside class="space-y-6">
+            <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start">
                 @php
                     $nextStatus = $report->status->next();
                     $canManageStatus = auth()->user()->role->value === 'developer'
@@ -295,24 +347,21 @@
                         @if ($report->device_metadata)
                             <div class="rounded-2xl bg-input p-4">
                                 <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Metadata Perangkat</dt>
-                                <dd class="mt-1 space-y-1 text-xs">
+                                <dd class="mt-2 flex flex-wrap gap-1.5">
                                     @if (! empty($report->device_metadata['browser']))
-                                        <div class="flex justify-between">
-                                            <span class="text-label">Browser:</span>
-                                            <span class="font-semibold text-ink">{{ $report->device_metadata['browser'] }}</span>
-                                        </div>
+                                        <span class="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-ink shadow-sm">
+                                            🌐 {{ $report->device_metadata['browser'] }}
+                                        </span>
                                     @endif
                                     @if (! empty($report->device_metadata['os']))
-                                        <div class="flex justify-between">
-                                            <span class="text-label">OS:</span>
-                                            <span class="font-semibold text-ink">{{ $report->device_metadata['os'] }}</span>
-                                        </div>
+                                        <span class="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-ink shadow-sm">
+                                            💻 {{ $report->device_metadata['os'] }}
+                                        </span>
                                     @endif
                                     @if (! empty($report->device_metadata['screen']))
-                                        <div class="flex justify-between">
-                                            <span class="text-label">Layar:</span>
-                                            <span class="font-semibold text-ink">{{ $report->device_metadata['screen'] }}</span>
-                                        </div>
+                                        <span class="rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-ink shadow-sm">
+                                            📐 {{ $report->device_metadata['screen'] }}
+                                        </span>
                                     @endif
                                 </dd>
                             </div>

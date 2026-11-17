@@ -18,10 +18,10 @@
         <span class="shrink-0 rounded-full bg-divider px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-label">Opsional</span>
     </div>
 
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-5">
+    <div class="grid grid-cols-1 gap-6">
 
         {{-- Drop zone & preview --}}
-        <div class="lg:col-span-3">
+        <div>
             <div
                 id="drop-zone"
                 class="mb-4 flex cursor-pointer flex-col items-center justify-center rounded-3xl bg-input px-6 py-10 transition hover:bg-input-hover"
@@ -104,7 +104,7 @@
         </div>
 
         {{-- Info lampiran --}}
-        <div class="flex flex-col gap-3 lg:col-span-2">
+        <div class="flex flex-col gap-3">
             <div class="rounded-2xl bg-input p-4">
                 <p class="text-xs font-semibold text-ink">Cara melampirkan file</p>
                 <ul class="mt-2.5 space-y-2 text-[11px] leading-relaxed text-label">
