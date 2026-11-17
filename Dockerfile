@@ -16,6 +16,9 @@ COPY . .
 RUN composer dump-autoload --no-dev --optimize
 
 FROM serversideup/php:8.5-fpm-nginx
+USER root
+RUN mkdir -p /data && touch /data/database.sqlite && chown -R www-data:www-data /data
+USER www-data
 WORKDIR /var/www/html
 COPY --from=vendor --chown=www-data:www-data /app /var/www/html
 COPY --from=assets --chown=www-data:www-data /app/public/build /var/www/html/public/build

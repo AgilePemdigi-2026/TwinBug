@@ -8,11 +8,12 @@ services:
     env_file: .env
     environment:
       AUTORUN_ENABLED: "true"
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /data/database.sqlite
+      DB_URL: ""
     volumes:
       - screenshots:/var/www/html/storage/app/public
-    depends_on:
-      db:
-        condition: service_healthy
+      - sqlite_data:/data
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8080/up"]
       interval: 30s
@@ -26,27 +27,17 @@ services:
     restart: unless-stopped
     command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=200", "--max-time=3600"]
     env_file: .env
+    environment:
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /data/database.sqlite
+      DB_URL: ""
     volumes:
       - screenshots:/var/www/html/storage/app/public
+      - sqlite_data:/data
     depends_on:
       app:
         condition: service_healthy
 
-  db:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${DB_DATABASE:-twinbug}
-      POSTGRES_USER: ${DB_USERNAME:-twinbug}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD wajib diisi}
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
 volumes:
   screenshots:
-  db_data:
+  sqlite_data:
