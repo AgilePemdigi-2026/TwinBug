@@ -37,6 +37,7 @@ return [
 
     'ml' => [
         'url' => env('ML_SERVICE_URL'),
+        'key' => env('ML_API_KEY'),
         'timeout' => (int) env('ML_SERVICE_TIMEOUT', 60),
         'top_k' => (int) env('ML_SERVICE_TOP_K', 5),
         'max_candidates' => (int) env('ML_SERVICE_MAX_CANDIDATES', 500),

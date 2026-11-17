@@ -33,3 +33,6 @@ docs
 progress.txt
 test_output.txt
 *.log
+ml
+Dockerfile
+docker-compose.yaml

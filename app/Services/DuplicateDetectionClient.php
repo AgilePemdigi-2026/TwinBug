@@ -16,6 +16,7 @@ class DuplicateDetectionClient
         protected int $topK = 5,
         protected int $maxCandidates = 500,
         protected string $model = 'paraphrase-multilingual-MiniLM-L12-v2',
+        protected ?string $key = null,
     ) {
         //
     }
@@ -72,9 +73,14 @@ class DuplicateDetectionClient
             ], $candidates)),
         ];
 
-        $response = Http::timeout($this->timeout)
-            ->retry(2, 500)
-            ->post(rtrim($this->url, '/').'/detect', $payload);
+        $http = Http::timeout($this->timeout)
+            ->retry(2, 500);
+
+        if ($this->key !== null) {
+            $http = $http->withHeaders(['X-API-Key' => $this->key]);
+        }
+
+        $response = $http->post(rtrim($this->url, '/').'/detect', $payload);
 
         $response->throw();
 
@@ -94,6 +100,7 @@ class DuplicateDetectionClient
             topK: (int) ($config['top_k'] ?? 5),
             maxCandidates: (int) ($config['max_candidates'] ?? 500),
             model: $config['model'] ?? 'paraphrase-multilingual-MiniLM-L12-v2',
+            key: ($config['key'] ?? null) ?: null,
         );
     }
 }

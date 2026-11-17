@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.git
+*.zip
+hasil*.txt
+tests/
+model_multilingual_minilm_l12/
