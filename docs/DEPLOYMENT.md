@@ -43,6 +43,8 @@ SQLite memakai `journal_mode=wal` dan `busy_timeout=5000` agar web dan worker bi
 
 ## Ditunda / belum disertakan
 
+- **Tidak ada container `db`** — ini by design, bukan error. Database utama adalah file SQLite (`/data/database.sqlite`) di volume `sqlite_data` yang di-share ke `app` dan `worker`.
+- **Status worker** — compose memasang healthcheck proses `queue:work`; worker berhenti sendiri tiap ~1 jam (`--max-time=3600`) lalu di-restart, jadi status bisa sesaat tidak healthy.
 - **ML service** tidak ada di repo ini dan belum di-deploy. Selama `ML_SERVICE_URL` tidak terjangkau, setiap job deteksi gagal setelah 3 retry (status `Failed`). Fitur lain tetap berjalan.
 - **Redis** tidak dipakai; cache, session, dan queue memakai SQLite.
 - **Scheduler** belum dijalankan karena belum ada scheduled task di `routes/console.php`.

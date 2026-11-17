@@ -25,12 +25,18 @@ services:
     build: .
     image: twinbug-app
     restart: unless-stopped
-    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--timeout=200", "--max-time=3600"]
+    command: ["sh", "-c", "php artisan migrate --force && exec php artisan queue:work --sleep=3 --tries=3 --timeout=200 --max-time=3600"]
     env_file: .env
     environment:
       DB_CONNECTION: sqlite
       DB_DATABASE: /data/database.sqlite
       DB_URL: ""
+    healthcheck:
+      test: ["CMD-SHELL", "grep -aq queue:work /proc/*/cmdline"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     volumes:
       - screenshots:/var/www/html/storage/app/public
       - sqlite_data:/data
