@@ -1,11 +1,11 @@
 <x-layouts.app title="Hasil Deteksi Duplikasi — #{{ $bugReport->id }}" meta-description="Hasil analisis kemiripan laporan bug dengan laporan historis pada sistem TwinBug.">
 
-    <div class="mx-auto max-w-screen-xl px-12 py-10 space-y-8">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
         {{-- ======================== BREADCRUMB ======================== --}}
         <nav class="flex items-center gap-2 text-xs" aria-label="Breadcrumb">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-1.5 text-label transition hover:text-ink">
-                <x-auth.icon name="bug" class="size-3" />
+                <x-auth.icon name="bug" class="size-3 text-sage-600" />
                 <span class="font-medium">Dashboard</span>
             </a>
             <svg class="size-2.5 text-label/60" viewBox="0 0 6 10" fill="none" aria-hidden="true">
@@ -15,35 +15,35 @@
             <svg class="size-2.5 text-label/60" viewBox="0 0 6 10" fill="none" aria-hidden="true">
                 <path d="M1 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span class="rounded-full bg-divider px-2.5 py-1 text-[11px] font-semibold text-ink">Deteksi Duplikasi</span>
+            <span class="rounded-md bg-input px-2 py-0.5 text-[11px] font-semibold text-ink">Deteksi Duplikasi</span>
         </nav>
 
         {{-- ======================== PAGE HEADER ======================== --}}
-        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div class="max-w-3xl">
-                <div class="mb-3 flex flex-wrap items-center gap-2">
-                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold {{ $bugReport->severity->badgeClasses() }}">
+                <div class="mb-2 flex flex-wrap items-center gap-2">
+                    <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold {{ $bugReport->severity->badgeClasses() }}">
                         {{ $bugReport->severity->label() }}
                     </span>
-                    <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold {{ $bugReport->status->badgeClasses() }}">
+                    <span class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold {{ $bugReport->status->badgeClasses() }}">
                         <span class="size-1.5 rounded-full bg-current opacity-80"></span>
                         {{ $bugReport->status->label() }}
                     </span>
-                    <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold {{ $bugReport->detection_status->badgeClasses() }}">
+                    <span class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold {{ $bugReport->detection_status->badgeClasses() }}">
                         {{ $bugReport->detection_status->label() }}
                     </span>
                     <span class="text-xs text-label">•</span>
-                    <span class="text-xs font-semibold text-label">#{{ $bugReport->id }}</span>
+                    <span class="font-mono text-xs font-semibold text-label">#{{ $bugReport->id }}</span>
                 </div>
-                <h1 class="font-serif text-3xl font-bold tracking-tight text-ink md:text-4xl">{{ $bugReport->title }}</h1>
-                <p class="mt-2 text-xs text-label">
-                    Dilaporkan {{ $bugReport->created_at->format('d M Y H:i') }} • Modul: {{ $bugReport->module ?? 'Lainnya' }}
+                <h1 class="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">{{ $bugReport->title }}</h1>
+                <p class="mt-1 text-xs text-label">
+                    Dilaporkan {{ $bugReport->created_at->format('d M Y H:i') }} • Modul: <span class="font-mono">{{ $bugReport->module ?? 'Lainnya' }}</span>
                 </p>
             </div>
 
             <a
                 href="{{ route('bug-reports.show', $bugReport) }}"
-                class="inline-flex shrink-0 items-center gap-2 rounded-xl border border-divider bg-white px-4 py-2.5 text-xs font-bold text-ink shadow-sm transition hover:bg-input"
+                class="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-divider bg-white px-3.5 py-2 text-xs font-semibold text-ink shadow-2xs transition hover:bg-input"
             >
                 <x-auth.icon name="arrow-left" class="size-3.5" />
                 <span>Kembali ke Detail</span>
@@ -51,76 +51,82 @@
         </div>
 
         {{-- ======================== ANALYZED REPORT CARD ======================== --}}
-        <div class="rounded-3xl bg-white p-8 shadow-sm border border-divider">
-            <div class="mb-6 flex items-center justify-between">
+        <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
+            <div class="mb-4 flex items-center justify-between">
                 <div>
-                    <h2 class="font-serif text-xl font-bold text-ink">Laporan yang Dianalisis</h2>
-                    <p class="mt-0.5 text-xs text-label">Informasi laporan sumber yang dikirimkan untuk deteksi duplikasi.</p>
+                    <h2 class="font-serif text-base font-bold text-ink">Laporan yang Dianalisis</h2>
+                    <p class="text-xs text-label">Informasi laporan sumber yang dikirimkan untuk deteksi duplikasi.</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div class="rounded-2xl bg-input p-4">
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div class="rounded-xl border border-divider/60 bg-input/40 p-3">
                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Judul</dt>
-                    <dd class="mt-1 font-semibold text-ink">{{ $bugReport->title }}</dd>
+                    <dd class="mt-0.5 text-xs font-semibold text-ink truncate" title="{{ $bugReport->title }}">{{ $bugReport->title }}</dd>
                 </div>
-                <div class="rounded-2xl bg-input p-4">
+                <div class="rounded-xl border border-divider/60 bg-input/40 p-3">
                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Modul</dt>
-                    <dd class="mt-1 font-semibold text-ink">{{ $bugReport->module ?? 'Lainnya' }}</dd>
+                    <dd class="mt-0.5 text-xs font-mono font-semibold text-ink">{{ $bugReport->module ?? 'Lainnya' }}</dd>
                 </div>
-                <div class="rounded-2xl bg-input p-4">
+                <div class="rounded-xl border border-divider/60 bg-input/40 p-3">
                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Keparahan</dt>
-                    <dd class="mt-1 inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold {{ $bugReport->severity->badgeClasses() }}">
-                        {{ $bugReport->severity->label() }}
+                    <dd class="mt-0.5">
+                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $bugReport->severity->badgeClasses() }}">
+                            {{ $bugReport->severity->label() }}
+                        </span>
                     </dd>
                 </div>
-                <div class="rounded-2xl bg-input p-4">
+                <div class="rounded-xl border border-divider/60 bg-input/40 p-3">
                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Status</dt>
-                    <dd class="mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold {{ $bugReport->status->badgeClasses() }}">
-                        <span class="size-1.5 rounded-full bg-current opacity-80"></span>
-                        {{ $bugReport->status->label() }}
+                    <dd class="mt-0.5">
+                        <span class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $bugReport->status->badgeClasses() }}">
+                            <span class="size-1.5 rounded-full bg-current opacity-80"></span>
+                            {{ $bugReport->status->label() }}
+                        </span>
                     </dd>
                 </div>
             </div>
 
-            <div class="mt-6 rounded-2xl bg-input p-4">
+            <div class="mt-4 rounded-xl border border-divider/60 bg-input/40 p-3.5">
                 <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Deskripsi</dt>
-                <dd class="mt-1 whitespace-pre-line text-sm leading-relaxed text-body">{{ $bugReport->description }}</dd>
+                <dd class="mt-1 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $bugReport->description }}</dd>
             </div>
 
             {{-- Detection status info --}}
-            <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div class="rounded-2xl bg-white p-4 border border-divider">
+            <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div class="rounded-xl border border-divider/60 bg-white p-3 shadow-2xs">
                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Status Deteksi</dt>
-                    <dd class="mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold {{ $bugReport->detection_status->badgeClasses() }}">
+                    <dd class="mt-1 inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $bugReport->detection_status->badgeClasses() }}">
                         {{ $bugReport->detection_status->label() }}
                     </dd>
                 </div>
                 @if ($bugReport->detection_threshold)
-                    <div class="rounded-2xl bg-white p-4 border border-divider">
+                    <div class="rounded-xl border border-divider/60 bg-white p-3 shadow-2xs">
                         <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Threshold</dt>
-                        <dd class="mt-1 font-semibold text-ink">{{ number_format($bugReport->detection_threshold * 100, 2) }}%</dd>
+                        <dd class="mt-1 font-mono text-xs font-semibold text-ink">{{ number_format($bugReport->detection_threshold * 100, 2) }}%</dd>
                     </div>
                 @endif
                 @if ($bugReport->detected_at)
-                    <div class="rounded-2xl bg-white p-4 border border-divider">
+                    <div class="rounded-xl border border-divider/60 bg-white p-3 shadow-2xs">
                         <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Terakhir Diperbarui</dt>
-                        <dd class="mt-1 font-semibold text-ink">{{ $bugReport->detected_at->format('d M Y H:i') }}</dd>
+                        <dd class="mt-1 text-xs font-semibold text-ink">{{ $bugReport->detected_at->format('d M Y H:i') }}</dd>
                     </div>
                 @endif
-                <div class="rounded-2xl bg-white p-4 border border-divider">
+                <div class="rounded-xl border border-divider/60 bg-white p-3 shadow-2xs">
                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Model</dt>
-                    <dd class="mt-1 font-semibold text-ink">{{ config('services.ml.model', 'paraphrase-multilingual-MiniLM-L12-v2') }}</dd>
+                    <dd class="mt-1 font-mono text-[11px] font-semibold text-ink truncate" title="{{ config('services.ml.model', 'paraphrase-multilingual-MiniLM-L12-v2') }}">
+                        {{ config('services.ml.model', 'paraphrase-multilingual-MiniLM-L12-v2') }}
+                    </dd>
                 </div>
             </div>
 
             @if ($bugReport->detection_status === App\Enums\DetectionStatus::Failed && $bugReport->detection_error)
-                <div class="mt-4 rounded-2xl bg-danger/10 border border-danger/20 p-4">
-                    <div class="flex items-start gap-3">
+                <div class="mt-4 rounded-xl border border-danger/30 bg-rose-50/70 p-3.5">
+                    <div class="flex items-start gap-2.5">
                         <x-auth.icon name="alert" class="size-4 text-danger shrink-0 mt-0.5" />
                         <div>
-                            <p class="text-sm font-medium text-danger">Analisis gagal</p>
-                            <p class="mt-1 text-xs text-danger/80">{{ $bugReport->detection_error }}</p>
+                            <p class="text-xs font-semibold text-danger">Analisis gagal</p>
+                            <p class="mt-0.5 text-xs text-danger/80">{{ $bugReport->detection_error }}</p>
                         </div>
                     </div>
                 </div>
@@ -131,16 +137,16 @@
 
         {{-- Failed state --}}
         @if ($bugReport->detection_status === App\Enums\DetectionStatus::Failed)
-            <div class="rounded-3xl bg-white p-8 shadow-sm border border-divider">
-                <div class="flex items-center gap-3">
-                    <x-auth.icon name="alert" class="size-5 text-danger" />
-                    <h2 class="font-serif text-xl font-bold text-ink">Analisis Gagal</h2>
+            <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
+                <div class="flex items-center gap-2.5">
+                    <x-auth.icon name="alert" class="size-4 text-danger" />
+                    <h2 class="font-serif text-base font-bold text-ink">Analisis Gagal</h2>
                 </div>
-                <p class="mt-2 text-label">{{ $bugReport->detection_error ?? 'Terjadi kesalahan saat menganalisis duplikasi.' }}</p>
+                <p class="mt-2 text-xs text-label">{{ $bugReport->detection_error ?? 'Terjadi kesalahan saat menganalisis duplikasi.' }}</p>
 
                 <form method="POST" action="{{ route('bug-reports.detection.rerun', $bugReport) }}">
                     @csrf
-                    <button type="submit" class="mt-6 inline-flex items-center gap-2 rounded-xl bg-danger px-5 py-2.5 text-xs font-bold text-white shadow-cta transition hover:bg-danger/90 active:scale-95">
+                    <button type="submit" class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-danger px-4 py-2 text-xs font-semibold text-white shadow-cta transition hover:bg-danger/90 active:scale-95 cursor-pointer">
                         <x-auth.icon name="refresh" class="size-3.5" />
                         <span>Analisis Ulang</span>
                     </button>
@@ -150,14 +156,14 @@
 
         {{-- Pending / Processing state --}}
         @if (in_array($bugReport->detection_status, [App\Enums\DetectionStatus::Pending, App\Enums\DetectionStatus::Processing]))
-            <div class="rounded-3xl bg-white p-8 shadow-sm border border-divider">
-                <div class="flex items-center gap-3">
-                    <x-auth.icon name="alert" class="size-5 text-amber-600" />
-                    <h2 class="font-serif text-xl font-bold text-ink">
+            <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
+                <div class="flex items-center gap-2.5">
+                    <x-auth.icon name="alert" class="size-4 text-amber-600" />
+                    <h2 class="font-serif text-base font-bold text-ink">
                         {{ $bugReport->detection_status === App\Enums\DetectionStatus::Pending ? 'Menunggu Analisis' : 'Sedang Menganalisis' }}
                     </h2>
                 </div>
-                <p class="mt-2 text-label">
+                <p class="mt-2 text-xs text-label">
                     {{ $bugReport->detection_status === App\Enums\DetectionStatus::Pending
                         ? 'Hasil deteksi duplikasi belum tersedia. Klik tombol di bawah untuk memulai analisis.'
                         : 'Analisis duplikasi sedang diproses. Harap tunggu hingga selesai.' }}
@@ -166,7 +172,7 @@
                 @if ($bugReport->detection_status === App\Enums\DetectionStatus::Pending)
                     <form method="POST" action="{{ route('bug-reports.detection.rerun', $bugReport) }}">
                         @csrf
-                        <button type="submit" class="mt-6 inline-flex items-center gap-2 rounded-xl bg-sage-500 px-5 py-2.5 text-xs font-bold text-white shadow-cta transition hover:bg-sage-600 active:scale-95">
+                        <button type="submit" class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-sage-500 px-4 py-2 text-xs font-semibold text-white shadow-cta transition hover:bg-sage-600 active:scale-95 cursor-pointer">
                             <x-auth.icon name="sparkles" class="size-3.5" />
                             <span>Mulai Analisis</span>
                         </button>
@@ -174,7 +180,7 @@
                 @else
                     <a
                         href="{{ route('bug-reports.detection', $bugReport) }}"
-                        class="mt-6 inline-flex items-center gap-2 rounded-xl border border-divider bg-white px-5 py-2.5 text-xs font-bold text-ink shadow-sm transition hover:bg-input"
+                        class="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-divider bg-white px-4 py-2 text-xs font-semibold text-ink shadow-2xs transition hover:bg-input"
                     >
                         <x-auth.icon name="refresh" class="size-3.5" />
                         <span>Segarkan Halaman</span>
@@ -187,50 +193,49 @@
         @if ($bugReport->detection_status === App\Enums\DetectionStatus::Completed)
             {{-- Empty state --}}
             @if ($results->isEmpty())
-                <div class="rounded-3xl bg-white p-8 shadow-sm border border-divider">
-                    <div class="flex flex-col items-center justify-center rounded-2xl bg-input/50 px-6 py-14 text-center">
-                        <span class="mb-4 grid size-16 place-items-center rounded-2xl bg-sage-200 text-sage-700 shadow-sm">
-                            <x-auth.icon name="check" class="size-8" />
+                <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
+                    <div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-divider bg-input/30 px-6 py-10 text-center">
+                        <span class="mb-3 grid size-10 place-items-center rounded-xl bg-emerald-100 text-emerald-700 shadow-2xs">
+                            <x-auth.icon name="check" class="size-5" />
                         </span>
-                        <h3 class="font-serif text-xl font-bold text-ink">Tidak Ada Laporan Serupa</h3>
-                        <p class="mt-2 max-w-md text-xs leading-relaxed text-label">
+                        <h3 class="font-serif text-sm font-bold text-ink">Tidak Ada Laporan Serupa</h3>
+                        <p class="mt-1 max-w-md text-xs leading-relaxed text-label">
                             Sistem tidak menemukan laporan bug historis yang secara signifikan mirip dengan laporan ini berdasarkan ambang batas deteksi.
                         </p>
-                        <p class="mt-3 text-xs text-label/60">
+                        <p class="mt-2 text-[11px] text-label/60">
                             Catatan: Hasil deteksi adalah saran saja, bukan keputusan akhir. Keputusan akhir diambil oleh Developer.
                         </p>
                     </div>
                 </div>
             @else
                 {{-- Candidate list --}}
-                <div class="rounded-3xl bg-white p-8 shadow-sm border border-divider">
-                    <div class="mb-6 flex items-center justify-between">
+                <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
+                    <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
                         <div>
-                            <h2 class="font-serif text-xl font-bold text-ink">Laporan Kandidat Mirip</h2>
-                            <p class="mt-0.5 text-xs text-label">
-                                Dihasilkan oleh model {{ config('services.ml.model', 'paraphrase-multilingual-MiniLM-L12-v2') }}.
-                                Skor menunjukkan potensi kemiripan, bukan keputusan akhir.
+                            <h2 class="font-serif text-base font-bold text-ink">Laporan Kandidat Mirip</h2>
+                            <p class="text-xs text-label">
+                                Dihasilkan oleh model <span class="font-mono text-[11px]">{{ config('services.ml.model', 'paraphrase-multilingual-MiniLM-L12-v2') }}</span>. Skor menunjukkan potensi kemiripan.
                             </p>
                         </div>
-                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold bg-ink/5 text-ink">
+                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold bg-input text-ink">
                             {{ $results->count() }} Kandidat Ditemukan
                         </span>
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm divide-y divide-divider">
+                    <div class="overflow-x-auto -mx-5 sm:mx-0">
+                        <table class="w-full text-left text-xs divide-y divide-divider/70">
                             <thead>
-                                <tr class="border-b border-divider text-[11px] font-bold uppercase tracking-wider text-label">
-                                    <th class="pb-3 px-4 w-12 text-center">Peringkat</th>
-                                    <th class="pb-3 px-4">Judul Laporan</th>
-                                    <th class="pb-3 px-4">Modul</th>
-                                    <th class="pb-3 px-4">Status</th>
-                                    <th class="pb-3 px-4 w-24 text-right">Skor</th>
-                                    <th class="pb-3 px-4 w-20 text-center">Tingkat</th>
-                                    <th class="pb-3 pl-4 text-right w-24">Aksi</th>
+                                <tr class="border-b border-divider/80 bg-input/40 text-[10px] font-bold uppercase tracking-wider text-label">
+                                    <th class="py-2.5 px-3 w-12 text-center font-semibold">Rank</th>
+                                    <th class="py-2.5 px-4 font-semibold">Judul Laporan</th>
+                                    <th class="py-2.5 px-3 font-semibold">Modul</th>
+                                    <th class="py-2.5 px-3 font-semibold">Status</th>
+                                    <th class="py-2.5 px-3 w-20 text-right font-semibold">Skor</th>
+                                    <th class="py-2.5 px-3 w-20 text-center font-semibold">Tingkat</th>
+                                    <th class="py-2.5 px-4 text-right w-24 font-semibold">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-divider">
+                            <tbody class="divide-y divide-divider/70">
                                 @foreach ($results as $result)
                                     @php
                                         $scorePercent = (float) $result->text_score * 100;
@@ -243,57 +248,57 @@
                                         if ($scorePercent >= $highMin * 100) {
                                             $badgeLevel = 'high';
                                             $badgeLabel = 'Tinggi';
-                                            $badgeClasses = 'bg-danger/10 text-danger';
+                                            $badgeClasses = 'bg-rose-50 text-rose-700 ring-1 ring-rose-200';
                                         } elseif ($scorePercent >= $mediumMin * 100) {
                                             $badgeLevel = 'medium';
                                             $badgeLabel = 'Sedang';
-                                            $badgeClasses = 'bg-amber-100 text-amber-800';
+                                            $badgeClasses = 'bg-amber-50 text-amber-800 ring-1 ring-amber-200';
                                         } elseif ($scorePercent >= ($bugReport->detection_threshold ?? 0) * 100) {
                                             $badgeLevel = 'low';
                                             $badgeLabel = 'Rendah';
-                                            $badgeClasses = 'bg-sage-100 text-sage-800';
+                                            $badgeClasses = 'bg-slate-100 text-slate-800';
                                         }
                                     @endphp
-                                    <tr class="transition hover:bg-input/40 cursor-pointer group"
+                                    <tr class="transition hover:bg-slate-50/70 cursor-pointer group"
                                         onclick="location.href='{{ route('bug-reports.detection', ['bugReport' => $bugReport, 'candidate' => $result->candidate_report_id]) }}'"
                                         role="button"
                                         tabindex="0"
                                         aria-label="Pilih kandidat {{ $result->candidateReport->title }}"
                                     >
-                                        <td class="py-4 px-4 text-center">
-                                            <span class="font-medium text-ink">{{ $result->rank }}</span>
+                                        <td class="py-3 px-3 text-center">
+                                            <span class="grid size-6 place-items-center rounded-md font-mono text-xs font-bold text-ink bg-input mx-auto">{{ $result->rank }}</span>
                                         </td>
-                                        <td class="py-4 px-4">
-                                            <div class="font-semibold text-ink">{{ $result->candidateReport->title }}</div>
-                                            <div class="mt-0.5 text-[11px] text-label/70 line-clamp-1 max-w-xs">
+                                        <td class="py-3 px-4">
+                                            <div class="font-semibold text-ink line-clamp-1">{{ $result->candidateReport->title }}</div>
+                                            <div class="mt-0.5 text-[10px] text-label/70 line-clamp-1">
                                                 #{{ $result->candidate_report_id }} • {{ $result->candidateReport->created_at->format('d M Y') }}
                                             </div>
                                         </td>
-                                        <td class="py-4 px-4">
-                                            <span class="inline-flex items-center rounded-lg bg-input px-2.5 py-1 text-[11px] font-medium text-ink">
+                                        <td class="py-3 px-3">
+                                            <span class="inline-flex items-center rounded-md bg-input px-2 py-0.5 text-[10px] font-mono font-medium text-ink">
                                                 {{ $result->candidateReport->module ?? 'Lainnya' }}
                                             </span>
                                         </td>
-                                        <td class="py-4 px-4">
-                                            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold {{ $result->candidateReport->status->badgeClasses() }}">
-                                                <span class="size-1.5 rounded-full bg-current opacity-80"></span>
+                                        <td class="py-3 px-3">
+                                            <span class="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold {{ $result->candidateReport->status->badgeClasses() }}">
+                                                <span class="size-1 rounded-full bg-current opacity-80"></span>
                                                 {{ $result->candidateReport->status->label() }}
                                             </span>
                                         </td>
-                                        <td class="py-4 px-4 text-right">
-                                            <span class="font-serif text-xl font-bold text-ink">{{ number_format($scorePercent, 1) }}%</span>
+                                        <td class="py-3 px-3 text-right">
+                                            <span class="font-serif text-sm font-bold text-ink">{{ number_format($scorePercent, 1) }}%</span>
                                         </td>
-                                        <td class="py-4 px-4 text-center">
-                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold {{ $badgeClasses }}">
+                                        <td class="py-3 px-3 text-center">
+                                            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $badgeClasses }}">
                                                 {{ $badgeLabel }}
                                             </span>
                                         </td>
-                                        <td class="py-4 pl-4 text-right">
+                                        <td class="py-3 px-4 text-right">
                                             <a
                                                 href="{{ route('bug-reports.detection', ['bugReport' => $bugReport, 'candidate' => $result->candidate_report_id]) }}"
-                                                class="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-white px-2.5 py-1.5 text-[11px] font-semibold text-ink transition hover:bg-sage-50"
+                                                class="inline-flex items-center gap-1 rounded-lg border border-divider bg-white px-2.5 py-1 text-[11px] font-semibold text-ink transition hover:border-slate-300 hover:bg-slate-50"
                                             >
-                                                <x-auth.icon name="eye" class="size-3" />
+                                                <x-auth.icon name="eye" class="size-2.5" />
                                                 <span>Bandingkan</span>
                                             </a>
                                         </td>
@@ -303,73 +308,77 @@
                         </table>
                     </div>
 
-                    <p class="mt-4 text-xs text-label/60">
-                        Catatan: Hasil deteksi adalah saran kemiripan saja, bukan verifikasi definitif. Keputusan akhir apakah
-                        dua laporan adalah duplikat dibuat oleh Developer setelah meninjau bukti dan metadata masing-masing.
-                    </p>
-                    <p class="mt-1 text-xs text-label/60">
-                        Model membaca sekitar 128 token awal dari setiap laporan untuk menghitung kemiripan teks.
-                    </p>
+                    <div class="mt-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-[11px] text-label/70 border-t border-divider/60 pt-3">
+                        <p>Catatan: Hasil deteksi adalah saran kemiripan. Keputusan duplikasi dibuat oleh Developer.</p>
+                        <p class="font-mono">Model: ~128 token input</p>
+                    </div>
                 </div>
 
                 {{-- Side-by-side comparison --}}
                 @if ($selectedCandidate)
-                    <div class="rounded-3xl bg-white p-8 shadow-sm border border-divider">
-                        <div class="mb-6 flex items-center justify-between">
+                    <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
+                        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
                             <div>
-                                <h2 class="font-serif text-xl font-bold text-ink">Perbandingan Sampingan</h2>
-                                <p class="mt-0.5 text-xs text-label">
-                                    Membandingkan laporan sumber dengan kandidat "{{ $selectedCandidate->title }}".
+                                <h2 class="font-serif text-base font-bold text-ink">Perbandingan Sampingan</h2>
+                                <p class="text-xs text-label">
+                                    Membandingkan laporan sumber dengan kandidat <strong class="text-ink">"{{ $selectedCandidate->title }}"</strong>.
                                 </p>
                             </div>
                             <a
                                 href="{{ route('bug-reports.detection', $bugReport) }}"
-                                class="inline-flex items-center gap-1.5 rounded-xl border border-divider bg-white px-3.5 py-2 text-xs font-semibold text-ink transition hover:bg-input"
+                                class="inline-flex items-center gap-1 rounded-lg border border-divider bg-white px-2.5 py-1 text-xs font-semibold text-ink transition hover:bg-input"
                             >
                                 <x-auth.icon name="x" class="size-3" />
                                 <span>Batal</span>
                             </a>
                         </div>
 
-                        <div class="mb-6 rounded-2xl border border-divider bg-input p-4">
-                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                <div>
-                                    <p class="text-[10px] font-bold uppercase tracking-wider text-label">Skor Kemiripan</p>
-                                    <p class="mt-1 font-serif text-3xl font-bold text-ink">{{ number_format((float) $selectedResult->text_score * 100, 1) }}%</p>
+                        {{-- Similarity Banner --}}
+                        <div class="mb-5 rounded-xl border border-divider/80 bg-input/40 p-3.5">
+                            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div>
+                                        <p class="text-[10px] font-bold uppercase tracking-wider text-label">Skor Kemiripan</p>
+                                        <p class="font-serif text-2xl font-bold text-ink">{{ number_format((float) $selectedResult->text_score * 100, 1) }}%</p>
+                                    </div>
+                                    <span class="rounded-md bg-sage-100 px-2 py-0.5 text-[10px] font-semibold text-sage-800">
+                                        Rank #{{ $selectedResult->rank }} dari {{ $results->count() }}
+                                    </span>
                                 </div>
-                                <p class="max-w-md text-xs leading-relaxed text-label">
+                                <p class="text-xs text-label leading-relaxed max-w-md">
                                     Dihitung dari judul, deskripsi, dan konteks visual screenshot bila tersedia.
-                                    Peringkat {{ $selectedResult->rank }} dari {{ $results->count() }} kandidat.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
                             {{-- Source report --}}
-                            <div class="space-y-4">
-                                <div class="rounded-xl bg-sage-50 p-4 border border-sage-100">
-                                    <div class="flex items-center gap-2 mb-3">
-                                        <x-auth.icon name="bug" class="size-4 text-sage-700" />
-                                        <span class="font-semibold text-sage-800">Laporan Sumber</span>
+                            <div class="space-y-3.5">
+                                <div class="rounded-xl border border-emerald-200/80 bg-emerald-50/50 p-3.5">
+                                    <div class="flex items-center gap-2 mb-2.5">
+                                        <x-auth.icon name="bug" class="size-3.5 text-emerald-800" />
+                                        <span class="text-xs font-bold text-emerald-950 uppercase tracking-wider">Laporan Sumber</span>
                                     </div>
-                                    <dl class="space-y-2 text-sm">
-                                        <div class="flex justify-between border-b border-divider/50 pb-1">
+                                    <dl class="space-y-1.5 text-xs">
+                                        <div class="flex justify-between border-b border-emerald-100 pb-1">
                                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Judul</dt>
-                                            <dd class="font-medium text-ink">{{ $bugReport->title }}</dd>
+                                            <dd class="font-semibold text-ink truncate max-w-xs text-right">{{ $bugReport->title }}</dd>
                                         </div>
-                                        <div class="flex justify-between border-b border-divider/50 pb-1">
+                                        <div class="flex justify-between border-b border-emerald-100 pb-1">
                                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Modul</dt>
-                                            <dd class="text-ink">{{ $bugReport->module ?? 'Lainnya' }}</dd>
+                                            <dd class="font-mono text-ink">{{ $bugReport->module ?? 'Lainnya' }}</dd>
                                         </div>
-                                        <div class="flex justify-between border-b border-divider/50 pb-1">
+                                        <div class="flex justify-between border-b border-emerald-100 pb-1">
                                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Keparahan</dt>
-                                            <dd class="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold {{ $bugReport->severity->badgeClasses() }}">
-                                                {{ $bugReport->severity->label() }}
+                                            <dd>
+                                                <span class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold {{ $bugReport->severity->badgeClasses() }}">
+                                                    {{ $bugReport->severity->label() }}
+                                                </span>
                                             </dd>
                                         </div>
-                                        <div class="flex justify-between border-b border-divider/50 pb-1">
+                                        <div class="flex justify-between border-b border-emerald-100 pb-1">
                                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Status</dt>
-                                            <dd class="text-ink">{{ $bugReport->status->label() }}</dd>
+                                            <dd class="font-semibold text-ink">{{ $bugReport->status->label() }}</dd>
                                         </div>
                                         <div class="flex justify-between">
                                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Tanggal</dt>
@@ -377,11 +386,11 @@
                                         </div>
                                     </dl>
                                 </div>
-                                <div class="rounded-xl bg-white p-4 border border-divider">
+                                <div class="rounded-xl border border-divider/70 bg-input/30 p-3.5">
                                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Deskripsi Sumber</dt>
-                                    <dd class="mt-2 whitespace-pre-line text-sm leading-relaxed text-body">{{ $bugReport->description }}</dd>
+                                    <dd class="mt-1.5 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $bugReport->description }}</dd>
                                 </div>
-                                <div class="rounded-xl bg-white p-4 border border-divider">
+                                <div class="rounded-xl border border-divider/70 bg-white p-3.5 shadow-2xs">
                                     <div class="flex items-center justify-between gap-2">
                                         <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Screenshot</dt>
                                         @if ($bugReport->hasScreenshot())
@@ -401,56 +410,58 @@
                                             href="{{ asset('storage/' . $bugReport->screenshot_path) }}"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            class="mt-2 block overflow-hidden rounded-xl border border-divider bg-input"
+                                            class="mt-2 block overflow-hidden rounded-xl border border-divider/80 bg-slate-100"
                                         >
                                             <img
                                                 src="{{ asset('storage/' . $bugReport->screenshot_path) }}"
                                                 alt="Screenshot laporan sumber {{ $bugReport->title }}"
-                                                class="max-h-64 w-full object-contain"
+                                                class="max-h-60 w-full object-contain"
                                             >
                                         </a>
                                     @else
-                                        <p class="mt-2 rounded-xl bg-input px-4 py-8 text-center text-xs text-label">Tidak ada screenshot</p>
+                                        <p class="mt-2 rounded-xl border border-dashed border-divider bg-input/40 px-4 py-6 text-center text-xs text-label">Tidak ada screenshot</p>
                                     @endif
                                 </div>
-                                <div class="rounded-xl bg-white p-4 border border-divider">
+                                <div class="rounded-xl border border-divider/70 bg-white p-3.5 shadow-2xs">
                                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Analisis Visual Screenshot (AI)</dt>
                                     @if ($bugReport->hasImageDescription())
-                                        <dd class="mt-2 whitespace-pre-line text-sm leading-relaxed text-body">{{ $bugReport->image_description }}</dd>
+                                        <dd class="mt-1.5 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $bugReport->image_description }}</dd>
                                         <p class="mt-2 text-[10px] text-label/60">Dihasilkan otomatis oleh LLM sebagai konteks tambahan untuk perbandingan.</p>
                                     @elseif ($bugReport->hasScreenshot())
-                                        <dd class="mt-2 text-xs text-label">Belum ada analisis visual. Jalankan analisis ulang atau command backfill.</dd>
+                                        <dd class="mt-1.5 text-xs text-label">Belum ada analisis visual. Jalankan analisis ulang atau command backfill.</dd>
                                     @else
-                                        <dd class="mt-2 text-xs text-label">Tidak ada screenshot untuk dianalisis.</dd>
+                                        <dd class="mt-1.5 text-xs text-label">Tidak ada screenshot untuk dianalisis.</dd>
                                     @endif
                                 </div>
                             </div>
 
                             {{-- Candidate report --}}
-                            <div class="space-y-4">
-                                <div class="rounded-xl bg-ink/5 p-4 border border-divider/30">
-                                    <div class="flex items-center gap-2 mb-3">
-                                        <x-auth.icon name="eye" class="size-4 text-ink" />
-                                        <span class="font-semibold text-ink">Kandidat Mirip</span>
+                            <div class="space-y-3.5">
+                                <div class="rounded-xl border border-slate-200/80 bg-slate-100/60 p-3.5">
+                                    <div class="flex items-center gap-2 mb-2.5">
+                                        <x-auth.icon name="eye" class="size-3.5 text-slate-800" />
+                                        <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">Kandidat Mirip</span>
                                     </div>
-                                    <dl class="space-y-2 text-sm">
-                                        <div class="flex justify-between border-b border-divider/50 pb-1">
+                                    <dl class="space-y-1.5 text-xs">
+                                        <div class="flex justify-between border-b border-slate-200 pb-1">
                                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Judul</dt>
-                                            <dd class="font-medium text-ink">{{ $selectedCandidate->title }}</dd>
+                                            <dd class="font-semibold text-ink truncate max-w-xs text-right">{{ $selectedCandidate->title }}</dd>
                                         </div>
-                                        <div class="flex justify-between border-b border-divider/50 pb-1">
+                                        <div class="flex justify-between border-b border-slate-200 pb-1">
                                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Modul</dt>
-                                            <dd class="text-ink">{{ $selectedCandidate->module ?? 'Lainnya' }}</dd>
+                                            <dd class="font-mono text-ink">{{ $selectedCandidate->module ?? 'Lainnya' }}</dd>
                                         </div>
-                                        <div class="flex justify-between border-b border-divider/50 pb-1">
+                                        <div class="flex justify-between border-b border-slate-200 pb-1">
                                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Keparahan</dt>
-                                            <dd class="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold {{ $selectedCandidate->severity->badgeClasses() }}">
-                                                {{ $selectedCandidate->severity->label() }}
+                                            <dd>
+                                                <span class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold {{ $selectedCandidate->severity->badgeClasses() }}">
+                                                    {{ $selectedCandidate->severity->label() }}
+                                                </span>
                                             </dd>
                                         </div>
-                                        <div class="flex justify-between border-b border-divider/50 pb-1">
+                                        <div class="flex justify-between border-b border-slate-200 pb-1">
                                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Status</dt>
-                                            <dd class="text-ink">{{ $selectedCandidate->status->label() }}</dd>
+                                            <dd class="font-semibold text-ink">{{ $selectedCandidate->status->label() }}</dd>
                                         </div>
                                         <div class="flex justify-between">
                                             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Tanggal</dt>
@@ -458,11 +469,11 @@
                                         </div>
                                     </dl>
                                 </div>
-                                <div class="rounded-xl bg-white p-4 border border-divider">
+                                <div class="rounded-xl border border-divider/70 bg-input/30 p-3.5">
                                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Deskripsi Kandidat</dt>
-                                    <dd class="mt-2 whitespace-pre-line text-sm leading-relaxed text-body">{{ $selectedCandidate->description }}</dd>
+                                    <dd class="mt-1.5 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $selectedCandidate->description }}</dd>
                                 </div>
-                                <div class="rounded-xl bg-white p-4 border border-divider">
+                                <div class="rounded-xl border border-divider/70 bg-white p-3.5 shadow-2xs">
                                     <div class="flex items-center justify-between gap-2">
                                         <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Screenshot</dt>
                                         @if ($selectedCandidate->hasScreenshot())
@@ -482,27 +493,27 @@
                                             href="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            class="mt-2 block overflow-hidden rounded-xl border border-divider bg-input"
+                                            class="mt-2 block overflow-hidden rounded-xl border border-divider/80 bg-slate-100"
                                         >
                                             <img
                                                 src="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}"
                                                 alt="Screenshot kandidat {{ $selectedCandidate->title }}"
-                                                class="max-h-64 w-full object-contain"
+                                                class="max-h-60 w-full object-contain"
                                             >
                                         </a>
                                     @else
-                                        <p class="mt-2 rounded-xl bg-input px-4 py-8 text-center text-xs text-label">Tidak ada screenshot</p>
+                                        <p class="mt-2 rounded-xl border border-dashed border-divider bg-input/40 px-4 py-6 text-center text-xs text-label">Tidak ada screenshot</p>
                                     @endif
                                 </div>
-                                <div class="rounded-xl bg-white p-4 border border-divider">
+                                <div class="rounded-xl border border-divider/70 bg-white p-3.5 shadow-2xs">
                                     <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Analisis Visual Screenshot (AI)</dt>
                                     @if ($selectedCandidate->hasImageDescription())
-                                        <dd class="mt-2 whitespace-pre-line text-sm leading-relaxed text-body">{{ $selectedCandidate->image_description }}</dd>
+                                        <dd class="mt-1.5 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $selectedCandidate->image_description }}</dd>
                                         <p class="mt-2 text-[10px] text-label/60">Dihasilkan otomatis oleh LLM sebagai konteks tambahan untuk perbandingan.</p>
                                     @elseif ($selectedCandidate->hasScreenshot())
-                                        <dd class="mt-2 text-xs text-label">Belum ada analisis visual. Jalankan analisis ulang atau command backfill.</dd>
+                                        <dd class="mt-1.5 text-xs text-label">Belum ada analisis visual. Jalankan analisis ulang atau command backfill.</dd>
                                     @else
-                                        <dd class="mt-2 text-xs text-label">Tidak ada screenshot untuk dianalisis.</dd>
+                                        <dd class="mt-1.5 text-xs text-label">Tidak ada screenshot untuk dianalisis.</dd>
                                     @endif
                                 </div>
                             </div>

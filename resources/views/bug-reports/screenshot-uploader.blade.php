@@ -6,40 +6,40 @@
 
     Dipakai di: resources/views/bug-reports/create.blade.php
 --}}
-<div class="rounded-3xl bg-white p-6 shadow-sm" id="screenshot-section">
-    <div class="mb-6 flex items-center justify-between gap-4">
+<div class="rounded-2xl border border-divider/80 bg-white p-5 shadow-xs" id="screenshot-section">
+    <div class="mb-5 flex items-center justify-between gap-4">
         <div class="flex items-center gap-2.5">
-            <span class="grid size-7 place-items-center rounded-2xl bg-divider font-serif text-xs font-bold text-sage-500">03</span>
+            <span class="grid size-6 place-items-center rounded-lg bg-slate-100 font-mono text-xs font-bold text-sage-600">03</span>
             <div>
-                <h2 class="font-serif text-xl font-bold text-ink">Lampiran Screenshot</h2>
-                <p class="mt-0.5 text-xs text-label">Tambahkan tangkapan layar yang memperlihatkan bug untuk membantu analisis visual TwinBug.</p>
+                <h2 class="font-serif text-base font-bold text-ink">Lampiran Screenshot</h2>
+                <p class="text-xs text-label">Tambahkan tangkapan layar untuk analisis visual TwinBug.</p>
             </div>
         </div>
-        <span class="shrink-0 rounded-full bg-divider px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-label">Opsional</span>
+        <span class="shrink-0 rounded-md bg-input px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-label">Opsional</span>
     </div>
 
-    <div class="grid grid-cols-1 gap-6">
+    <div class="grid grid-cols-1 gap-5">
 
         {{-- Drop zone & preview --}}
         <div>
             <div
                 id="drop-zone"
-                class="mb-4 flex cursor-pointer flex-col items-center justify-center rounded-3xl bg-input px-6 py-10 transition hover:bg-input-hover"
+                class="mb-3.5 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-divider/80 bg-input/40 px-6 py-8 transition hover:border-sage-400 hover:bg-input/70"
                 role="button"
                 tabindex="0"
                 aria-label="Klik, seret, atau tempel gambar untuk melampirkan screenshot"
                 onclick="document.getElementById('screenshot').click()"
             >
-                <div class="mb-3 grid size-12 place-items-center rounded-3xl bg-white shadow-sm text-sage-500">
-                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <div class="mb-2.5 grid size-10 place-items-center rounded-xl bg-white shadow-2xs text-sage-600">
+                    <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
                         <path d="M12 12v9"/>
                         <path d="m16 16-4-4-4 4"/>
                     </svg>
                 </div>
-                <p class="text-sm font-semibold text-ink">Seret, tempel, atau pilih screenshot</p>
-                <p class="mt-1 text-xs font-bold text-sage-500">Klik untuk memilih berkas &middot; Ctrl/&#8984; + V untuk tempel</p>
-                <p class="mt-1.5 text-[10px] text-label">PNG, JPG, GIF, WebP &middot; maksimal 5MB &middot; minimal 720p</p>
+                <p class="text-xs font-semibold text-ink">Seret, tempel, atau pilih screenshot</p>
+                <p class="mt-0.5 text-xs font-semibold text-sage-600">Klik untuk memilih berkas &middot; Ctrl/&#8984; + V untuk tempel</p>
+                <p class="mt-1 text-[10px] text-label">PNG, JPG, GIF, WebP &middot; maksimal 5MB &middot; minimal 720p</p>
             </div>
 
             <input
@@ -52,33 +52,33 @@
             >
 
             {{-- Preview (hidden by default, shown via JS) --}}
-            <div id="screenshot-preview" class="mb-4 hidden rounded-3xl bg-input p-4">
+            <div id="screenshot-preview" class="mb-4 hidden rounded-xl border border-divider/80 bg-input/40 p-3">
                 {{-- Full screenshot preview --}}
-                <div class="relative overflow-hidden rounded-2xl bg-divider">
+                <div class="relative overflow-hidden rounded-lg bg-slate-100">
                     <img
                         id="preview-img"
                         alt="Preview screenshot yang dilampirkan"
-                        class="mx-auto max-h-80 w-full object-contain"
+                        class="mx-auto max-h-72 w-full object-contain"
                         decoding="async"
                     >
-                    <span id="preview-ext" class="absolute right-2 top-2 rounded-full bg-ink/70 px-2 py-0.5 font-mono text-[9px] font-semibold text-parchment/90">PNG</span>
+                    <span id="preview-ext" class="absolute right-2 top-2 rounded-md bg-ink/80 px-1.5 py-0.5 font-mono text-[9px] font-semibold text-white">PNG</span>
                 </div>
 
                 {{-- Meta & actions --}}
-                <div class="mt-3 flex flex-wrap items-start justify-between gap-3">
+                <div class="mt-2.5 flex flex-wrap items-start justify-between gap-3">
                     <div class="min-w-0">
                         <p class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-sage-600">
-                            <x-auth.icon name="check" class="size-3" />
+                            <x-auth.icon name="check" class="size-2.5" />
                             File terlampir
                         </p>
-                        <p id="preview-name" class="mt-0.5 truncate font-serif text-sm font-semibold text-ink"></p>
-                        <p id="preview-meta" class="mt-1 font-mono text-[11px] text-label"></p>
+                        <p id="preview-name" class="mt-0.5 truncate font-serif text-xs font-semibold text-ink"></p>
+                        <p id="preview-meta" class="mt-0.5 font-mono text-[10px] text-label"></p>
                     </div>
-                    <div class="flex shrink-0 items-center gap-4 pt-1">
+                    <div class="flex shrink-0 items-center gap-3 pt-0.5">
                         <button
                             type="button"
                             id="btn-replace"
-                            class="flex items-center gap-1 text-[11px] font-semibold text-sage-500 hover:underline"
+                            class="flex items-center gap-1 text-[11px] font-semibold text-sage-600 hover:underline"
                             onclick="document.getElementById('screenshot').click()"
                         >
                             <x-auth.icon name="eye" class="size-2.5" />
@@ -104,10 +104,10 @@
         </div>
 
         {{-- Info lampiran --}}
-        <div class="flex flex-col gap-3">
-            <div class="rounded-2xl bg-input p-4">
+        <div class="flex flex-col gap-2.5">
+            <div class="rounded-xl border border-divider/60 bg-input/50 p-3">
                 <p class="text-xs font-semibold text-ink">Cara melampirkan file</p>
-                <ul class="mt-2.5 space-y-2 text-[11px] leading-relaxed text-label">
+                <ul class="mt-2 space-y-1.5 text-[11px] leading-relaxed text-label">
                     <li class="flex gap-2">
                         <span class="mt-1.5 size-1 shrink-0 rounded-full bg-sage-500"></span>
                         <span><strong class="font-semibold text-ink">Pilih berkas</strong> dengan mengklik area unggah.</span>
@@ -118,29 +118,29 @@
                     </li>
                     <li class="flex gap-2">
                         <span class="mt-1.5 size-1 shrink-0 rounded-full bg-sage-500"></span>
-                        <span><strong class="font-semibold text-ink">Tempel</strong> screenshot dari clipboard dengan Ctrl/&#8984; + V.</span>
+                        <span><strong class="font-semibold text-ink">Tempel</strong> screenshot langsung dari clipboard (Ctrl/&#8984; + V).</span>
                     </li>
                 </ul>
             </div>
 
-            <div class="rounded-2xl bg-input p-4">
+            <div class="rounded-xl border border-divider/60 bg-input/50 p-3">
                 <div class="flex items-center justify-between">
                     <p class="text-xs font-semibold text-ink">Format didukung</p>
                     <span class="font-mono text-[10px] text-label">Maks. 5MB</span>
                 </div>
-                <div class="mt-2.5 flex flex-wrap gap-1.5">
+                <div class="mt-2 flex flex-wrap gap-1.5">
                     @foreach (['PNG', 'JPG', 'GIF', 'WebP'] as $format)
-                        <span class="rounded-full bg-white px-2 py-0.5 font-mono text-[10px] font-semibold text-sage-700">{{ $format }}</span>
+                        <span class="rounded-md border border-divider/60 bg-white px-2 py-0.5 font-mono text-[10px] font-semibold text-sage-800">{{ $format }}</span>
                     @endforeach
                 </div>
             </div>
 
             {{-- Fallback note --}}
-            <div class="flex items-start gap-2.5 rounded-2xl bg-gold-100/60 p-3">
-                <span class="mt-0.5 shrink-0 text-ochre">
-                    <x-auth.icon name="alert" class="size-4" />
+            <div class="flex items-start gap-2 rounded-xl border border-amber-200/80 bg-amber-50/60 p-2.5">
+                <span class="mt-0.5 shrink-0 text-amber-700">
+                    <x-auth.icon name="alert" class="size-3.5" />
                 </span>
-                <p class="text-xs font-semibold leading-snug text-ink">
+                <p class="text-xs font-medium leading-snug text-amber-900">
                     Catatan: Laporan tanpa gambar tetap didukung penuh menggunakan kemiripan teks semantik.
                 </p>
             </div>
