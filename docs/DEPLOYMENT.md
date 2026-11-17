@@ -3,7 +3,7 @@
 ## File terkait
 
 - `Dockerfile` — multi-stage: Vite build (Node 22) → Composer (`--no-dev`) → `serversideup/php:8.5-fpm-nginx`.
-- `compose.yaml` — service `app`, `worker` (queue), dan `db` (PostgreSQL 17).
+- `docker-compose.yaml` — service `app`, `worker` (queue), dan `db` (PostgreSQL 17).
 - `.dockerignore` — mengecualikan `vendor`, `node_modules`, `.env`, cache build, dan `bootstrap/cache/*.php`.
 
 Port internal container `app` adalah **8080**. Di Coolify, arahkan domain ke port tersebut.
@@ -15,7 +15,7 @@ Port internal container `app` adalah **8080**. Di Coolify, arahkan domain ke por
 | `APP_KEY` | Hasil `php artisan key:generate --show`; simpan sebagai secret |
 | `APP_URL` | `https://<domain>` |
 | `DB_CONNECTION=pgsql` | `DB_HOST=db`, `DB_PORT=5432` |
-| `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | `DB_PASSWORD` wajib karena dipakai interpolasi `compose.yaml` |
+| `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | `DB_PASSWORD` wajib karena dipakai interpolasi `docker-compose.yaml` |
 | `MAIL_*` | Kredensial SMTP Brevo |
 | `ML_SERVICE_URL` dan `ML_SERVICE_*` | URL layanan deteksi duplikasi (belum disertakan) |
 | `VISION_SERVICE_KEY` | API key OpenAI untuk analisis screenshot |
@@ -24,7 +24,7 @@ Port internal container `app` adalah **8080**. Di Coolify, arahkan domain ke por
 
 ## Langkah deploy
 
-1. Coolify → New Resource → Docker Compose → repo `AgilePemdigi-2026/TwinBug`, branch `main`, compose path `compose.yaml`.
+1. Coolify → New Resource → Docker Compose → repo `AgilePemdigi-2026/TwinBug`, branch `main`, compose path `docker-compose.yaml`.
 2. Isi environment di UI Coolify (mark `APP_KEY`, `DB_PASSWORD`, `MAIL_PASSWORD`, `VISION_SERVICE_KEY` sebagai secret).
 3. Set domain pada service `app`, port `8080`, aktifkan HTTPS.
 4. Deploy. Container `app` otomatis menjalankan `storage:link`, `migrate --force`, dan `optimize` (via `AUTORUN_ENABLED=true`); worker tidak.
