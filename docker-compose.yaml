@@ -60,8 +60,6 @@ services:
     environment:
       ML_API_KEY: ${ML_API_KEY:-}
       PORT: "7860"
-    ports:
-      - "127.0.0.1:8001:7860"
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:7860/health"]
       interval: 30s
