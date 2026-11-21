@@ -6,6 +6,7 @@ use App\Enums\BugResolution;
 use App\Enums\BugSeverity;
 use App\Enums\BugStatus;
 use App\Enums\DetectionStatus;
+use App\Enums\OcrStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -42,6 +43,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'detection_error',
     'detected_at',
     'detection_threshold',
+    'ocr_text',
+    'ocr_status',
+    'ocr_error',
 ])]
 class BugReport extends Model
 {
@@ -73,6 +77,7 @@ class BugReport extends Model
             'device_metadata' => 'array',
             'resolved_at' => 'datetime',
             'closed_at' => 'datetime',
+            'ocr_status' => OcrStatus::class,
         ];
     }
 
@@ -142,6 +147,30 @@ class BugReport extends Model
     public function hasImageDescription(): bool
     {
         return filled($this->image_description);
+    }
+
+    /**
+     * Check whether this report has OCR-extracted text.
+     */
+    public function hasOcrText(): bool
+    {
+        return filled($this->ocr_text);
+    }
+
+    /**
+     * Check whether OCR is still pending (not yet completed, failed, or skipped).
+     */
+    public function ocrIsPending(): bool
+    {
+        return ! in_array($this->ocr_status, [OcrStatus::Completed, OcrStatus::Failed, OcrStatus::Skipped]);
+    }
+
+    /**
+     * Get the OCR status label, or '-' if not set.
+     */
+    public function ocrStatusLabel(): string
+    {
+        return $this->ocr_status ? $this->ocr_status->label() : '-';
     }
 
     /**

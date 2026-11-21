@@ -292,6 +292,91 @@ class DuplicateDetectionTest extends TestCase
         );
     }
 
+    public function test_payload_includes_ocr_text_in_description(): void
+    {
+        $captured = null;
+        Http::fake(function ($request) use (&$captured) {
+            $captured = json_decode($request->body(), true);
+
+            return Http::response(['threshold_used' => 0.5, 'results' => []], 200);
+        });
+
+        $application = Application::factory()->create();
+        $source = $this->createBugReport($application, [
+            'title' => 'Sumber dengan OCR',
+            'description' => 'Deskripsi sumber.',
+            'ocr_text' => 'Teks hasil OCR dari screenshot.',
+            'ocr_status' => 'completed',
+        ]);
+        $candidate = $this->createBugReport($application, [
+            'title' => 'Kandidat',
+            'description' => 'Deskripsi kandidat.',
+        ]);
+
+        $job = new AnalyzeBugReport($source);
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+
+        $this->assertStringContainsString('Deskripsi sumber.', $captured['description']);
+        $this->assertStringContainsString('Teks hasil OCR dari screenshot.', $captured['description']);
+        $this->assertStringNotContainsString('Teks hasil OCR dari screenshot.', $captured['candidates'][0]['description']);
+    }
+
+    public function test_payload_unchanged_when_ocr_text_is_empty(): void
+    {
+        $captured = null;
+        Http::fake(function ($request) use (&$captured) {
+            $captured = json_decode($request->body(), true);
+
+            return Http::response(['threshold_used' => 0.5, 'results' => []], 200);
+        });
+
+        $application = Application::factory()->create();
+        $source = $this->createBugReport($application, [
+            'title' => 'Tanpa OCR',
+            'description' => 'Deskripsi asli.',
+            'ocr_text' => null,
+            'ocr_status' => null,
+        ]);
+
+        $job = new AnalyzeBugReport($source);
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+
+        $this->assertSame('Deskripsi asli.', $captured['description']);
+    }
+
+    public function test_payload_includes_ocr_text_for_candidate_when_available(): void
+    {
+        $captured = null;
+        Http::fake(function ($request) use (&$captured) {
+            $captured = json_decode($request->body(), true);
+
+            return Http::response(['threshold_used' => 0.5, 'results' => []], 200);
+        });
+
+        $application = Application::factory()->create();
+        $source = $this->createBugReport($application, [
+            'title' => 'Sumber',
+            'description' => 'Deskripsi sumber.',
+        ]);
+        $candidateWithOcr = $this->createBugReport($application, [
+            'title' => 'Kandidat dengan OCR',
+            'description' => 'Deskripsi kandidat.',
+            'ocr_text' => 'Teks OCR kandidat.',
+            'ocr_status' => 'completed',
+        ]);
+        $candidateWithoutOcr = $this->createBugReport($application, [
+            'title' => 'Kandidat tanpa OCR',
+            'description' => 'Deskripsi kandidat teks.',
+        ]);
+
+        $job = new AnalyzeBugReport($source);
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+
+        $candidates = collect($captured['candidates'])->keyBy('id');
+        $this->assertStringContainsString('Teks OCR kandidat.', $candidates[$candidateWithOcr->id]['description']);
+        $this->assertStringNotContainsString('Teks OCR kandidat.', $candidates[$candidateWithoutOcr->id]['description']);
+    }
+
     public function test_candidates_only_from_same_application_and_not_self(): void
     {
         $captured = null;

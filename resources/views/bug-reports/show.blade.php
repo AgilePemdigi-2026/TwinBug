@@ -204,6 +204,43 @@
                     </div>
                 @endif
 
+                {{-- ======================== OCR TEXT ======================== --}}
+                @if ($report->hasScreenshot() && auth()->user()->role->value === 'developer' && $report->application_id === auth()->user()->application_id)
+                    <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
+                        <div class="mb-3 flex items-center gap-2">
+                            <button
+                                class="flex items-center gap-1.5 rounded-lg border border-divider bg-input/40 px-3 py-1.5 text-xs font-semibold text-ink hover:bg-input transition"
+                                onclick="this.nextElementSibling.classList.toggle('hidden')"
+                            >
+                                <x-auth.icon name="text" class="size-3 shrink-0 text-label" />
+                                <span>Teks yang Diekstrak dari Screenshot</span>
+                                <x-auth.icon name="chevron-down" class="size-2.5 shrink-0 text-label ml-auto transition-transform" />
+                            </button>
+                        </div>
+
+                        <div class="mt-3 hidden">
+                            @if ($report->ocr_status === \App\Enums\OcrStatus::Completed && $report->hasOcrText())
+                                <div class="rounded-xl border border-divider/60 bg-input/40 p-3.5">
+                                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Hasil OCR</dt>
+                                    <dd class="mt-1.5 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $report->ocr_text }}</dd>
+                                </div>
+                            @elseif ($report->ocr_status === \App\Enums\OcrStatus::Failed)
+                                <div class="rounded-xl border border-danger/30 bg-rose-50/70 p-3.5">
+                                    <p class="text-xs text-danger">OCR gagal: {{ $report->ocr_error ?? 'Terjadi kesalahan saat mengekstrak teks dari screenshot.' }}</p>
+                                </div>
+                            @elseif ($report->ocr_status === \App\Enums\OcrStatus::Skipped)
+                                <div class="rounded-xl border border-divider/60 bg-input/40 p-3.5">
+                                    <p class="text-xs text-label">OCR dilewati: tidak ada gambar yang dapat diekstrak.</p>
+                                </div>
+                            @else
+                                <div class="rounded-xl border border-divider/60 bg-input/40 p-3.5">
+                                    <p class="text-xs text-label">OCR belum diproses.</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
                 {{-- ======================== LAPORAN SERUPA ======================== --}}
                 @if ($similarReports->isNotEmpty())
                     <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">

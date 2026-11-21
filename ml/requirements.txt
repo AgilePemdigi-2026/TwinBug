@@ -5,3 +5,7 @@ pydantic==2.14.3
 sentence-transformers==6.2.0
 transformers==5.22.2
 torch==2.15.0
+rapidocr-onnxruntime==1.2.3
+python-multipart==0.0.12
+Pillow==12.2.0
+opencv-python-headless==5.1.0.95

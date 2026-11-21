@@ -3,8 +3,10 @@
 namespace App\Jobs;
 
 use App\Enums\DetectionStatus;
+use App\Enums\OcrStatus;
 use App\Models\BugReport;
 use App\Models\DetectionResult;
+use App\Jobs\ExtractScreenshotText;
 use App\Services\DuplicateDetectionClient;
 use App\Services\ScreenshotAnalysisClient;
 use Illuminate\Bus\Queueable;
@@ -50,6 +52,24 @@ class AnalyzeBugReport implements ShouldQueue
     public function handle(DuplicateDetectionClient $client, ScreenshotAnalysisClient $vision): void
     {
         $this->bugReport->refresh();
+
+        // --- OCR step (best-effort, never blocks duplicate detection) ---
+        if ($this->bugReport->ocrIsPending()) {
+            $this->bugReport->update([
+                'ocr_status' => OcrStatus::Processing->value,
+            ]);
+
+            try {
+                (new ExtractScreenshotText($this->bugReport))->handle($client);
+            } catch (Throwable $e) {
+                // Safety net: ExtractScreenshotText handles its own failures,
+                // but we guard here so detection always proceeds.
+                $this->bugReport->update([
+                    'ocr_status' => OcrStatus::Failed->value,
+                    'ocr_error' => $e->getMessage(),
+                ]);
+            }
+        }
 
         $this->bugReport->update([
             'detection_status' => DetectionStatus::Processing->value,
@@ -137,10 +157,15 @@ class AnalyzeBugReport implements ShouldQueue
 
     /**
      * Build the text sent to the similarity model, including visual context.
+     * Appends OCR text (if available) to the description.
      */
     private function similarityText(BugReport $report): string
     {
         $description = $report->description ?? '';
+
+        if ($report->hasOcrText()) {
+            $description = trim($description.' '.$report->ocr_text);
+        }
 
         if (! $report->hasImageDescription()) {
             return $description;

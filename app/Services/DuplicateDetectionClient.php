@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Client\RequestException;
 use RuntimeException;
 
 class DuplicateDetectionClient
@@ -16,7 +18,7 @@ class DuplicateDetectionClient
         protected int $topK = 5,
         protected int $maxCandidates = 500,
         protected string $model = 'paraphrase-multilingual-MiniLM-L12-v2',
-        protected ?string $key = null,
+        protected ?string $apiKey = null,
     ) {
         //
     }
@@ -34,6 +36,7 @@ class DuplicateDetectionClient
             'top_k' => $this->topK,
             'max_candidates' => $this->maxCandidates,
             'model' => $this->model,
+            'api_key' => $this->apiKey,
         ];
     }
 
@@ -76,8 +79,8 @@ class DuplicateDetectionClient
         $http = Http::timeout($this->timeout)
             ->retry(2, 500);
 
-        if ($this->key !== null) {
-            $http = $http->withHeaders(['X-API-Key' => $this->key]);
+        if ($this->apiKey !== null) {
+            $http = $http->withHeaders(['X-API-Key' => $this->apiKey]);
         }
 
         $response = $http->post(rtrim($this->url, '/').'/detect', $payload);
@@ -85,6 +88,48 @@ class DuplicateDetectionClient
         $response->throw();
 
         return $response->json();
+    }
+
+    /**
+     * Extract text from a screenshot via the ML service /ocr endpoint.
+     *
+     * @param  string  $storedPath  Path relative to the public storage disk
+     * @return string
+     *
+     * @throws RuntimeException
+     */
+    public function extractText(string $storedPath): string
+    {
+        $disk = Storage::disk('public');
+
+        if (! $disk->exists($storedPath)) {
+            throw new RuntimeException("OCR source file not found: {$storedPath}");
+        }
+
+        $mimeType = $disk->mimeType($storedPath) ?? 'application/octet-stream';
+        $contents = $disk->get($storedPath);
+        $filename = basename($storedPath);
+
+        $http = Http::timeout($this->timeout);
+
+        if ($this->apiKey !== null) {
+            $http = $http->withHeaders(['X-API-Key' => $this->apiKey]);
+        }
+
+        $response = $http->attach(
+            'file',
+            $contents,
+            $filename,
+            ['Content-Type' => $mimeType]
+        )->post(rtrim($this->url, '/').'/ocr');
+
+        try {
+            $response->throw();
+        } catch (RequestException $e) {
+            throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
+        }
+
+        return (string) $response->json('text');
     }
 
     /**
@@ -100,7 +145,7 @@ class DuplicateDetectionClient
             topK: (int) ($config['top_k'] ?? 5),
             maxCandidates: (int) ($config['max_candidates'] ?? 500),
             model: $config['model'] ?? 'paraphrase-multilingual-MiniLM-L12-v2',
-            key: ($config['key'] ?? null) ?: null,
+            apiKey: ($config['api_key'] ?? null) ?: null,
         );
     }
 }

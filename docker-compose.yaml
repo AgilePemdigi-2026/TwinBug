@@ -12,6 +12,7 @@ services:
       DB_DATABASE: /data/database.sqlite
       DB_URL: ""
       ML_SERVICE_URL: http://ml:7860
+      ML_SERVICE_API_KEY: ${ML_SERVICE_API_KEY:-}
       ML_API_KEY: ${ML_API_KEY:-}
     volumes:
       - screenshots:/var/www/html/storage/app/public
@@ -37,6 +38,7 @@ services:
       DB_DATABASE: /data/database.sqlite
       DB_URL: ""
       ML_SERVICE_URL: http://ml:7860
+      ML_SERVICE_API_KEY: ${ML_SERVICE_API_KEY:-}
       ML_API_KEY: ${ML_API_KEY:-}
     healthcheck:
       test: ["CMD-SHELL", "grep -aq queue:work /proc/*/cmdline"]

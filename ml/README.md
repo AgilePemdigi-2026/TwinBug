@@ -76,6 +76,38 @@ Response:
 }
 ```
 
+### POST /ocr
+OCR for bug screenshots. Laravel stores the returned `text` and appends it to the `description` field when calling `POST /detect`. The `/detect` and `/predict-duplicate` schemas are unchanged.
+
+Request (multipart/form-data, field `file`):
+
+```bash
+# curl
+curl -X POST http://127.0.0.1:8001/ocr \
+  -H "X-API-Key: <key>" \
+  -F "file=@screenshot.png"
+
+# PowerShell
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8001/ocr `
+  -Headers @{"X-API-Key" = "<key>"} `
+  -Form @{ file = Get-Item "screenshot.png" }
+```
+
+Response:
+```json
+{
+  "text": "Server Error\n500",
+  "lines": 2,
+  "truncated": false
+}
+```
+
+- Accepts `image/png`, `image/jpeg`, `image/webp` only (otherwise 415).
+- Max size from `OCR_MAX_BYTES` (otherwise 413).
+- Longest side is downscaled to at most 2000 px before OCR.
+- Upload is never written to disk; image contents are never logged.
+- Protected by the same `X-API-Key` check as `/detect`.
+
 ## Environment variables
 
 | Variable | Default | Description |
@@ -83,6 +115,11 @@ Response:
 | `ML_API_KEY` | (unset) | If set, `POST /detect` and `POST /predict-duplicate` require header `X-API-Key` equal to this value (otherwise 401). `GET /health` stays public. If unset, no key is required and a warning is logged at startup. |
 | `MAX_CANDIDATES` | `1000` | Maximum candidates allowed per `/detect` request. Exceeding returns 422. |
 | `PORT` | `7860` | Port the server listens on (used by the Docker CMD). |
+| `OCR_MAX_BYTES` | `5242880` | Max upload size in bytes for `POST /ocr`. Exceeding returns 413. |
+| `OCR_MAX_CHARS` | `300` | Max characters of cleaned OCR text returned by `POST /ocr`. Set `truncated=true` when capped. |
+| `OCR_NOISE_WORDS` | `Search,VPN,OVPN,Pinterest,Chrome,Edge` | Comma-separated noise words dropped by `POST /ocr` text cleaning. |
+| `OCR_IGNORE_TOP` | `0.12` | Top fraction of image height ignored by `POST /ocr` (browser tabs/address bar). Set 0 to disable. |
+| `OCR_IGNORE_BOTTOM` | `0.08` | Bottom fraction of image height ignored by `POST /ocr` (taskbar). Set 0 to disable. |
 
 ## Run locally
 
@@ -111,7 +148,7 @@ Then call `http://127.0.0.1:8001/health`.
 
 ## RAM expectations
 
-The sentence-transformers model plus PyTorch CPU needs roughly **1–2 GB RAM**. The free HF Spaces CPU tier should be sufficient.
+The sentence-transformers model plus PyTorch CPU needs roughly **1–2 GB RAM**. The OCR engine (RapidOCR/ONNXRuntime CPU plus OpenCV headless) adds roughly **0.3–0.6 GB RAM**. The free HF Spaces CPU tier should be sufficient.
 
 ## Model folder
 

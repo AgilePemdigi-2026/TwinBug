@@ -5,5 +5,21 @@ __pycache__/
 .git
 *.zip
 hasil*.txt
+# local OCR prototype material — never commit
+ocr_try.py
+samples/
+*.jpg
+*.jpeg
+*.png
+
+# model weights / local model folders
+*.safetensors
+*.bin
+*.pt
+model_*/
+
+# test caches
+.pytest_cache/
+
 tests/
 model_multilingual_minilm_l12/
