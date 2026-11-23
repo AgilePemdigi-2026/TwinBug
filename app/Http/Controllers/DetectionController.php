@@ -58,11 +58,17 @@ class DetectionController extends Controller
      */
     public function rerun(BugReport $bugReport): RedirectResponse
     {
+        $user = request()->user();
+
         abort_unless(
-            $bugReport->application_id === request()->user()->application_id
-            && request()->user()->role === UserRole::Developer,
+            $user->role === UserRole::Developer
+            && $bugReport->application_id === $user->application_id,
             403
         );
+
+        if (in_array($bugReport->detection_status, [DetectionStatus::Pending, DetectionStatus::Processing])) {
+            abort(403, 'Analisis tidak dapat dijalankan ulang saat masih dalam status pending atau processing.');
+        }
 
         $bugReport->update([
             'detection_status' => DetectionStatus::Pending->value,
@@ -73,7 +79,7 @@ class DetectionController extends Controller
         AnalyzeBugReport::dispatch($bugReport)->afterCommit();
 
         return redirect()
-            ->route('bug-reports.detection', $bugReport)
+            ->route('report.detection_result', $bugReport)
             ->with('success', 'Analisis duplikasi telah dijalankan ulang. Tunggu beberapa saat hingga selesai.');
     }
 }

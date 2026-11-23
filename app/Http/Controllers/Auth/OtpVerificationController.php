@@ -21,7 +21,24 @@ class OtpVerificationController extends Controller
                 ->withErrors(['email' => 'Silakan daftar terlebih dahulu.']);
         }
 
-        return view('auth.otp-verify');
+        $email = $request->session()->get('pending_otp_email');
+        $otpResendRemaining = 0;
+
+        if ($email) {
+            $cooldownSeconds = (int) config('auth.otp.resend_cooldown', 60);
+            $otpToken = OTPToken::where('email', $email)->first();
+
+            if ($otpToken && $otpToken->otp_sent_at) {
+                $elapsed = now()->diffInSeconds($otpToken->otp_sent_at);
+                if ($elapsed < $cooldownSeconds) {
+                    $otpResendRemaining = $cooldownSeconds - $elapsed;
+                }
+            }
+        }
+
+        return view('auth.otp-verify', [
+            'otpResendRemaining' => $otpResendRemaining,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse

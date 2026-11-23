@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'candidate_report_id',
     'rank',
     'text_score',
+    'image_score',
     'model',
 ])]
 class DetectionResult extends Model
@@ -28,6 +29,7 @@ class DetectionResult extends Model
         return [
             'rank' => 'integer',
             'text_score' => 'decimal:6',
+            'image_score' => 'decimal:6',
             'model' => 'string',
         ];
     }

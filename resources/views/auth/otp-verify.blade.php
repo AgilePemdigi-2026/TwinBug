@@ -46,6 +46,34 @@
                     </button>
                 </div>
 
+                {{-- OTP Resend --}}
+                <div class="pt-4">
+                    <form method="POST" action="{{ route('otp.resend') }}" id="otp-resend-form">
+                        @csrf
+
+                        <button
+                            type="submit"
+                            id="otp-resend-button"
+                            @if ($otpResendRemaining > 0) disabled @endif
+                            class="w-full rounded-xl border border-divider bg-white px-4 py-3 text-sm font-semibold text-sage-600 shadow-xs transition @if ($otpResendRemaining > 0) bg-sage-50 text-sage-400 cursor-not-allowed @else hover:bg-sage-50 @endif focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-500/40 focus-visible:ring-offset-2"
+                        >
+                            <span id="otp-resend-label">
+                                @if ($otpResendRemaining > 0)
+                                    Kirim ulang dalam {{ $otpResendRemaining }} detik
+                                @else
+                                    Kirim ulang kode
+                                @endif
+                            </span>
+                        </button>
+                    </form>
+
+                    <p id="otp-resend-countdown" class="mt-2 text-xs text-label/60 text-center" aria-live="polite">
+                        @if ($otpResendRemaining > 0)
+                            Kode OTP baru dapat dikirim dalam {{ $otpResendRemaining }} detik.
+                        @endif
+                    </p>
+                </div>
+
                 <p class="mt-6 text-center text-sm text-body">
                     Belum punya akun?
                     <a href="{{ route('register') }}" class="font-semibold text-sage-600 transition hover:text-sage-700 hover:underline">Daftar</a>
@@ -53,4 +81,41 @@
             </form>
         </div>
     </div>
+
+    @if ($otpResendRemaining > 0)
+    <script>
+        (function () {
+            var remaining = {{ $otpResendRemaining }};
+            var labelEl = document.getElementById('otp-resend-label');
+            var countdownEl = document.getElementById('otp-resend-countdown');
+            var btn = document.getElementById('otp-resend-button');
+
+            var timer = setInterval(function () {
+                remaining -= 1;
+
+                if (labelEl) {
+                    labelEl.textContent = 'Kirim ulang dalam ' + remaining + ' detik';
+                }
+
+                if (countdownEl) {
+                    countdownEl.textContent = 'Kode OTP baru dapat dikirim dalam ' + remaining + ' detik.';
+                }
+
+                if (remaining <= 0) {
+                    clearInterval(timer);
+                    if (labelEl) {
+                        labelEl.textContent = 'Kirim ulang kode';
+                    }
+                    if (countdownEl) {
+                        countdownEl.textContent = '';
+                    }
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.className = 'w-full rounded-xl border border-divider bg-white px-4 py-3 text-sm font-semibold text-sage-600 shadow-xs transition hover:bg-sage-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-500/40 focus-visible:ring-offset-2';
+                    }
+                }
+            }, 1000);
+        })();
+    </script>
+    @endif
 </x-layouts.auth>

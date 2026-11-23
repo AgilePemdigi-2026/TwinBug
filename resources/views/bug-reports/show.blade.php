@@ -77,7 +77,7 @@
             <div class="flex flex-wrap items-center gap-2">
                 @if (auth()->user()->role->value === 'developer')
                     <a
-                        href="{{ route('bug-reports.detection', $report) }}"
+                        href="{{ route('report.detection_result', $report) }}"
                         class="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-divider bg-white px-3.5 py-2 text-xs font-semibold text-ink shadow-2xs transition hover:bg-input"
                     >
                         <x-auth.icon name="bug" class="size-3.5 text-sage-600" />

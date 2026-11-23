@@ -114,4 +114,20 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | OTP Resend Settings
+    |--------------------------------------------------------------------------
+    |
+    | These options control the rate limiting and cooldown for OTP resend
+    | requests during registration verification.
+    |
+    */
+
+    'otp' => [
+        'resend_cooldown' => (int) env('OTP_RESEND_COOLDOWN', 60),
+        'max_resends_per_hour' => (int) env('OTP_MAX_RESENDS_PER_HOUR', 5),
+        'resend_limit_per_ip' => (int) env('OTP_RESEND_LIMIT_PER_IP', 5),
+    ],
+
 ];

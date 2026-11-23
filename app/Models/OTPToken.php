@@ -17,6 +17,7 @@ class OTPToken extends Model
         'email',
         'otp_code',
         'expires_at',
+        'otp_sent_at',
     ];
 
     /**
@@ -28,6 +29,7 @@ class OTPToken extends Model
     {
         return [
             'expires_at' => 'datetime',
+            'otp_sent_at' => 'datetime',
         ];
     }
 }

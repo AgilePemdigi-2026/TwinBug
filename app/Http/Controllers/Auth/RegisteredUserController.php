@@ -34,6 +34,7 @@ class RegisteredUserController extends Controller
             [
                 'otp_code' => Hash::make($otpCode),
                 'expires_at' => now()->addMinutes(self::OTP_LIFETIME_MINUTES),
+                'otp_sent_at' => now(),
             ],
         );
 

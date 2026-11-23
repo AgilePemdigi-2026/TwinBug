@@ -4,6 +4,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\OtpResendController;
 use App\Http\Controllers\Auth\OtpVerificationController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -16,8 +17,8 @@ use App\Http\Middleware\EnsureUserHasApplication;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return auth()->check() ? to_route('dashboard') : view('auth.login');
-});
+    return auth()->check() ? to_route('dashboard') : view('landing');
+})->name('home');
 
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
@@ -38,6 +39,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/otp/verify', [OtpVerificationController::class, 'store'])
         ->middleware('throttle:3,1')
         ->name('otp.verify.submit');
+    Route::post('/otp/resend', [OtpResendController::class, '__invoke'])
+        ->name('otp.resend');
     Route::get('/otp/success', function () {
         return view('auth.otp-success');
     })->name('otp.success');
@@ -75,8 +78,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/bug-reports/{bugReport}', [BugReportController::class, 'show'])->name('bug-reports.show');
         Route::patch('/bug-reports/{bugReport}/status', [BugReportController::class, 'updateStatus'])
             ->name('bug-reports.status.update');
-        Route::get('/bug-reports/{bugReport}/detection', [DetectionController::class, 'show'])
-            ->name('bug-reports.detection');
+
+        // Duplicate detection results
+        Route::get('/report/detection-result/{bugReport}', [DetectionController::class, 'show'])
+            ->name('report.detection_result');
+        Route::get('/bug-reports/{bugReport}/detection', function ($bugReport) {
+            return redirect()->route('report.detection_result', $bugReport);
+        })->name('bug-reports.detection');
         Route::post('/bug-reports/{bugReport}/detection/rerun', [DetectionController::class, 'rerun'])
             ->name('bug-reports.detection.rerun');
     });

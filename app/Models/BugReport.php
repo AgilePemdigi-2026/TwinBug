@@ -46,6 +46,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'ocr_text',
     'ocr_status',
     'ocr_error',
+    'screenshot_hash',
 ])]
 class BugReport extends Model
 {
@@ -171,6 +172,22 @@ class BugReport extends Model
     public function ocrStatusLabel(): string
     {
         return $this->ocr_status ? $this->ocr_status->label() : '-';
+    }
+
+    /**
+     * Check whether this report has a screenshot hash computed.
+     */
+    public function hasScreenshotHash(): bool
+    {
+        return filled($this->screenshot_hash);
+    }
+
+    /**
+     * Check whether screenshot hashing is still pending (hash not yet computed).
+     */
+    public function hashIsPending(): bool
+    {
+        return ! $this->hasScreenshotHash() && $this->hasScreenshot();
     }
 
     /**

@@ -148,7 +148,7 @@
                     @csrf
                     <button type="submit" class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-danger px-4 py-2 text-xs font-semibold text-white shadow-cta transition hover:bg-danger/90 active:scale-95 cursor-pointer">
                         <x-auth.icon name="refresh" class="size-3.5" />
-                        <span>Analisis Ulang</span>
+                        <span>Jalankan ulang analisis</span>
                     </button>
                 </form>
             </div>
@@ -164,22 +164,12 @@
                     </h2>
                 </div>
                 <p class="mt-2 text-xs text-label">
-                    {{ $bugReport->detection_status === App\Enums\DetectionStatus::Pending
-                        ? 'Hasil deteksi duplikasi belum tersedia. Klik tombol di bawah untuk memulai analisis.'
-                        : 'Analisis duplikasi sedang diproses. Harap tunggu hingga selesai.' }}
+                    Analisis kemiripan sedang diproses. Silakan cek kembali beberapa saat lagi.
                 </p>
 
-                @if ($bugReport->detection_status === App\Enums\DetectionStatus::Pending)
-                    <form method="POST" action="{{ route('bug-reports.detection.rerun', $bugReport) }}">
-                        @csrf
-                        <button type="submit" class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-sage-500 px-4 py-2 text-xs font-semibold text-white shadow-cta transition hover:bg-sage-600 active:scale-95 cursor-pointer">
-                            <x-auth.icon name="sparkles" class="size-3.5" />
-                            <span>Mulai Analisis</span>
-                        </button>
-                    </form>
-                @else
+                @if ($bugReport->detection_status === App\Enums\DetectionStatus::Processing)
                     <a
-                        href="{{ route('bug-reports.detection', $bugReport) }}"
+                        href="{{ route('report.detection_result', $bugReport) }}"
                         class="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-divider bg-white px-4 py-2 text-xs font-semibold text-ink shadow-2xs transition hover:bg-input"
                     >
                         <x-auth.icon name="refresh" class="size-3.5" />
@@ -198,7 +188,7 @@
                         <span class="mb-3 grid size-10 place-items-center rounded-xl bg-emerald-100 text-emerald-700 shadow-2xs">
                             <x-auth.icon name="check" class="size-5" />
                         </span>
-                        <h3 class="font-serif text-sm font-bold text-ink">Tidak Ada Laporan Serupa</h3>
+                        <h3 class="font-serif text-sm font-bold text-ink">Tidak ditemukan laporan bug serupa.</h3>
                         <p class="mt-1 max-w-md text-xs leading-relaxed text-label">
                             Sistem tidak menemukan laporan bug historis yang secara signifikan mirip dengan laporan ini berdasarkan ambang batas deteksi.
                         </p>
@@ -212,7 +202,7 @@
                 <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
                     <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
                         <div>
-                            <h2 class="font-serif text-base font-bold text-ink">Laporan Kandidat Mirip</h2>
+                            <h2 class="font-serif text-base font-bold text-ink">Similar Historical Bug Reports</h2>
                             <p class="text-xs text-label">
                                 Dihasilkan oleh model <span class="font-mono text-[11px]">{{ config('services.ml.model', 'paraphrase-multilingual-MiniLM-L12-v2') }}</span>. Skor menunjukkan potensi kemiripan.
                             </p>
@@ -230,7 +220,8 @@
                                     <th class="py-2.5 px-4 font-semibold">Judul Laporan</th>
                                     <th class="py-2.5 px-3 font-semibold">Modul</th>
                                     <th class="py-2.5 px-3 font-semibold">Status</th>
-                                    <th class="py-2.5 px-3 w-20 text-right font-semibold">Skor</th>
+                                    <th class="py-2.5 px-3 w-20 text-right font-semibold">Skor Teks</th>
+                                    <th class="py-2.5 px-3 w-20 text-right font-semibold">Skor Gambar</th>
                                     <th class="py-2.5 px-3 w-20 text-center font-semibold">Tingkat</th>
                                     <th class="py-2.5 px-4 text-right w-24 font-semibold">Aksi</th>
                                 </tr>
@@ -238,22 +229,26 @@
                             <tbody class="divide-y divide-divider/70">
                                 @foreach ($results as $result)
                                     @php
-                                        $scorePercent = (float) $result->text_score * 100;
+                                        $textScore = $result->text_score ?? null;
+                                        $imageScore = $result->image_score ?? null;
+                                        $combined = max($textScore ?? 0, $imageScore ?? 0);
+                                        $combinedPercent = $combined * 100;
+
                                         $badgeLevel = 'low';
                                         $badgeLabel = 'Rendah';
-                                        $badgeClasses = 'bg-sage-100 text-sage-800';
+                                        $badgeClasses = 'bg-slate-100 text-slate-800';
                                         $mediumMin = (float) (config('detection.badge_medium.min') ?? 0.65);
                                         $highMin = (float) (config('detection.badge_high.min') ?? 0.80);
 
-                                        if ($scorePercent >= $highMin * 100) {
+                                        if ($combinedPercent >= $highMin * 100) {
                                             $badgeLevel = 'high';
                                             $badgeLabel = 'Tinggi';
                                             $badgeClasses = 'bg-rose-50 text-rose-700 ring-1 ring-rose-200';
-                                        } elseif ($scorePercent >= $mediumMin * 100) {
+                                        } elseif ($combinedPercent >= $mediumMin * 100) {
                                             $badgeLevel = 'medium';
                                             $badgeLabel = 'Sedang';
                                             $badgeClasses = 'bg-amber-50 text-amber-800 ring-1 ring-amber-200';
-                                        } elseif ($scorePercent >= ($bugReport->detection_threshold ?? 0) * 100) {
+                                        } elseif ($combinedPercent >= ($bugReport->detection_threshold ?? 0) * 100) {
                                             $badgeLevel = 'low';
                                             $badgeLabel = 'Rendah';
                                             $badgeClasses = 'bg-slate-100 text-slate-800';
@@ -286,13 +281,24 @@
                                             </span>
                                         </td>
                                         <td class="py-3 px-3 text-right">
-                                            <span class="font-serif text-sm font-bold text-ink">{{ number_format($scorePercent, 1) }}%</span>
-                                        </td>
-                                        <td class="py-3 px-3 text-center">
-                                            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $badgeClasses }}">
-                                                {{ $badgeLabel }}
-                                            </span>
-                                        </td>
+                                        @if ($textScore !== null)
+                                            <span class="font-serif text-sm font-bold text-ink">{{ number_format($textScore * 100, 1) }}%</span>
+                                        @else
+                                            <span class="text-xs text-label/50 italic">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="py-3 px-3 text-right">
+                                        @if ($imageScore !== null)
+                                            <span class="font-serif text-sm font-bold text-ink">{{ number_format($imageScore * 100, 1) }}%</span>
+                                        @else
+                                            <span class="text-xs text-label/50 italic">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="py-3 px-3 text-center">
+                                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $badgeClasses }}">
+                                            {{ $badgeLabel }}
+                                        </span>
+                                    </td>
                                         <td class="py-3 px-4 text-right">
                                             <a
                                                 href="{{ route('bug-reports.detection', ['bugReport' => $bugReport, 'candidate' => $result->candidate_report_id]) }}"
@@ -339,7 +345,11 @@
                                 <div class="flex items-center gap-3">
                                     <div>
                                         <p class="text-[10px] font-bold uppercase tracking-wider text-label">Skor Kemiripan</p>
-                                        <p class="font-serif text-2xl font-bold text-ink">{{ number_format((float) $selectedResult->text_score * 100, 1) }}%</p>
+                                        @if ($selectedResult->text_score !== null)
+                                            <p class="font-serif text-2xl font-bold text-ink">{{ number_format((float) $selectedResult->text_score * 100, 1) }}%</p>
+                                        @else
+                                            <p class="font-serif text-2xl font-bold text-ink">-</p>
+                                        @endif
                                     </div>
                                     <span class="rounded-md bg-sage-100 px-2 py-0.5 text-[10px] font-semibold text-sage-800">
                                         Rank #{{ $selectedResult->rank }} dari {{ $results->count() }}
@@ -347,6 +357,13 @@
                                 </div>
                                 <p class="text-xs text-label leading-relaxed max-w-md">
                                     Dihitung dari judul, deskripsi, dan konteks visual screenshot bila tersedia.
+                                </p>
+                                <p class="text-xs text-label">
+                                    @if ($selectedResult->image_score !== null)
+                                        Skor kemiripan gambar: {{ number_format((float) $selectedResult->image_score * 100, 1) }}%
+                                    @else
+                                        Skor kemiripan gambar: tidak tersedia
+                                    @endif
                                 </p>
                             </div>
                         </div>

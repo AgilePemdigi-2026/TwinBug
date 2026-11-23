@@ -11,6 +11,7 @@ use App\Models\BugReport;
 use App\Models\DetectionResult;
 use App\Models\User;
 use App\Services\DuplicateDetectionClient;
+use App\Services\ImageHasher;
 use App\Services\ScreenshotAnalysisClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
@@ -122,7 +123,7 @@ class DuplicateDetectionTest extends TestCase
         });
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $this->assertSame(DetectionStatus::Completed, $source->fresh()->detection_status);
         $this->assertSame(0.5097, $source->fresh()->detection_threshold);
@@ -152,7 +153,7 @@ class DuplicateDetectionTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $this->assertSame(DetectionStatus::Completed, $source->fresh()->detection_status);
         $this->assertSame(0.50, $source->fresh()->detection_threshold);
@@ -175,7 +176,7 @@ class DuplicateDetectionTest extends TestCase
         $job = new AnalyzeBugReport($source);
 
         try {
-            $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+            $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
         } catch (\Throwable $e) {
             $job->failed($e);
         }
@@ -200,7 +201,7 @@ class DuplicateDetectionTest extends TestCase
         $job = new AnalyzeBugReport($source);
 
         try {
-            $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+            $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
         } catch (\Throwable $e) {
             $job->failed($e);
         }
@@ -236,7 +237,7 @@ class DuplicateDetectionTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $this->assertArrayNotHasKey('threshold', $captured);
         $this->assertSame('', $captured['description']);
@@ -272,7 +273,7 @@ class DuplicateDetectionTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $this->assertStringContainsString(
             'Konteks visual screenshot: Screenshot menampilkan halaman checkout.',
@@ -314,7 +315,7 @@ class DuplicateDetectionTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $this->assertStringContainsString('Deskripsi sumber.', $captured['description']);
         $this->assertStringContainsString('Teks hasil OCR dari screenshot.', $captured['description']);
@@ -339,7 +340,7 @@ class DuplicateDetectionTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $this->assertSame('Deskripsi asli.', $captured['description']);
     }
@@ -370,7 +371,7 @@ class DuplicateDetectionTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $candidates = collect($captured['candidates'])->keyBy('id');
         $this->assertStringContainsString('Teks OCR kandidat.', $candidates[$candidateWithOcr->id]['description']);
@@ -402,7 +403,7 @@ class DuplicateDetectionTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $candidateIds = array_map(fn (array $c) => (int) $c['id'], $captured['candidates']);
         $this->assertNotContains($source->id, $candidateIds);
@@ -437,7 +438,7 @@ class DuplicateDetectionTest extends TestCase
         }
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $this->assertSame(3, count($captured['candidates']));
     }
@@ -464,8 +465,8 @@ class DuplicateDetectionTest extends TestCase
         });
 
         $job = new AnalyzeBugReport($source);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $this->assertCount(1, $source->fresh()->detectionResults);
         $this->assertSame(DetectionStatus::Completed, $source->fresh()->detection_status);

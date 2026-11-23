@@ -57,7 +57,7 @@ class DetectionPageTest extends TestCase
         ]);
         $report = $this->createBugReport($application);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', $report));
+        $response = $this->actingAs($developer)->get(route('report.detection_result', $report));
 
         $response->assertStatus(200);
         $response->assertSee($report->title);
@@ -73,7 +73,7 @@ class DetectionPageTest extends TestCase
         $report = $this->createBugReport($application);
 
         $this->actingAs($reporter)
-            ->get(route('bug-reports.detection', $report))
+            ->get(route('report.detection_result', $report))
             ->assertStatus(403);
     }
 
@@ -88,11 +88,11 @@ class DetectionPageTest extends TestCase
         $report = $this->createBugReport($otherApplication);
 
         $this->actingAs($developer)
-            ->get(route('bug-reports.detection', $report))
+            ->get(route('report.detection_result', $report))
             ->assertStatus(403);
     }
 
-    public function test_pending_state_renders_start_button(): void
+    public function test_pending_state_renders_processing_message(): void
     {
         $application = Application::factory()->create();
         $developer = User::factory()->create([
@@ -103,14 +103,14 @@ class DetectionPageTest extends TestCase
             'detection_status' => DetectionStatus::Pending->value,
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', $report));
+        $response = $this->actingAs($developer)->get(route('report.detection_result', $report));
 
         $response->assertStatus(200);
-        $response->assertSee('Menunggu Analisis');
-        $response->assertSee('Mulai Analisis');
+        $response->assertSee('Analisis kemiripan sedang diproses. Silakan cek kembali beberapa saat lagi.');
+        $response->assertDontSee('Mulai Analisis');
     }
 
-    public function test_processing_state_renders_refresh_button(): void
+    public function test_processing_state_renders_processing_message(): void
     {
         $application = Application::factory()->create();
         $developer = User::factory()->create([
@@ -121,10 +121,10 @@ class DetectionPageTest extends TestCase
             'detection_status' => DetectionStatus::Processing->value,
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', $report));
+        $response = $this->actingAs($developer)->get(route('report.detection_result', $report));
 
         $response->assertStatus(200);
-        $response->assertSee('Sedang Menganalisis');
+        $response->assertSee('Analisis kemiripan sedang diproses. Silakan cek kembali beberapa saat lagi.');
         $response->assertSee('Segarkan Halaman');
     }
 
@@ -172,10 +172,10 @@ class DetectionPageTest extends TestCase
             'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', $source));
+        $response = $this->actingAs($developer)->get(route('report.detection_result', $source));
 
         $response->assertStatus(200);
-        $response->assertSee('Laporan Kandidat Mirip');
+        $response->assertSee('Similar Historical Bug Reports');
         $response->assertSee('Kandidat Tertinggi');
         $response->assertSee('Kandidat Kedua');
         $response->assertSee('92.0%');
@@ -212,7 +212,7 @@ class DetectionPageTest extends TestCase
             'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', [
+        $response = $this->actingAs($developer)->get(route('report.detection_result', [
             'bugReport' => $source,
             'candidate' => $candidate->id,
         ]));
@@ -251,7 +251,7 @@ class DetectionPageTest extends TestCase
             'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', [
+        $response = $this->actingAs($developer)->get(route('report.detection_result', [
             'bugReport' => $source,
             'candidate' => $candidate->id,
         ]));
@@ -286,7 +286,7 @@ class DetectionPageTest extends TestCase
             'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', [
+        $response = $this->actingAs($developer)->get(route('report.detection_result', [
             'bugReport' => $source,
             'candidate' => $candidate->id,
         ]));
@@ -308,10 +308,10 @@ class DetectionPageTest extends TestCase
             'detected_at' => now(),
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', $report));
+        $response = $this->actingAs($developer)->get(route('report.detection_result', $report));
 
         $response->assertStatus(200);
-        $response->assertSee('Tidak Ada Laporan Serupa');
+        $response->assertSee('Tidak ditemukan laporan bug serupa.');
     }
 
     public function test_failed_state_renders_error_and_rerun_button(): void
@@ -326,12 +326,12 @@ class DetectionPageTest extends TestCase
             'detection_error' => 'Koneksi ke layanan ML gagal.',
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', $report));
+        $response = $this->actingAs($developer)->get(route('report.detection_result', $report));
 
         $response->assertStatus(200);
         $response->assertSee('Analisis Gagal');
         $response->assertSee('Koneksi ke layanan ML gagal.');
-        $response->assertSee('Analisis Ulang');
+        $response->assertSee('Jalankan ulang analisis');
     }
 
     public function test_rerun_dispatches_job_and_resets_status(): void
@@ -351,7 +351,7 @@ class DetectionPageTest extends TestCase
         $response = $this->actingAs($developer)
             ->post(route('bug-reports.detection.rerun', $report));
 
-        $response->assertRedirect(route('bug-reports.detection', $report));
+        $response->assertRedirect(route('report.detection_result', $report));
         $this->assertSame(DetectionStatus::Pending, $report->fresh()->detection_status);
         $this->assertNull($report->fresh()->detection_error);
         Queue::assertPushed(AnalyzeBugReport::class);
@@ -416,7 +416,7 @@ class DetectionPageTest extends TestCase
             'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', $source));
+        $response = $this->actingAs($developer)->get(route('report.detection_result', $source));
 
         $response->assertStatus(200);
         $response->assertSee('Tinggi');
@@ -436,7 +436,7 @@ class DetectionPageTest extends TestCase
             'detected_at' => now(),
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', $report));
+        $response = $this->actingAs($developer)->get(route('report.detection_result', $report));
 
         $response->assertStatus(200);
         $response->assertSee('Hasil deteksi adalah saran saja');
@@ -466,7 +466,7 @@ class DetectionPageTest extends TestCase
             'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
         ]);
 
-        $response = $this->actingAs($developer)->get(route('bug-reports.detection', $source));
+        $response = $this->actingAs($developer)->get(route('report.detection_result', $source));
 
         $response->assertStatus(200);
         // Description should be escaped, not rendered as HTML
@@ -486,7 +486,7 @@ class DetectionPageTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Deteksi Duplikasi');
-        $response->assertSee(route('bug-reports.detection', $report));
+        $response->assertSee(route('report.detection_result', $report));
     }
 
     public function test_detection_link_hidden_on_show_page_for_reporter(): void
@@ -527,5 +527,179 @@ class DetectionPageTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Deteksi Duplikasi');
+    }
+
+    public function test_rerun_guard_blocks_when_pending(): void
+    {
+        Queue::fake();
+
+        $application = Application::factory()->create();
+        $developer = User::factory()->create([
+            'role' => UserRole::Developer,
+            'application_id' => $application->id,
+        ]);
+        $report = $this->createBugReport($application, [
+            'detection_status' => DetectionStatus::Pending->value,
+        ]);
+
+        $this->actingAs($developer)
+            ->post(route('bug-reports.detection.rerun', $report))
+            ->assertStatus(403);
+
+        Queue::assertNotPushed(AnalyzeBugReport::class);
+    }
+
+    public function test_rerun_guard_blocks_when_processing(): void
+    {
+        Queue::fake();
+
+        $application = Application::factory()->create();
+        $developer = User::factory()->create([
+            'role' => UserRole::Developer,
+            'application_id' => $application->id,
+        ]);
+        $report = $this->createBugReport($application, [
+            'detection_status' => DetectionStatus::Processing->value,
+        ]);
+
+        $this->actingAs($developer)
+            ->post(route('bug-reports.detection.rerun', $report))
+            ->assertStatus(403);
+
+        Queue::assertNotPushed(AnalyzeBugReport::class);
+    }
+
+    public function test_rerun_guard_allows_when_failed(): void
+    {
+        Queue::fake();
+
+        $application = Application::factory()->create();
+        $developer = User::factory()->create([
+            'role' => UserRole::Developer,
+            'application_id' => $application->id,
+        ]);
+        $report = $this->createBugReport($application, [
+            'detection_status' => DetectionStatus::Failed->value,
+        ]);
+
+        $response = $this->actingAs($developer)
+            ->post(route('bug-reports.detection.rerun', $report));
+
+        $response->assertRedirect(route('report.detection_result', $report));
+        $this->assertSame(DetectionStatus::Pending, $report->fresh()->detection_status);
+        Queue::assertPushed(AnalyzeBugReport::class);
+    }
+
+    public function test_comparison_shows_image_similarity_not_available(): void
+    {
+        $application = Application::factory()->create();
+        $developer = User::factory()->create([
+            'role' => UserRole::Developer,
+            'application_id' => $application->id,
+        ]);
+        $source = $this->createBugReport($application, [
+            'title' => 'Laporan Sumber',
+            'detection_status' => DetectionStatus::Completed->value,
+            'detected_at' => now(),
+        ]);
+        $candidate = $this->createBugReport($application, [
+            'title' => 'Kandidat Mirip',
+            'detection_status' => DetectionStatus::Completed->value,
+        ]);
+        DetectionResult::create([
+            'bug_report_id' => $source->id,
+            'candidate_report_id' => $candidate->id,
+            'rank' => 1,
+            'text_score' => 0.92,
+            'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
+        ]);
+
+        $response = $this->actingAs($developer)->get(route('report.detection_result', [
+            'bugReport' => $source,
+            'candidate' => $candidate->id,
+        ]));
+
+        $response->assertStatus(200);
+        $response->assertSee('Perbandingan Sampingan');
+        $response->assertSee('Skor Kemiripan');
+        $response->assertSee('92.0%');
+        $response->assertSee('Skor kemiripan gambar: tidak tersedia');
+    }
+
+    public function test_list_shows_title_score_and_status_for_each_result(): void
+    {
+        $application = Application::factory()->create();
+        $developer = User::factory()->create([
+            'role' => UserRole::Developer,
+            'application_id' => $application->id,
+        ]);
+        $source = $this->createBugReport($application, [
+            'detection_status' => DetectionStatus::Completed->value,
+            'detection_threshold' => 0.5097,
+            'detected_at' => now(),
+        ]);
+        $candidate1 = $this->createBugReport($application, [
+            'title' => 'Kandidat Pertama',
+            'detection_status' => DetectionStatus::Completed->value,
+        ]);
+        $candidate2 = $this->createBugReport($application, [
+            'title' => 'Kandidat Kedua',
+            'detection_status' => DetectionStatus::Processing->value,
+        ]);
+
+        DetectionResult::create([
+            'bug_report_id' => $source->id,
+            'candidate_report_id' => $candidate1->id,
+            'rank' => 1,
+            'text_score' => 0.92,
+            'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
+        ]);
+        DetectionResult::create([
+            'bug_report_id' => $source->id,
+            'candidate_report_id' => $candidate2->id,
+            'rank' => 2,
+            'text_score' => 0.85,
+            'model' => 'paraphrase-multilingual-MiniLM-L12-v2',
+        ]);
+
+        $response = $this->actingAs($developer)->get(route('report.detection_result', $source));
+
+        $response->assertStatus(200);
+        $response->assertSee('Similar Historical Bug Reports');
+        $response->assertSee('Kandidat Pertama');
+        $response->assertSee('Kandidat Kedua');
+        $response->assertSee('92.0%');
+        $response->assertSee('85.0%');
+        $response->assertSee('Terbuka');
+        $response->assertSeeInOrder(['Kandidat Pertama', 'Kandidat Kedua']);
+    }
+
+    public function test_reporter_gets_403_on_new_route(): void
+    {
+        $application = Application::factory()->create();
+        $reporter = User::factory()->create([
+            'role' => UserRole::Reporter,
+            'application_id' => $application->id,
+        ]);
+        $report = $this->createBugReport($application);
+
+        $this->actingAs($reporter)
+            ->get(route('report.detection_result', $report))
+            ->assertStatus(403);
+    }
+
+    public function test_developer_from_another_application_gets_403_on_new_route(): void
+    {
+        $ownApplication = Application::factory()->create();
+        $otherApplication = Application::factory()->create();
+        $developer = User::factory()->create([
+            'role' => UserRole::Developer,
+            'application_id' => $ownApplication->id,
+        ]);
+        $report = $this->createBugReport($otherApplication);
+
+        $this->actingAs($developer)
+            ->get(route('report.detection_result', $report))
+            ->assertStatus(403);
     }
 }

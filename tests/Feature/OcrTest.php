@@ -11,6 +11,7 @@ use App\Models\Application;
 use App\Models\BugReport;
 use App\Models\User;
 use App\Services\DuplicateDetectionClient;
+use App\Services\ImageHasher;
 use App\Services\ScreenshotAnalysisClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -309,7 +310,7 @@ class OcrTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($report);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $report->refresh();
 
@@ -340,7 +341,7 @@ class OcrTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($report);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $report->refresh();
 
@@ -370,7 +371,7 @@ class OcrTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($report);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $report->refresh();
 
@@ -403,7 +404,7 @@ class OcrTest extends TestCase
         ]);
 
         $job = new AnalyzeBugReport($report);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
 
         $report->refresh();
 

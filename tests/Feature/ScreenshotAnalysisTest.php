@@ -9,6 +9,7 @@ use App\Models\Application;
 use App\Models\BugReport;
 use App\Models\User;
 use App\Services\DuplicateDetectionClient;
+use App\Services\ImageHasher;
 use App\Services\ScreenshotAnalysisClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -58,7 +59,7 @@ class ScreenshotAnalysisTest extends TestCase
     private function runJob(BugReport $report): void
     {
         $job = new AnalyzeBugReport($report);
-        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig());
+        $job->handle(DuplicateDetectionClient::fromConfig(), ScreenshotAnalysisClient::fromConfig(), new ImageHasher());
     }
 
     public function test_detection_job_analyzes_screenshot_and_stores_description(): void

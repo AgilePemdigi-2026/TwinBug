@@ -9,27 +9,24 @@
         </div>
 
         <div class="rounded-[24px] border border-white/70 bg-card p-7 shadow-card sm:p-9">
-            <header class="mb-7 text-center">
-                <p class="text-xs font-semibold uppercase tracking-widest text-ochre">Akun Berhasil Diverifikasi</p>
-                <h1 class="mt-2 font-serif text-[28px] font-semibold leading-tight text-ink">Selamat Datang!</h1>
-                <p class="mt-2 text-sm leading-6 text-body">Akun Anda telah berhasil diverifikasi melalui OTP. Anda sekarang dapat mengakses halaman utama.</p>
-            </header>
-
             <div class="mt-8 text-center">
-                <x-auth.icon name="bug" class="size-6 mb-4 text-sage-500" />
-
-                <h2 class="text-3xl font-serif font-bold text-ink mb-2">Akun Sudah Aktif</h2>
-
-                <p class="text-body mb-6">Akun TwinBug Anda telah diverifikasi dan siap digunakan.</p>
-
-                <div class="w-48 mx-auto rounded-xl bg-sage-500 px-6 py-3 text-sm font-bold text-white shadow-cta">
-                    <a href="{{ route('login') }}" class="hover:text-sage-100">
-                        Masuk ke Akun
-                    </a>
+                <div class="mx-auto size-16 rounded-full bg-sage-100 flex items-center justify-center text-sage-600 shadow-sm">
+                    <x-auth.icon name="check" class="size-8" aria-hidden="true" />
                 </div>
+
+                <h1 class="mt-6 font-serif text-[28px] font-bold leading-tight text-ink">Akun Sudah Aktif</h1>
+
+                <p class="mt-3 text-body leading-6">Akun TwinBug Anda telah diverifikasi dan siap digunakan.</p>
+
+                <a
+                    href="{{ route('login') }}"
+                    class="mt-8 block w-full rounded-xl bg-sage-500 px-4 py-3 text-sm font-bold text-white shadow-cta transition hover:bg-sage-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-500/40 focus-visible:ring-offset-2"
+                >
+                    Masuk ke Akun
+                </a>
             </div>
 
-            <p class="mt-6 text-center text-sm text-body/70">
+            <p class="mt-8 text-center text-sm text-body/70">
                 Tidak punya akun?
                 <a href="{{ route('register') }}" class="font-semibold text-sage-600 transition hover:text-sage-700 hover:underline">Daftar</a>
             </p>

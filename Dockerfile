@@ -19,7 +19,7 @@ FROM serversideup/php:8.5-fpm-nginx
 USER root
 RUN mkdir -p /data && touch /data/database.sqlite && chown -R www-data:www-data /data
 USER root
-RUN install-php-extensions intl
+RUN install-php-extensions intl gd
 USER www-data
 WORKDIR /var/www/html
 COPY --from=vendor --chown=www-data:www-data /app /var/www/html
