@@ -36,8 +36,8 @@
                 <span class="font-serif text-lg font-bold tracking-tight text-ink">TwinBug</span>
             </a>
 
-            {{-- Nav --}}
-            <nav class="flex items-center gap-1 rounded-xl border border-divider/70 bg-input/70 p-1" aria-label="Navigasi utama">
+            {{-- Nav (desktop) --}}
+            <nav class="hidden md:flex items-center gap-1 rounded-xl border border-divider/70 bg-input/70 p-1" aria-label="Navigasi utama">
                 @auth
                     <a href="{{ route('dashboard') }}"
                         class="rounded-lg px-3 py-1.5 text-xs font-medium transition hover:text-ink {{ request()->routeIs('dashboard') ? 'bg-white text-ink shadow-xs font-semibold' : 'text-label' }}">
@@ -60,8 +60,8 @@
                 </a>
             </nav>
 
-            {{-- CTA + User info + logout --}}
-            <div class="flex items-center gap-2.5">
+            {{-- CTA + User info + logout (desktop) --}}
+            <div class="hidden md:flex items-center gap-2.5">
                 @auth
                     <a href="{{ route('bug-reports.create') }}"
                         class="inline-flex items-center gap-1.5 rounded-lg bg-sage-500 px-3 py-1.5 text-xs font-semibold text-white shadow-cta transition hover:bg-sage-600 active:scale-95">
@@ -99,6 +99,77 @@
                     </a>
                 @endauth
             </div>
+
+            {{-- Mobile menu toggle --}}
+            <button
+                id="app-mobile-menu-toggle"
+                type="button"
+                class="md:hidden flex items-center rounded-lg border border-divider bg-white p-2.5 text-label hover:bg-input transition"
+                aria-expanded="false"
+                aria-controls="app-mobile-menu"
+                aria-label="Buka menu navigasi"
+            >
+                <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+        </div>
+
+        {{-- Mobile menu panel --}}
+        <div
+            id="app-mobile-menu"
+            class="md:hidden border-b border-divider bg-white hidden"
+            aria-labelledby="app-mobile-menu-toggle"
+        >
+            <div class="px-4 py-4 space-y-2">
+                @auth
+                    <a href="{{ route('dashboard') }}"
+                        class="block rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-input hover:text-ink {{ request()->routeIs('dashboard') ? 'bg-input text-ink font-semibold' : 'text-label' }}">
+                        Dashboard
+                    </a>
+                    <a href="{{ route('bug-reports.index') }}"
+                        class="block rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-input hover:text-ink {{ request()->routeIs('bug-reports.index') ? 'bg-input text-ink font-semibold' : 'text-label' }}">
+                        Daftar Laporan
+                    </a>
+                @endauth
+                <a href="{{ route('about') }}"
+                    class="block rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-input hover:text-ink {{ request()->routeIs('about') ? 'bg-input text-ink font-semibold' : 'text-label' }}">
+                    Tentang Kami
+                </a>
+                <a href="{{ route('faq') }}"
+                    class="block rounded-lg px-3 py-2 text-sm font-medium transition hover:bg-input hover:text-ink {{ request()->routeIs('faq') ? 'bg-input text-ink font-semibold' : 'text-label' }}">
+                    Bantuan & FAQ
+                </a>
+                <div class="border-t border-divider/50 my-3"></div>
+                @auth
+                    <a href="{{ route('bug-reports.create') }}"
+                        class="block rounded-lg bg-sage-500 px-3.5 py-2 text-sm font-semibold text-white text-center shadow-cta transition hover:bg-sage-600">
+                        + Buat Laporan
+                    </a>
+                    <a href="{{ route('profile') }}"
+                        class="block rounded-lg px-3 py-2 text-sm font-medium text-label transition hover:bg-input hover:text-ink">
+                        Profil Saya
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-danger transition hover:bg-danger/5">
+                            Keluar
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}"
+                        class="block rounded-lg px-3 py-2 text-sm font-medium text-label transition hover:bg-input hover:text-ink">
+                        Masuk
+                    </a>
+                    <a href="{{ route('register') }}"
+                        class="block rounded-lg bg-sage-500 px-3.5 py-2 text-sm font-semibold text-white text-center shadow-cta transition hover:bg-sage-600">
+                        Daftar
+                    </a>
+                @endauth
+            </div>
         </div>
     </header>
 
@@ -109,18 +180,18 @@
 
     {{-- ======================== FOOTER ======================== --}}
     <footer class="mt-16 border-t border-divider bg-white">
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 py-8">
-            <div class="flex items-center gap-3">
+        <div class="mx-auto flex flex-col gap-4 sm:flex-row max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col sm:flex-row items-center gap-3">
                 <span class="flex items-center gap-2">
                     <span class="grid size-5 place-items-center rounded-md bg-sage-500 text-white">
                         <x-auth.icon name="bug" class="size-3" />
                     </span>
                     <span class="font-serif text-sm font-bold tracking-tight text-ink">TwinBug</span>
                 </span>
-                <span class="text-[11px] text-label">© {{ date('Y') }} TwinBug Detection System. Arsitektur Berbasis AI
+                <span class="text-[11px] text-label text-center sm:text-left">© {{ date('Y') }} TwinBug Detection System. Arsitektur Berbasis AI
                     Multimodal.</span>
             </div>
-            <nav class="flex items-center gap-5" aria-label="Footer">
+            <nav class="flex flex-wrap justify-center items-center gap-5" aria-label="Footer">
                 <a href="{{ route('about') }}" class="text-xs text-label transition hover:text-ink">Tentang Kami</a>
                 <a href="#" class="text-xs text-label transition hover:text-ink">Dokumentasi API</a>
                 <a href="#" class="text-xs text-label transition hover:text-ink">Status Sistem</a>

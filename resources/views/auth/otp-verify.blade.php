@@ -16,13 +16,13 @@
             </header>
 
             @if ($message = Session('error'))
-                <div class="rounded-xl bg-red-100 border-red-400 text-red-700 px-4 py-3 mb-4" role="alert">
+                <div class="rounded-xl border border-danger/30 bg-rose-50/70 p-3.5 text-xs text-danger mb-4" role="alert">
                     {{ $message }}
                 </div>
             @endif
 
             @if ($message = Session('status'))
-                <div class="rounded-xl bg-green-100 border-green-400 text-green-700 px-4 py-3 mb-4" role="alert">
+                <div class="rounded-xl border border-success/30 bg-emerald-50/70 p-3.5 text-xs text-success mb-4" role="alert">
                     {{ $message }}
                 </div>
             @endif
@@ -30,7 +30,7 @@
             <form method="POST" action="{{ route('otp.verify.submit') }}" class="space-y-5">
                 @csrf
 
-                <div class="grid gap-5 sm:grid-cols-2">
+                <div>
                     <x-auth.field
                         name="otp_code"
                         label="Kode OTP"
@@ -45,40 +45,40 @@
                         Verifikasi
                     </button>
                 </div>
-
-                {{-- OTP Resend --}}
-                <div class="pt-4">
-                    <form method="POST" action="{{ route('otp.resend') }}" id="otp-resend-form">
-                        @csrf
-
-                        <button
-                            type="submit"
-                            id="otp-resend-button"
-                            @if ($otpResendRemaining > 0) disabled @endif
-                            class="w-full rounded-xl border border-divider bg-white px-4 py-3 text-sm font-semibold text-sage-600 shadow-xs transition @if ($otpResendRemaining > 0) bg-sage-50 text-sage-400 cursor-not-allowed @else hover:bg-sage-50 @endif focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-500/40 focus-visible:ring-offset-2"
-                        >
-                            <span id="otp-resend-label">
-                                @if ($otpResendRemaining > 0)
-                                    Kirim ulang dalam {{ $otpResendRemaining }} detik
-                                @else
-                                    Kirim ulang kode
-                                @endif
-                            </span>
-                        </button>
-                    </form>
-
-                    <p id="otp-resend-countdown" class="mt-2 text-xs text-label/60 text-center" aria-live="polite">
-                        @if ($otpResendRemaining > 0)
-                            Kode OTP baru dapat dikirim dalam {{ $otpResendRemaining }} detik.
-                        @endif
-                    </p>
-                </div>
-
-                <p class="mt-6 text-center text-sm text-body">
-                    Belum punya akun?
-                    <a href="{{ route('register') }}" class="font-semibold text-sage-600 transition hover:text-sage-700 hover:underline">Daftar</a>
-                </p>
             </form>
+
+            {{-- OTP Resend --}}
+            <div class="pt-4">
+                <form method="POST" action="{{ route('otp.resend') }}" id="otp-resend-form">
+                    @csrf
+
+                    <button
+                        type="submit"
+                        id="otp-resend-button"
+                        @if ($otpResendRemaining > 0) disabled @endif
+                        class="w-full rounded-xl border border-divider bg-white px-4 py-3 text-sm font-semibold text-sage-600 shadow-xs transition @if ($otpResendRemaining > 0) bg-sage-50 text-sage-400 cursor-not-allowed @else hover:bg-sage-50 @endif focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-500/40 focus-visible:ring-offset-2"
+                    >
+                        <span id="otp-resend-label">
+                            @if ($otpResendRemaining > 0)
+                                Kirim ulang dalam {{ $otpResendRemaining }} detik
+                            @else
+                                Kirim ulang kode
+                            @endif
+                        </span>
+                    </button>
+                </form>
+
+                <p id="otp-resend-countdown" class="mt-2 text-xs text-label/60 text-center" aria-live="polite">
+                    @if ($otpResendRemaining > 0)
+                        Kode OTP baru dapat dikirim dalam {{ $otpResendRemaining }} detik.
+                    @endif
+                </p>
+            </div>
+
+            <p class="mt-6 text-center text-sm text-body">
+                Belum punya akun?
+                <a href="{{ route('register') }}" class="font-semibold text-sage-600 transition hover:text-sage-700 hover:underline">Daftar</a>
+            </p>
         </div>
     </div>
 

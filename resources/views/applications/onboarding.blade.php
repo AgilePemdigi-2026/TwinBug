@@ -1,7 +1,7 @@
 <x-layouts.app title="Hubungkan Aplikasi" meta-description="Hubungkan akun TwinBug Anda ke aplikasi reporter atau developer.">
 
-    <div class="mx-auto flex min-h-[70vh] max-w-screen-xl items-center justify-center px-6 py-12">
-        <div class="w-full max-w-xl rounded-3xl border border-white/70 bg-card p-8 shadow-card">
+    <div class="mx-auto flex min-h-[70vh] max-w-7xl items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+        <div class="w-full max-w-xl rounded-2xl border border-divider/80 bg-white p-6 sm:p-8 shadow-xs">
 
             <div class="mb-6 text-center">
                 <span class="mx-auto grid size-12 place-items-center rounded-2xl bg-sage-500 text-white shadow-cta">

@@ -9,7 +9,7 @@
 <div class="rounded-2xl border border-divider/80 bg-white p-5 shadow-xs" id="screenshot-section">
     <div class="mb-5 flex items-center justify-between gap-4">
         <div class="flex items-center gap-2.5">
-            <span class="grid size-6 place-items-center rounded-lg bg-slate-100 font-mono text-xs font-bold text-sage-600">03</span>
+            <span class="grid size-6 place-items-center rounded-lg bg-slate-100 font-mono text-xs font-bold text-sage-600">04</span>
             <div>
                 <h2 class="font-serif text-base font-bold text-ink">Lampiran Screenshot</h2>
                 <p class="text-xs text-label">Tambahkan tangkapan layar untuk analisis visual TwinBug.</p>

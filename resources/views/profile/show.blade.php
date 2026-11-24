@@ -37,10 +37,22 @@
 
 <x-layouts.app title="Profil Saya" meta-description="Kelola informasi akun dan keamanan profil TwinBug Anda.">
 
-    <div class="mx-auto max-w-screen-xl px-12 py-10 space-y-6">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        {{-- ======================== BREADCRUMB ======================== --}}
+        <nav class="flex items-center gap-2 text-xs" aria-label="Breadcrumb">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-1.5 text-label transition hover:text-ink">
+                <x-auth.icon name="bug" class="size-3 text-sage-600" />
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <svg class="size-2.5 text-label/60" viewBox="0 0 6 10" fill="none" aria-hidden="true">
+                <path d="M1 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="rounded-md bg-input px-2 py-0.5 text-[11px] font-semibold text-ink">Profil Saya</span>
+        </nav>
 
         {{-- ======================== PROFILE HERO ======================== --}}
-        <div class="relative overflow-hidden rounded-3xl bg-white p-8 shadow-sm">
+        <div class="relative overflow-hidden rounded-2xl bg-white p-6 sm:p-8 shadow-xs border border-divider/80">
             {{-- Subtle decorative bg --}}
             <div class="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full opacity-30 blur-[80px]
                 {{ $user->role === \App\Enums\UserRole::Reporter ? 'bg-sage-200' : ($user->role === \App\Enums\UserRole::Developer ? 'bg-amber-200' : 'bg-indigo-200') }}">
@@ -49,7 +61,7 @@
             <div class="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center">
                 {{-- Avatar --}}
                 <div class="shrink-0">
-                    <div class="grid size-24 place-items-center rounded-3xl text-3xl font-bold shadow-card {{ $roleConfig['avatar_classes'] }}">
+                    <div class="grid size-24 place-items-center rounded-2xl text-3xl font-bold shadow-card {{ $roleConfig['avatar_classes'] }}">
                         {{ $initials }}
                     </div>
                 </div>
@@ -80,7 +92,7 @@
                 </div>
 
                 {{-- Role description chip --}}
-                <div class="shrink-0 hidden lg:block max-w-xs rounded-2xl bg-input p-4">
+                <div class="shrink-0 hidden lg:block max-w-xs rounded-xl bg-input p-4">
                     <p class="text-[10px] font-bold uppercase tracking-wider text-label mb-1">Tanggung Jawab</p>
                     <p class="text-xs leading-relaxed text-body">{{ $roleConfig['description'] }}</p>
                 </div>
@@ -91,7 +103,7 @@
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
             {{-- ---- STATISTICS (role-aware) ---- --}}
-            <div class="rounded-3xl bg-white p-8 shadow-sm">
+            <div class="rounded-2xl border border-divider/80 bg-white p-6 sm:p-8 shadow-xs">
                 <div class="mb-5 flex items-center gap-2">
                     <x-auth.icon :name="$roleConfig['icon']" class="size-4 text-label" />
                     <h2 class="font-serif text-lg font-bold text-ink">
@@ -172,7 +184,7 @@
             </div>
 
             {{-- ---- SECURITY ---- --}}
-            <div class="rounded-3xl bg-white p-8 shadow-sm">
+            <div class="rounded-2xl border border-divider/80 bg-white p-6 sm:p-8 shadow-xs">
                 <div class="mb-5 flex items-center gap-2">
                     <x-auth.icon name="logout" class="size-4 text-label" />
                     <h2 class="font-serif text-lg font-bold text-ink">Keamanan Akun</h2>
@@ -193,7 +205,7 @@
                             name="current_password"
                             autocomplete="current-password"
                             placeholder="••••••••"
-                            class="w-full rounded-2xl border border-divider bg-input px-4 py-3 text-sm text-ink placeholder-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20
+                            class="w-full rounded-xl border border-divider bg-input px-4 py-3 text-sm text-ink placeholder-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20
                                 {{ $errors->has('current_password') ? 'border-danger bg-danger/5' : '' }}"
                         >
                         @error('current_password')
@@ -212,7 +224,7 @@
                             name="password"
                             autocomplete="new-password"
                             placeholder="Min. 8 karakter"
-                            class="w-full rounded-2xl border border-divider bg-input px-4 py-3 text-sm text-ink placeholder-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20
+                            class="w-full rounded-xl border border-divider bg-input px-4 py-3 text-sm text-ink placeholder-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20
                                 {{ $errors->has('password') ? 'border-danger bg-danger/5' : '' }}"
                         >
                         @error('password')
@@ -231,14 +243,14 @@
                             name="password_confirmation"
                             autocomplete="new-password"
                             placeholder="Ulangi kata sandi baru"
-                            class="w-full rounded-2xl border border-divider bg-input px-4 py-3 text-sm text-ink placeholder-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20"
+                            class="w-full rounded-xl border border-divider bg-input px-4 py-3 text-sm text-ink placeholder-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20"
                         >
                     </div>
 
                     <button
                         type="submit"
                         id="btn-update-password"
-                        class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-ink px-5 py-3 text-sm font-bold text-white transition hover:bg-ink/80 active:scale-95"
+                        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-bold text-white transition hover:bg-ink/80 active:scale-95"
                     >
                         <x-auth.icon name="check" class="size-4" />
                         Perbarui Kata Sandi
@@ -248,7 +260,7 @@
         </div>
 
         {{-- ======================== EDIT PROFILE ======================== --}}
-        <div class="rounded-3xl bg-white p-8 shadow-sm">
+        <div class="rounded-2xl border border-divider/80 bg-white p-6 sm:p-8 shadow-xs">
             <div class="mb-6 flex items-center gap-2">
                 <x-auth.icon name="user" class="size-4 text-label" />
                 <h2 class="font-serif text-lg font-bold text-ink">Informasi Profil</h2>
@@ -271,7 +283,7 @@
                             name="name"
                             value="{{ old('name', $user->name) }}"
                             autocomplete="name"
-                            class="w-full rounded-2xl border border-divider bg-input px-4 py-3 text-sm text-ink transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20
+                            class="w-full rounded-xl border border-divider bg-input px-4 py-3 text-sm text-ink transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20
                                 {{ $errors->has('name') ? 'border-danger bg-danger/5' : '' }}"
                         >
                         @error('name')
@@ -289,7 +301,7 @@
                                 type="email"
                                 value="{{ $user->email }}"
                                 disabled
-                                class="w-full rounded-2xl border border-divider bg-input/60 px-4 py-3 text-sm text-label cursor-not-allowed pr-24"
+                                class="w-full rounded-xl border border-divider bg-input/60 px-4 py-3 text-sm text-label cursor-not-allowed pr-24"
                             >
                             <span class="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 rounded-xl bg-sage-100 px-2.5 py-1 text-[10px] font-bold text-sage-700">
                                 <x-auth.icon name="check" class="size-3" />
@@ -306,7 +318,7 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-label mb-1.5">
                             Peran di Sistem
                         </label>
-                        <div class="flex items-center gap-3 rounded-2xl border border-divider bg-input/60 px-4 py-3">
+                        <div class="flex items-center gap-3 rounded-xl border border-divider bg-input/60 px-4 py-3">
                             <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider {{ $roleConfig['badge_classes'] }}">
                                 <x-auth.icon :name="$roleConfig['icon']" class="size-3" />
                                 {{ $roleConfig['label'] }}
@@ -318,7 +330,7 @@
                     <button
                         type="submit"
                         id="btn-update-profile"
-                        class="inline-flex items-center gap-2 rounded-2xl bg-sage-500 px-6 py-3 text-sm font-bold text-white shadow-cta transition hover:bg-sage-600 active:scale-95"
+                        class="inline-flex items-center gap-2 rounded-xl bg-sage-500 px-6 py-3 text-sm font-bold text-white shadow-cta transition hover:bg-sage-600 active:scale-95"
                     >
                         <x-auth.icon name="check" class="size-4" />
                         Simpan Perubahan

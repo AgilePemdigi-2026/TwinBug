@@ -151,3 +151,79 @@ document.querySelectorAll('[data-copy]').forEach((button) => {
         }
     });
 });
+
+function setupMobileMenu(toggleId, menuId) {
+    const toggle = document.getElementById(toggleId);
+    const menu = document.getElementById(menuId);
+    if (!toggle || !menu) return;
+
+    toggle.addEventListener('click', () => {
+        const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!isExpanded));
+        menu.classList.toggle('hidden');
+    });
+}
+
+setupMobileMenu('mobile-menu-toggle', 'mobile-menu');
+setupMobileMenu('app-mobile-menu-toggle', 'app-mobile-menu');
+
+// Scroll Reveal Observer
+if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+        revealObserver.observe(el);
+    });
+} else {
+    document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+        el.classList.add('is-visible');
+    });
+}
+
+// Top Page Navigation Progress Indicator
+const progressBar = document.createElement('div');
+progressBar.id = 'page-progress-bar';
+document.body.appendChild(progressBar);
+
+document.addEventListener('click', (event) => {
+    const link = event.target.closest('a');
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('javascript:') || link.target === '_blank' || event.ctrlKey || event.metaKey) {
+        return;
+    }
+
+    try {
+        const url = new URL(link.href, window.location.href);
+        if (url.origin === window.location.origin && url.pathname !== window.location.pathname) {
+            progressBar.style.width = '35%';
+            progressBar.style.opacity = '1';
+            setTimeout(() => {
+                progressBar.style.width = '75%';
+            }, 120);
+        }
+    } catch {
+        // Ignore invalid URLs
+    }
+});
+
+window.addEventListener('pageshow', () => {
+    progressBar.style.width = '100%';
+    setTimeout(() => {
+        progressBar.style.opacity = '0';
+        setTimeout(() => {
+            progressBar.style.width = '0%';
+        }, 300);
+    }, 150);
+});

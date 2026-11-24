@@ -42,7 +42,15 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('dashboard.reporter', compact('user', 'stats', 'recentReports'));
+        $topModules = BugReport::where('user_id', $user->id)
+            ->whereNotNull('module')
+            ->selectRaw('module, count(*) as count')
+            ->groupBy('module')
+            ->orderByDesc('count')
+            ->take(4)
+            ->get();
+
+        return view('dashboard.reporter', compact('user', 'stats', 'recentReports', 'topModules'));
     }
 
     /**
@@ -66,6 +74,14 @@ class DashboardController extends Controller
             ->take(8)
             ->get();
 
-        return view('dashboard.developer', compact('user', 'stats', 'recentReports'));
+        $topModules = BugReport::where('application_id', $applicationId)
+            ->whereNotNull('module')
+            ->selectRaw('module, count(*) as count')
+            ->groupBy('module')
+            ->orderByDesc('count')
+            ->take(4)
+            ->get();
+
+        return view('dashboard.developer', compact('user', 'stats', 'recentReports', 'topModules'));
     }
 }

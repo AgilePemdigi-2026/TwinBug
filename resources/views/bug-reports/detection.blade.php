@@ -281,24 +281,24 @@
                                             </span>
                                         </td>
                                         <td class="py-3 px-3 text-right">
-                                        @if ($textScore !== null)
-                                            <span class="font-serif text-sm font-bold text-ink">{{ number_format($textScore * 100, 1) }}%</span>
-                                        @else
-                                            <span class="text-xs text-label/50 italic">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-3 px-3 text-right">
-                                        @if ($imageScore !== null)
-                                            <span class="font-serif text-sm font-bold text-ink">{{ number_format($imageScore * 100, 1) }}%</span>
-                                        @else
-                                            <span class="text-xs text-label/50 italic">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-3 px-3 text-center">
-                                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $badgeClasses }}">
-                                            {{ $badgeLabel }}
-                                        </span>
-                                    </td>
+                                            @if ($textScore !== null)
+                                                <span class="font-serif text-sm font-bold text-ink">{{ number_format($textScore * 100, 1) }}%</span>
+                                            @else
+                                                <span class="text-xs text-label/50 italic">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-3 px-3 text-right">
+                                            @if ($imageScore !== null)
+                                                <span class="font-serif text-sm font-bold text-ink">{{ number_format($imageScore * 100, 1) }}%</span>
+                                            @else
+                                                <span class="text-xs text-label/50 italic">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-3 px-3 text-center">
+                                            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $badgeClasses }}">
+                                                {{ $badgeLabel }}
+                                            </span>
+                                        </td>
                                         <td class="py-3 px-4 text-right">
                                             <a
                                                 href="{{ route('bug-reports.detection', ['bugReport' => $bugReport, 'candidate' => $result->candidate_report_id]) }}"

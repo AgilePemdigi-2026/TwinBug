@@ -6,7 +6,7 @@
         <h2 class="font-serif text-sm font-bold text-ink">Informasi Akun Anda</h2>
     </div>
 
-    <dl class="grid grid-cols-1 gap-3 sm:grid-cols-3 text-sm">
+    <dl class="grid grid-cols-1 gap-2.5 text-sm">
         <div class="rounded-xl border border-divider/70 bg-input/60 p-3">
             <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Nama Lengkap</dt>
             <dd class="mt-0.5 text-xs font-semibold text-ink">{{ $user->name }}</dd>
