@@ -1,543 +1,634 @@
-<x-layouts.app title="Hasil Deteksi Duplikasi — #{{ $bugReport->id }}" meta-description="Hasil analisis kemiripan laporan bug dengan laporan historis pada sistem TwinBug.">
+<x-layouts.app title="Detection Results — BUG-{{ $bugReport->id }}" meta-description="Duplicate bug report detection results and similarity evidence on TwinBug.">
 
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    @php
+        $overallSimilarity = $results->isNotEmpty()
+            ? $results->max(fn ($result) => max((float) ($result->text_score ?? 0), (float) ($result->image_score ?? 0)))
+            : null;
+        $overallPercent = $overallSimilarity !== null ? (int) round($overallSimilarity * 100) : null;
+    @endphp
 
-        {{-- ======================== BREADCRUMB ======================== --}}
-        <nav class="flex items-center gap-2 text-xs" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-1.5 text-label transition hover:text-ink">
-                <x-auth.icon name="bug" class="size-3 text-sage-600" />
-                <span class="font-medium">Dashboard</span>
-            </a>
-            <svg class="size-2.5 text-label/60" viewBox="0 0 6 10" fill="none" aria-hidden="true">
-                <path d="M1 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <a href="{{ route('bug-reports.show', $bugReport) }}" class="text-label transition hover:text-ink">Laporan #{{ $bugReport->id }}</a>
-            <svg class="size-2.5 text-label/60" viewBox="0 0 6 10" fill="none" aria-hidden="true">
-                <path d="M1 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="rounded-md bg-input px-2 py-0.5 text-[11px] font-semibold text-ink">Deteksi Duplikasi</span>
-        </nav>
+    <div class="workspace-detection-page mx-auto max-w-[1540px] p-8 space-y-5">
 
-        {{-- ======================== PAGE HEADER ======================== --}}
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div class="max-w-3xl">
-                <div class="mb-2 flex flex-wrap items-center gap-2">
-                    <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold {{ $bugReport->severity->badgeClasses() }}">
-                        {{ $bugReport->severity->label() }}
-                    </span>
-                    <span class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold {{ $bugReport->status->badgeClasses() }}">
-                        <span class="size-1.5 rounded-full bg-current opacity-80"></span>
-                        {{ $bugReport->status->label() }}
-                    </span>
-                    <span class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold {{ $bugReport->detection_status->badgeClasses() }}">
-                        {{ $bugReport->detection_status->label() }}
-                    </span>
-                    <span class="text-xs text-label">•</span>
-                    <span class="font-mono text-xs font-semibold text-label">#{{ $bugReport->id }}</span>
-                </div>
-                <h1 class="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">{{ $bugReport->title }}</h1>
-                <p class="mt-1 text-xs text-label">
-                    Dilaporkan {{ $bugReport->created_at->format('d M Y H:i') }} • Modul: <span class="font-mono">{{ $bugReport->module ?? 'Lainnya' }}</span>
-                </p>
-            </div>
+        @if ($selectedCandidate && request()->has('candidate'))
+            @php
+                $compTextPct = $selectedResult?->text_score !== null ? (int) round($selectedResult->text_score * 100) : 0;
+                $compImagePct = $selectedResult?->image_score !== null ? (int) round($selectedResult->image_score * 100) : null;
+                $compFinalPct = (int) round(max((float) ($selectedResult?->text_score ?? 0), (float) ($selectedResult?->image_score ?? 0)) * 100);
+                $isHighSim = $compFinalPct >= 65;
+            @endphp
 
-            <a
-                href="{{ route('bug-reports.show', $bugReport) }}"
-                class="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-divider bg-white px-3.5 py-2 text-xs font-semibold text-ink shadow-2xs transition hover:bg-input"
-            >
-                <x-auth.icon name="arrow-left" class="size-3.5" />
-                <span>Kembali ke Detail</span>
-            </a>
-        </div>
+            {{-- ======================== COMPARISON BREADCRUMB ======================== --}}
+            <nav class="flex flex-wrap items-center gap-2 text-[11.5px] leading-[17px]" aria-label="Breadcrumb">
+                <a href="{{ route('dashboard') }}" class="text-[#83908A] transition hover:text-[#33423B]">Developer Dashboard</a>
+                <span class="text-[#83908A]">›</span>
+                <a href="{{ route('report.detection_result', $bugReport) }}" class="text-[#83908A] transition hover:text-[#33423B]">Detection Results</a>
+                <span class="text-[#83908A]">›</span>
+                <a href="{{ route('report.detection_result', $bugReport) }}" class="text-[#83908A] transition hover:text-[#33423B]">BUG-{{ $bugReport->id }}</a>
+                <span class="text-[#83908A]">›</span>
+                <span class="font-semibold text-[#33423B]">Comparison</span>
+            </nav>
 
-        {{-- ======================== ANALYZED REPORT CARD ======================== --}}
-        <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
-            <div class="mb-4 flex items-center justify-between">
+            {{-- ======================== COMPARISON HEADER ======================== --}}
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                    <h2 class="font-serif text-base font-bold text-ink">Laporan yang Dianalisis</h2>
-                    <p class="text-xs text-label">Informasi laporan sumber yang dikirimkan untuk deteksi duplikasi.</p>
+                    <a href="{{ route('report.detection_result', $bugReport) }}" class="inline-flex items-center gap-[5px] text-[10px] font-semibold leading-[15px] text-[#236B51] hover:underline">
+                        <x-auth.icon name="arrow-left" class="size-4" />
+                        <span>Back to results</span>
+                    </a>
+                    <h1 class="pt-3 text-[27px] font-bold leading-8 tracking-[-0.65px] text-[#142019]">Detection comparison</h1>
+                    <p class="pt-[7px] text-[13px] leading-5 text-[#67736D]">
+                        Review TwinBug’s recommendation before deciding how to triage this report.
+                    </p>
                 </div>
-            </div>
 
-            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div class="rounded-xl border border-divider/60 bg-input/40 p-3">
-                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Judul</dt>
-                    <dd class="mt-0.5 text-xs font-semibold text-ink truncate" title="{{ $bugReport->title }}">{{ $bugReport->title }}</dd>
-                </div>
-                <div class="rounded-xl border border-divider/60 bg-input/40 p-3">
-                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Modul</dt>
-                    <dd class="mt-0.5 text-xs font-mono font-semibold text-ink">{{ $bugReport->module ?? 'Lainnya' }}</dd>
-                </div>
-                <div class="rounded-xl border border-divider/60 bg-input/40 p-3">
-                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Keparahan</dt>
-                    <dd class="mt-0.5">
-                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $bugReport->severity->badgeClasses() }}">
-                            {{ $bugReport->severity->label() }}
+                <div class="flex items-center gap-7 rounded-[9px] border-[0.8px] border-[#E2E8E5] bg-white px-[15px] py-[11px] shrink-0">
+                    <div>
+                        <p class="text-[8.5px] leading-[13px] text-[#67736D]">Detection status</p>
+                        <span class="mt-[5px] inline-flex items-center gap-[5px] rounded-full border-[0.8px] px-[7px] py-1 text-[9.5px] font-semibold leading-[14px] {{ $isHighSim ? 'border-[#F2E4BD] bg-[#FBF4E3] text-[#8B6418]' : 'border-[#D9EEE3] bg-[#EDF7F2] text-[#26714F]' }}">
+                            <span class="size-[5px] rounded-full {{ $isHighSim ? 'bg-[#8B6418]' : 'bg-[#26714F]' }}"></span>
+                            <span>{{ $isHighSim ? 'Potential duplicate' : 'Low similarity' }}</span>
                         </span>
-                    </dd>
-                </div>
-                <div class="rounded-xl border border-divider/60 bg-input/40 p-3">
-                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Status</dt>
-                    <dd class="mt-0.5">
-                        <span class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $bugReport->status->badgeClasses() }}">
-                            <span class="size-1.5 rounded-full bg-current opacity-80"></span>
-                            {{ $bugReport->status->label() }}
-                        </span>
-                    </dd>
-                </div>
-            </div>
-
-            <div class="mt-4 rounded-xl border border-divider/60 bg-input/40 p-3.5">
-                <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Deskripsi</dt>
-                <dd class="mt-1 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $bugReport->description }}</dd>
-            </div>
-
-            {{-- Detection status info --}}
-            <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div class="rounded-xl border border-divider/60 bg-white p-3 shadow-2xs">
-                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Status Deteksi</dt>
-                    <dd class="mt-1 inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $bugReport->detection_status->badgeClasses() }}">
-                        {{ $bugReport->detection_status->label() }}
-                    </dd>
-                </div>
-                @if ($bugReport->detection_threshold)
-                    <div class="rounded-xl border border-divider/60 bg-white p-3 shadow-2xs">
-                        <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Threshold</dt>
-                        <dd class="mt-1 font-mono text-xs font-semibold text-ink">{{ number_format($bugReport->detection_threshold * 100, 2) }}%</dd>
                     </div>
-                @endif
-                @if ($bugReport->detected_at)
-                    <div class="rounded-xl border border-divider/60 bg-white p-3 shadow-2xs">
-                        <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Terakhir Diperbarui</dt>
-                        <dd class="mt-1 text-xs font-semibold text-ink">{{ $bugReport->detected_at->format('d M Y H:i') }}</dd>
+                    <div>
+                        <p class="text-[8.5px] leading-[13px] text-[#67736D]">Overall similarity</p>
+                        <p class="pt-1 text-[19px] font-bold leading-[19px] text-[#09090B]">{{ $compFinalPct }}%</p>
+                        <p class="pt-1 text-[8px] leading-3 text-[#287152]">{{ $compFinalPct >= 80 ? 'Very high' : ($compFinalPct >= 65 ? 'Moderate' : 'Low') }}</p>
                     </div>
-                @endif
-                <div class="rounded-xl border border-divider/60 bg-white p-3 shadow-2xs">
-                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Model</dt>
-                    <dd class="mt-1 font-mono text-[11px] font-semibold text-ink truncate" title="{{ config('services.ml.model', 'paraphrase-multilingual-MiniLM-L12-v2') }}">
-                        {{ config('services.ml.model', 'paraphrase-multilingual-MiniLM-L12-v2') }}
-                    </dd>
                 </div>
             </div>
 
-            @if ($bugReport->detection_status === App\Enums\DetectionStatus::Failed && $bugReport->detection_error)
-                <div class="mt-4 rounded-xl border border-danger/30 bg-rose-50/70 p-3.5">
-                    <div class="flex items-start gap-2.5">
-                        <x-auth.icon name="alert" class="size-4 text-danger shrink-0 mt-0.5" />
-                        <div>
-                            <p class="text-xs font-semibold text-danger">Analisis gagal</p>
-                            <p class="mt-0.5 text-xs text-danger/80">{{ $bugReport->detection_error }}</p>
+            {{-- ======================== SIMILARITY SCORES BAR ======================== --}}
+            <div class="grid grid-cols-1 items-center gap-6 rounded-[10px] border-[0.8px] border-[#E2E8E5] bg-white px-[18.8px] py-[15.8px] lg:grid-cols-12">
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-3 lg:col-span-9">
+                    <div>
+                        <p class="text-[9px] leading-[14px] text-[#67736D]">Text similarity</p>
+                        <div class="mt-[7px] flex items-center gap-[9px]">
+                            <div class="h-[6px] flex-1 overflow-hidden rounded-full bg-[#E9EEEB]">
+                                <div class="h-full rounded-full bg-[#2C795A]" style="width: {{ $compTextPct }}%"></div>
+                            </div>
+                            <span class="w-7 text-[10px] font-bold leading-[15px] text-[#34413B]">{{ $compTextPct }}%</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[9px] leading-[14px] text-[#67736D]">Image similarity</p>
+                        <div class="mt-[7px] flex items-center gap-[9px]">
+                            <div class="h-[6px] flex-1 overflow-hidden rounded-full bg-[#E9EEEB]">
+                                <div class="h-full rounded-full bg-[#2C795A]" style="width: {{ $compImagePct ?? 0 }}%"></div>
+                            </div>
+                            <span class="w-7 text-[10px] font-bold leading-[15px] text-[#34413B]">{{ $compImagePct !== null ? $compImagePct . '%' : '—' }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[9px] leading-[14px] text-[#67736D]">Final similarity</p>
+                        <div class="mt-[7px] flex items-center gap-[9px]">
+                            <div class="h-[6px] flex-1 overflow-hidden rounded-full bg-[#E9EEEB]">
+                                <div class="h-full rounded-full bg-[#2C795A]" style="width: {{ $compFinalPct }}%"></div>
+                            </div>
+                            <span class="w-7 text-[10px] font-bold leading-[15px] text-[#34413B]">{{ $compFinalPct }}%</span>
                         </div>
                     </div>
                 </div>
-            @endif
+                <div class="flex items-center gap-[9px] border-t border-[#E2E8E5] pt-3 lg:col-span-3 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0">
+                    <x-auth.icon name="sparkles" class="size-[18px] shrink-0 text-[#236B51]" />
+                    <div>
+                        <p class="text-[8px] leading-3 text-[#67736D]">Analysis method</p>
+                        <p class="pt-[3px] text-[10px] font-bold leading-[15px] text-[#36443D]">
+                            {{ $bugReport->hasScreenshot() && $selectedCandidate->hasScreenshot() ? 'Multimodal Late Fusion' : 'Semantic Text Analysis' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ======================== 2-COLUMN REPORT COMPARISON ======================== --}}
+            <div class="grid grid-cols-1 gap-[18px] lg:grid-cols-2">
+                {{-- Left Panel: New Bug Report --}}
+                <div class="overflow-hidden rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white">
+                    <div class="flex items-center gap-[10px] border-b-[0.8px] border-[#E2E8E5] bg-[#FAFBFA] px-[18px] py-4">
+                        <div class="grid size-[34px] shrink-0 place-items-center rounded-[8px] bg-[#E8F3EE] text-[#236B51]">
+                            <x-auth.icon name="bug" class="size-[18px]" />
+                        </div>
+                        <div>
+                            <p class="text-[8px] uppercase leading-3 tracking-[0.56px] text-[#67736D]">New bug report</p>
+                            <h2 class="pt-[3px] text-[12px] font-semibold leading-[18px] text-[#09090B]">BUG-{{ $bugReport->id }}</h2>
+                        </div>
+                    </div>
+
+                    <div class="px-[18px] pt-4 pb-[5px] space-y-[13px]">
+                        <div>
+                            <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Bug title</p>
+                            <p class="pt-[5px] text-[10.5px] font-medium leading-4 text-[#2E3B35]">{{ $bugReport->title }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 py-1">
+                            <div>
+                                <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Reporter</p>
+                                <p class="pt-[5px] text-[10.5px] font-medium leading-4 text-[#2E3B35]">{{ $bugReport->user?->name ?? 'Reporter' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Module</p>
+                                <p class="pt-[5px] text-[10.5px] font-medium leading-4 text-[#2E3B35]">{{ $bugReport->module ?? 'General' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t-[0.8px] border-[#EDF0EE] px-[18px] py-3">
+                        <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Bug description</p>
+                        <p class="pt-[5px] whitespace-pre-line text-[10px] leading-4 text-[#56635D]">{{ $bugReport->description }}</p>
+                    </div>
+
+                    @if ($bugReport->steps_to_reproduce)
+                        <div class="border-t-[0.8px] border-[#EDF0EE] px-[18px] py-3">
+                            <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Steps to reproduce</p>
+                            <p class="pt-[5px] whitespace-pre-line text-[10px] leading-4 text-[#56635D]">{{ $bugReport->steps_to_reproduce }}</p>
+                        </div>
+                    @endif
+
+                    @if ($bugReport->actual_result || $bugReport->expected_result)
+                        <div class="grid grid-cols-1 border-t-[0.8px] border-[#EDF0EE] sm:grid-cols-2">
+                            <div class="border-b-[0.8px] border-[#EDF0EE] px-[18px] py-3 sm:border-b-0 sm:border-r-[0.8px]">
+                                <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Actual result</p>
+                                <p class="pt-[5px] text-[10px] leading-4 text-[#56635D]">{{ $bugReport->actual_result ?? '—' }}</p>
+                            </div>
+                            <div class="px-[18px] py-3">
+                                <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Expected result</p>
+                                <p class="pt-[5px] text-[10px] leading-4 text-[#56635D]">{{ $bugReport->expected_result ?? '—' }}</p>
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="border-t-[0.8px] border-[#EDF0EE] px-[18px] py-3">
+                        <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Screenshot</p>
+                        @if ($bugReport->hasScreenshot())
+                            <a href="{{ asset('storage/' . $bugReport->screenshot_path) }}" target="_blank" rel="noopener noreferrer" class="mt-[5px] block overflow-hidden rounded-[7px] border-[0.8px] border-[#DFE5E2] bg-[#F5F7F6]">
+                                <div class="flex h-5 items-center gap-1 bg-[#E4E9E6] px-2">
+                                    <span class="size-1 rounded-full bg-[#A6B0AB]"></span>
+                                    <span class="size-1 rounded-full bg-[#A6B0AB]"></span>
+                                    <span class="size-1 rounded-full bg-[#A6B0AB]"></span>
+                                </div>
+                                <img src="{{ asset('storage/' . $bugReport->screenshot_path) }}" alt="Screenshot {{ $bugReport->title }}" class="max-h-52 w-full object-contain p-3">
+                            </a>
+                        @else
+                            <div class="mt-[5px] rounded-[7px] border-[0.8px] border-dashed border-[#DFE5E2] bg-[#F5F7F6] p-6 text-center text-[10px] text-[#87918C]">
+                                No screenshot attached
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="border-t-[0.8px] border-[#EDF0EE] px-[18px] py-3">
+                        <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Visual Screenshot Analysis (AI)</p>
+                        @if ($bugReport->hasImageDescription())
+                            <p class="pt-[5px] whitespace-pre-line text-[10px] leading-4 text-[#56635D]">{{ $bugReport->image_description }}</p>
+                        @elseif ($bugReport->hasScreenshot())
+                            <p class="pt-[5px] text-[10px] text-[#87918C]">No visual analysis yet. Re-run analysis or run backfill command.</p>
+                        @else
+                            <p class="pt-[5px] text-[10px] text-[#87918C]">No screenshot to analyze.</p>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Right Panel: Historical Bug Report --}}
+                <div class="overflow-hidden rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white">
+                    <div class="flex items-center justify-between gap-[10px] border-b-[0.8px] border-[#E2E8E5] bg-[#FAFBFA] px-[18px] py-4">
+                        <div class="flex items-center gap-[10px]">
+                            <div class="grid size-[34px] shrink-0 place-items-center rounded-[8px] bg-[#EEF3F6] text-[#52748A]">
+                                <x-auth.icon name="refresh" class="size-[18px]" />
+                            </div>
+                            <div>
+                                <p class="text-[8px] uppercase leading-3 tracking-[0.56px] text-[#67736D]">Historical bug report</p>
+                                <h2 class="pt-[3px] text-[12px] font-semibold leading-[18px] text-[#09090B]">BUG-{{ $selectedCandidate->id }}</h2>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center gap-[5px] rounded-full border-[0.8px] border-[#D9EEE3] bg-[#EDF7F2] px-[7px] py-1 text-[9.5px] font-semibold leading-[14px] text-[#26714F]">
+                            <span class="size-[5px] rounded-full bg-[#26714F]"></span>
+                            <span>{{ $selectedCandidate->status->label() }}</span>
+                        </span>
+                    </div>
+
+                    <div class="px-[18px] pt-4 pb-[5px] space-y-[13px]">
+                        <div>
+                            <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Bug title</p>
+                            <p class="pt-[5px] text-[10.5px] font-medium leading-4 text-[#2E3B35]">{{ $selectedCandidate->title }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 py-1">
+                            <div>
+                                <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Reporter</p>
+                                <p class="pt-[5px] text-[10.5px] font-medium leading-4 text-[#2E3B35]">{{ $selectedCandidate->user?->name ?? 'Reporter' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Module</p>
+                                <p class="pt-[5px] text-[10.5px] font-medium leading-4 text-[#2E3B35]">{{ $selectedCandidate->module ?? 'General' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t-[0.8px] border-[#EDF0EE] px-[18px] py-3">
+                        <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Bug description</p>
+                        <p class="pt-[5px] whitespace-pre-line text-[10px] leading-4 text-[#56635D]">{{ $selectedCandidate->description }}</p>
+                    </div>
+
+                    @if ($selectedCandidate->steps_to_reproduce)
+                        <div class="border-t-[0.8px] border-[#EDF0EE] px-[18px] py-3">
+                            <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Steps to reproduce</p>
+                            <p class="pt-[5px] whitespace-pre-line text-[10px] leading-4 text-[#56635D]">{{ $selectedCandidate->steps_to_reproduce }}</p>
+                        </div>
+                    @endif
+
+                    @if ($selectedCandidate->actual_result || $selectedCandidate->expected_result)
+                        <div class="grid grid-cols-1 border-t-[0.8px] border-[#EDF0EE] sm:grid-cols-2">
+                            <div class="border-b-[0.8px] border-[#EDF0EE] px-[18px] py-3 sm:border-b-0 sm:border-r-[0.8px]">
+                                <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Actual result</p>
+                                <p class="pt-[5px] text-[10px] leading-4 text-[#56635D]">{{ $selectedCandidate->actual_result ?? '—' }}</p>
+                            </div>
+                            <div class="px-[18px] py-3">
+                                <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Expected result</p>
+                                <p class="pt-[5px] text-[10px] leading-4 text-[#56635D]">{{ $selectedCandidate->expected_result ?? '—' }}</p>
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="border-t-[0.8px] border-[#EDF0EE] px-[18px] py-3">
+                        <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Screenshot</p>
+                        @if ($selectedCandidate->hasScreenshot())
+                            <a href="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}" target="_blank" rel="noopener noreferrer" class="mt-[5px] block overflow-hidden rounded-[7px] border-[0.8px] border-[#DFE5E2] bg-[#F5F7F6]">
+                                <div class="flex h-5 items-center gap-1 bg-[#E4E9E6] px-2">
+                                    <span class="size-1 rounded-full bg-[#A6B0AB]"></span>
+                                    <span class="size-1 rounded-full bg-[#A6B0AB]"></span>
+                                    <span class="size-1 rounded-full bg-[#A6B0AB]"></span>
+                                </div>
+                                <img src="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}" alt="Screenshot {{ $selectedCandidate->title }}" class="max-h-52 w-full object-contain p-3">
+                            </a>
+                        @else
+                            <div class="mt-[5px] rounded-[7px] border-[0.8px] border-dashed border-[#DFE5E2] bg-[#F5F7F6] p-6 text-center text-[10px] text-[#87918C]">
+                                No screenshot attached
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="border-t-[0.8px] border-[#EDF0EE] px-[18px] py-3">
+                        <p class="text-[8.5px] font-semibold uppercase leading-[13px] tracking-[0.425px] text-[#77827D]">Visual Screenshot Analysis (AI)</p>
+                        @if ($selectedCandidate->hasImageDescription())
+                            <p class="pt-[5px] whitespace-pre-line text-[10px] leading-4 text-[#56635D]">{{ $selectedCandidate->image_description }}</p>
+                        @elseif ($selectedCandidate->hasScreenshot())
+                            <p class="pt-[5px] text-[10px] text-[#87918C]">No visual analysis yet. Re-run analysis or run backfill command.</p>
+                        @else
+                            <p class="pt-[5px] text-[10px] text-[#87918C]">No screenshot to analyze.</p>
+                        @endif
+                    </div>
+
+                    @if ($selectedCandidate->resolution_note)
+                        <div class="px-[18px] pb-[17px]">
+                            <div class="flex items-start gap-[9px] rounded-[7px] border-[0.8px] border-[#D9ECE2] bg-[#EDF7F2] p-[10px]">
+                                <x-auth.icon name="check" class="size-[18px] shrink-0 text-[#2D7456]" />
+                                <div>
+                                    <p class="text-[9.5px] font-bold leading-[14px] text-[#355044]">Historical resolution</p>
+                                    <p class="pt-[3px] text-[8.5px] leading-[13px] text-[#5D7067]">{{ $selectedCandidate->resolution_note }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- ======================== DECISION BAR ======================== --}}
+            <form method="POST" action="{{ route('bug-reports.status.update', $bugReport) }}" class="flex flex-col gap-4 rounded-[10px] border-[0.8px] border-[#E2E8E5] bg-white px-[18px] py-4 lg:flex-row lg:items-center lg:justify-between">
+                @csrf
+                @method('PATCH')
+                <input type="hidden" name="duplicate_of_id" value="{{ $selectedCandidate->id }}">
+                <div>
+                    <p class="text-[11px] font-bold leading-4 text-[#09090B]">Ready to make a decision?</p>
+                    <p class="pt-[3px] text-[9px] leading-[14px] text-[#67736D]">TwinBug’s result is a recommendation and requires developer review.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-[7px]">
+                    <a href="{{ route('bug-reports.show', $bugReport) }}"
+                        class="inline-flex h-10 items-center justify-center gap-[7px] rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]">
+                        <span>Open external ticket</span>
+                    </a>
+                    <button type="submit" name="status" value="{{ App\Enums\BugStatus::InProgress->value }}"
+                        class="inline-flex h-10 cursor-pointer items-center justify-center gap-[7px] rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]">
+                        <span>Reject recommendation</span>
+                    </button>
+                    <button type="submit" name="status" value="{{ App\Enums\BugStatus::Resolved->value }}"
+                        class="inline-flex h-10 cursor-pointer items-center justify-center gap-[7px] rounded-[8px] bg-[#A83A36] px-[15px] text-[12px] font-semibold leading-[18px] text-white transition hover:bg-[#8E2F2C]">
+                        <span>Link as duplicate</span>
+                    </button>
+                </div>
+            </form>
+
+        @else
+
+        {{-- ======================== BREADCRUMB ======================== --}}
+        <nav class="flex items-center gap-2 text-[11.5px] leading-[17px]" aria-label="Breadcrumb">
+            <a href="{{ route('dashboard') }}" class="text-[#83908A] transition hover:text-[#33423B]">Developer Dashboard</a>
+            <span class="text-[#83908A]">›</span>
+            <a href="{{ route('bug-reports.index') }}" class="text-[#83908A] transition hover:text-[#33423B]">Detection Results</a>
+            <span class="text-[#83908A]">›</span>
+            <span class="font-semibold text-[#33423B]">BUG-{{ $bugReport->id }}</span>
+        </nav>
+
+        {{-- ======================== PAGE HEADING ======================== --}}
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+                <p class="text-[10px] font-bold uppercase leading-4 tracking-[1px] text-[#236B51]">
+                    Report BUG-{{ $bugReport->id }} · {{ $bugReport->detection_status->label() }}
+                </p>
+                <h1 class="pt-[7px] text-[27px] font-bold leading-8 tracking-[-0.65px] text-[#142019]">
+                    {{ $selectedCandidate && request()->has('candidate') ? 'Detection Comparison' : 'Detection Results' }}
+                </h1>
+                <p class="pt-[7px] text-[13px] leading-5 text-[#67736D]">
+                    {{ $bugReport->title }}
+                </p>
+            </div>
+
+            <div class="flex items-center gap-2.5 shrink-0">
+                <span class="inline-flex h-[24.6px] items-center gap-[5px] rounded-full border-[0.8px] border-[#D9EEE3] bg-[#EDF7F2] px-[7px] text-[9.5px] font-semibold leading-[14px] text-[#26714F]">
+                    <span class="size-[5px] rounded-full bg-[#26714F]"></span>
+                    <span>{{ $bugReport->detection_status->label() }}</span>
+                </span>
+            </div>
         </div>
 
-        {{-- ======================== DETECTION STATES ======================== --}}
-
-        {{-- Failed state --}}
-        @if ($bugReport->detection_status === App\Enums\DetectionStatus::Failed)
-            <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
-                <div class="flex items-center gap-2.5">
-                    <x-auth.icon name="alert" class="size-4 text-danger" />
-                    <h2 class="font-serif text-base font-bold text-ink">Analisis Gagal</h2>
+        {{-- ======================== DARK GREEN SUMMARY BANNER ======================== --}}
+        <section class="detection-summary rounded-[12px] bg-[#0D2D22] p-[22px] text-white shadow-[0_6px_20px_rgba(13,45,34,0.12)]" aria-label="Detection summary">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-[180px_1fr]">
+                <div class="border-b border-white/[0.13] pb-5 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-5">
+                    <p class="text-[10px] leading-[15px] text-[#B8CBC2]">Overall similarity</p>
+                    <p class="pt-1 pb-[7px] text-[48px] font-bold leading-[53px] tracking-[-2px] text-white">
+                        {{ $overallPercent !== null ? $overallPercent . '%' : '—' }}
+                    </p>
+                    <div class="flex items-center gap-[5px] text-[9.5px] leading-[14px] text-[#BFE0CF]">
+                        <x-auth.icon name="sparkles" class="size-[15px]" />
+                        <span>
+                            {{ $overallSimilarity !== null ? ($overallSimilarity >= 0.8 ? 'Very high similarity' : ($overallSimilarity >= 0.65 ? 'Moderate similarity' : 'Low similarity')) : 'No matching reports' }}
+                        </span>
+                    </div>
                 </div>
-                <p class="mt-2 text-xs text-label">{{ $bugReport->detection_error ?? 'Terjadi kesalahan saat menganalisis duplikasi.' }}</p>
 
-                <form method="POST" action="{{ route('bug-reports.detection.rerun', $bugReport) }}">
+                <div class="flex flex-col justify-between">
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <div>
+                            <p class="text-[9px] leading-[14px] text-[#94AFA2]">Detection mode</p>
+                            <p class="pt-[5px] flex items-center gap-[5px] text-[10.5px] font-bold leading-4 text-white">
+                                <x-auth.icon name="eye" class="size-4" />
+                                <span>{{ $bugReport->hasScreenshot() ? 'Multimodal' : 'Text only' }}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] leading-[14px] text-[#94AFA2]">Candidates found</p>
+                            <p class="pt-[5px] text-[10.5px] font-bold leading-4 text-white">
+                                {{ $results->count() }} historical {{ $results->count() === 1 ? 'report' : 'reports' }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] leading-[14px] text-[#94AFA2]">Analyzed</p>
+                            <p class="pt-[5px] text-[10.5px] font-bold leading-4 text-white">
+                                {{ $bugReport->detected_at?->format('d M Y, H:i') ?? 'Not completed' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="pt-4 text-[10px] leading-4 text-[#C4D2CB]">
+                        TwinBug found historical reports with semantic and visual similarities. Review each candidate before making a triage decision.
+                    </p>
+
+                    <div class="mt-[11px] flex items-center gap-[7px] rounded-[6px] bg-white/[0.06] px-[10px] py-2 text-[9px] leading-[14px] text-[#A9C2B6]">
+                        <x-auth.icon name="alert" class="size-4 shrink-0" />
+                        <span>Similarity scores are supporting evidence, not an automatic duplicate decision.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {{-- ======================== STATUS STATES (FAILED / PENDING / PROCESSING) ======================== --}}
+        @if ($bugReport->detection_status === App\Enums\DetectionStatus::Failed)
+            <div class="rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-5">
+                <div class="flex items-center gap-2.5 text-danger">
+                    <x-auth.icon name="alert" class="size-4" />
+                    <h2 class="text-[14px] font-semibold">Analysis Failed</h2>
+                </div>
+                <p class="mt-2 text-[11px] text-[#67736D]">{{ $bugReport->detection_error ?? 'An error occurred during duplicate analysis.' }}</p>
+                <form method="POST" action="{{ route('bug-reports.detection.rerun', $bugReport) }}" class="mt-4">
                     @csrf
-                    <button type="submit" class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-danger px-4 py-2 text-xs font-semibold text-white shadow-cta transition hover:bg-danger/90 active:scale-95 cursor-pointer">
+                    <button type="submit" class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-[8px] bg-[#A83A36] px-4 text-[12px] font-semibold text-white">
                         <x-auth.icon name="refresh" class="size-3.5" />
-                        <span>Jalankan ulang analisis</span>
+                        <span>Re-run analysis</span>
                     </button>
                 </form>
             </div>
         @endif
 
-        {{-- Pending / Processing state --}}
         @if (in_array($bugReport->detection_status, [App\Enums\DetectionStatus::Pending, App\Enums\DetectionStatus::Processing]))
-            <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
-                <div class="flex items-center gap-2.5">
-                    <x-auth.icon name="alert" class="size-4 text-amber-600" />
-                    <h2 class="font-serif text-base font-bold text-ink">
+            <div class="rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-5">
+                <div class="flex items-center gap-2.5 text-[#8B6418]">
+                    <x-auth.icon name="alert" class="size-4" />
+                    <h2 class="text-[14px] font-semibold text-[#09090B]">
                         {{ $bugReport->detection_status === App\Enums\DetectionStatus::Pending ? 'Menunggu Analisis' : 'Sedang Menganalisis' }}
                     </h2>
                 </div>
-                <p class="mt-2 text-xs text-label">
+                <p class="mt-2 text-[11px] text-[#67736D]">
                     Analisis kemiripan sedang diproses. Silakan cek kembali beberapa saat lagi.
                 </p>
-
                 @if ($bugReport->detection_status === App\Enums\DetectionStatus::Processing)
-                    <a
-                        href="{{ route('report.detection_result', $bugReport) }}"
-                        class="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-divider bg-white px-4 py-2 text-xs font-semibold text-ink shadow-2xs transition hover:bg-input"
-                    >
+                    <a href="{{ route('report.detection_result', $bugReport) }}"
+                        class="mt-4 inline-flex h-10 items-center gap-2 rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-4 text-[12px] font-semibold text-[#35433C]">
                         <x-auth.icon name="refresh" class="size-3.5" />
-                        <span>Segarkan Halaman</span>
+                        <span>Refresh</span>
                     </a>
                 @endif
             </div>
         @endif
 
-        {{-- Completed state --}}
+        {{-- ======================== TOP SIMILAR HISTORICAL REPORTS ======================== --}}
         @if ($bugReport->detection_status === App\Enums\DetectionStatus::Completed)
-            {{-- Empty state --}}
-            @if ($results->isEmpty())
-                <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
-                    <div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-divider bg-input/30 px-6 py-10 text-center">
-                        <span class="mb-3 grid size-10 place-items-center rounded-xl bg-emerald-100 text-emerald-700 shadow-2xs">
-                            <x-auth.icon name="check" class="size-5" />
-                        </span>
-                        <h3 class="font-serif text-sm font-bold text-ink">Tidak ditemukan laporan bug serupa.</h3>
-                        <p class="mt-1 max-w-md text-xs leading-relaxed text-label">
-                            Sistem tidak menemukan laporan bug historis yang secara signifikan mirip dengan laporan ini berdasarkan ambang batas deteksi.
-                        </p>
-                        <p class="mt-2 text-[11px] text-label/60">
-                            Catatan: Hasil deteksi adalah saran saja, bukan keputusan akhir. Keputusan akhir diambil oleh Developer.
-                        </p>
+            <section class="overflow-hidden rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white shadow-[0_1px_2px_rgba(12,35,25,0.024)]">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b-[0.8px] border-[#E9EEEB] px-5 py-[18px]">
+                    <div>
+                        <h2 class="text-[14px] font-normal leading-[21px] tracking-[-0.15px] text-[#09090B]">Top similar historical reports</h2>
+                        <p class="pt-1 text-[11px] leading-4 text-[#67736D]">Ranked by final similarity score, highest first.</p>
                     </div>
-                </div>
-            @else
-                {{-- Candidate list --}}
-                <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
-                    <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
-                        <div>
-                            <h2 class="font-serif text-base font-bold text-ink">Similar Historical Bug Reports</h2>
-                            <p class="text-xs text-label">
-                                Dihasilkan oleh model <span class="font-mono text-[11px]">{{ config('services.ml.model', 'paraphrase-multilingual-MiniLM-L12-v2') }}</span>. Skor menunjukkan potensi kemiripan.
-                            </p>
-                        </div>
-                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold bg-input text-ink">
-                            {{ $results->count() }} Kandidat Ditemukan
-                        </span>
-                    </div>
-
-                    <div class="overflow-x-auto -mx-5 sm:mx-0">
-                        <table class="w-full text-left text-xs divide-y divide-divider/70">
-                            <thead>
-                                <tr class="border-b border-divider/80 bg-input/40 text-[10px] font-bold uppercase tracking-wider text-label">
-                                    <th class="py-2.5 px-3 w-12 text-center font-semibold">Rank</th>
-                                    <th class="py-2.5 px-4 font-semibold">Judul Laporan</th>
-                                    <th class="py-2.5 px-3 font-semibold">Modul</th>
-                                    <th class="py-2.5 px-3 font-semibold">Status</th>
-                                    <th class="py-2.5 px-3 w-20 text-right font-semibold">Skor Teks</th>
-                                    <th class="py-2.5 px-3 w-20 text-right font-semibold">Skor Gambar</th>
-                                    <th class="py-2.5 px-3 w-20 text-center font-semibold">Tingkat</th>
-                                    <th class="py-2.5 px-4 text-right w-24 font-semibold">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-divider/70">
-                                @foreach ($results as $result)
-                                    @php
-                                        $textScore = $result->text_score ?? null;
-                                        $imageScore = $result->image_score ?? null;
-                                        $combined = max($textScore ?? 0, $imageScore ?? 0);
-                                        $combinedPercent = $combined * 100;
-
-                                        $badgeLevel = 'low';
-                                        $badgeLabel = 'Rendah';
-                                        $badgeClasses = 'bg-slate-100 text-slate-800';
-                                        $mediumMin = (float) (config('detection.badge_medium.min') ?? 0.65);
-                                        $highMin = (float) (config('detection.badge_high.min') ?? 0.80);
-
-                                        if ($combinedPercent >= $highMin * 100) {
-                                            $badgeLevel = 'high';
-                                            $badgeLabel = 'Tinggi';
-                                            $badgeClasses = 'bg-rose-50 text-rose-700 ring-1 ring-rose-200';
-                                        } elseif ($combinedPercent >= $mediumMin * 100) {
-                                            $badgeLevel = 'medium';
-                                            $badgeLabel = 'Sedang';
-                                            $badgeClasses = 'bg-amber-50 text-amber-800 ring-1 ring-amber-200';
-                                        } elseif ($combinedPercent >= ($bugReport->detection_threshold ?? 0) * 100) {
-                                            $badgeLevel = 'low';
-                                            $badgeLabel = 'Rendah';
-                                            $badgeClasses = 'bg-slate-100 text-slate-800';
-                                        }
-                                    @endphp
-                                    <tr class="transition hover:bg-slate-50/70 cursor-pointer group"
-                                        onclick="location.href='{{ route('bug-reports.detection', ['bugReport' => $bugReport, 'candidate' => $result->candidate_report_id]) }}'"
-                                        role="button"
-                                        tabindex="0"
-                                        aria-label="Pilih kandidat {{ $result->candidateReport->title }}"
-                                    >
-                                        <td class="py-3 px-3 text-center">
-                                            <span class="grid size-6 place-items-center rounded-md font-mono text-xs font-bold text-ink bg-input mx-auto">{{ $result->rank }}</span>
-                                        </td>
-                                        <td class="py-3 px-4">
-                                            <div class="font-semibold text-ink line-clamp-1">{{ $result->candidateReport->title }}</div>
-                                            <div class="mt-0.5 text-[10px] text-label/70 line-clamp-1">
-                                                #{{ $result->candidate_report_id }} • {{ $result->candidateReport->created_at->format('d M Y') }}
-                                            </div>
-                                        </td>
-                                        <td class="py-3 px-3">
-                                            <span class="inline-flex items-center rounded-md bg-input px-2 py-0.5 text-[10px] font-mono font-medium text-ink">
-                                                {{ $result->candidateReport->module ?? 'Lainnya' }}
-                                            </span>
-                                        </td>
-                                        <td class="py-3 px-3">
-                                            <span class="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold {{ $result->candidateReport->status->badgeClasses() }}">
-                                                <span class="size-1 rounded-full bg-current opacity-80"></span>
-                                                {{ $result->candidateReport->status->label() }}
-                                            </span>
-                                        </td>
-                                        <td class="py-3 px-3 text-right">
-                                            @if ($textScore !== null)
-                                                <span class="font-serif text-sm font-bold text-ink">{{ number_format($textScore * 100, 1) }}%</span>
-                                            @else
-                                                <span class="text-xs text-label/50 italic">-</span>
-                                            @endif
-                                        </td>
-                                        <td class="py-3 px-3 text-right">
-                                            @if ($imageScore !== null)
-                                                <span class="font-serif text-sm font-bold text-ink">{{ number_format($imageScore * 100, 1) }}%</span>
-                                            @else
-                                                <span class="text-xs text-label/50 italic">-</span>
-                                            @endif
-                                        </td>
-                                        <td class="py-3 px-3 text-center">
-                                            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold {{ $badgeClasses }}">
-                                                {{ $badgeLabel }}
-                                            </span>
-                                        </td>
-                                        <td class="py-3 px-4 text-right">
-                                            <a
-                                                href="{{ route('bug-reports.detection', ['bugReport' => $bugReport, 'candidate' => $result->candidate_report_id]) }}"
-                                                class="inline-flex items-center gap-1 rounded-lg border border-divider bg-white px-2.5 py-1 text-[11px] font-semibold text-ink transition hover:border-slate-300 hover:bg-slate-50"
-                                            >
-                                                <x-auth.icon name="eye" class="size-2.5" />
-                                                <span>Bandingkan</span>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-[11px] text-label/70 border-t border-divider/60 pt-3">
-                        <p>Catatan: Hasil deteksi adalah saran kemiripan. Keputusan duplikasi dibuat oleh Developer.</p>
-                        <p class="font-mono">Model: ~128 token input</p>
-                    </div>
+                    <span class="inline-flex items-center gap-[5px] rounded-full bg-[#F3F6F4] px-[9px] py-[6px] text-[9.5px] leading-[14px] text-[#236B51]">
+                        <x-auth.icon name="sparkles" class="size-[14px]" />
+                        <span>{{ $bugReport->hasScreenshot() ? 'Multimodal analysis' : 'Text analysis' }}</span>
+                    </span>
                 </div>
 
-                {{-- Side-by-side comparison --}}
-                @if ($selectedCandidate)
-                    <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
-                        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
-                            <div>
-                                <h2 class="font-serif text-base font-bold text-ink">Perbandingan Sampingan</h2>
-                                <p class="text-xs text-label">
-                                    Membandingkan laporan sumber dengan kandidat <strong class="text-ink">"{{ $selectedCandidate->title }}"</strong>.
-                                </p>
-                            </div>
-                            <a
-                                href="{{ route('bug-reports.detection', $bugReport) }}"
-                                class="inline-flex items-center gap-1 rounded-lg border border-divider bg-white px-2.5 py-1 text-xs font-semibold text-ink transition hover:bg-input"
-                            >
-                                <x-auth.icon name="x" class="size-3" />
-                                <span>Batal</span>
-                            </a>
-                        </div>
-
-                        {{-- Similarity Banner --}}
-                        <div class="mb-5 rounded-xl border border-divider/80 bg-input/40 p-3.5">
-                            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div>
-                                        <p class="text-[10px] font-bold uppercase tracking-wider text-label">Skor Kemiripan</p>
-                                        @if ($selectedResult->text_score !== null)
-                                            <p class="font-serif text-2xl font-bold text-ink">{{ number_format((float) $selectedResult->text_score * 100, 1) }}%</p>
-                                        @else
-                                            <p class="font-serif text-2xl font-bold text-ink">-</p>
-                                        @endif
-                                    </div>
-                                    <span class="rounded-md bg-sage-100 px-2 py-0.5 text-[10px] font-semibold text-sage-800">
-                                        Rank #{{ $selectedResult->rank }} dari {{ $results->count() }}
+                @if ($results->isEmpty())
+                    <div class="px-6 py-10 text-center">
+                        <p class="text-[13px] font-semibold text-[#09090B]">No similar historical reports found.</p>
+                        <p class="mt-1 text-[11px] text-[#67736D]">TwinBug did not find any historical bug reports matching the similarity threshold.</p>
+                    </div>
+                @else
+                    <div class="divide-y-[0.8px] divide-[#E2E8E5] px-[18px]">
+                        @foreach ($results as $result)
+                            @php
+                                $textPct = $result->text_score !== null ? (int) round($result->text_score * 100) : 0;
+                                $imagePct = $result->image_score !== null ? (int) round($result->image_score * 100) : 0;
+                                $finalPct = (int) round(max((float) ($result->text_score ?? 0), (float) ($result->image_score ?? 0)) * 100);
+                                $candStatus = $result->candidateReport->status;
+                            @endphp
+                            <article class="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
+                                <div class="flex items-center gap-4 min-w-0 flex-1">
+                                    <span class="grid size-[30px] shrink-0 place-items-center rounded-[8px] bg-[#F1F5F3] text-[10px] font-bold text-[#236B51]">
+                                        #{{ $result->rank }}
                                     </span>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex flex-wrap items-center gap-3">
+                                            <span class="text-[16px] font-semibold leading-6 text-[#236B51]">BUG-{{ $result->candidate_report_id }}</span>
+                                            <span class="inline-flex items-center gap-[5px] rounded-full border-[0.8px] px-[7px] py-1 text-[9.5px] font-semibold leading-[14px] {{ $candStatus === App\Enums\BugStatus::Resolved ? 'border-[#D9EEE3] bg-[#EDF7F2] text-[#26714F]' : 'border-[#E0E5E2] bg-[#F1F4F2] text-[#58665F]' }}">
+                                                <span class="size-[5px] rounded-full {{ $candStatus === App\Enums\BugStatus::Resolved ? 'bg-[#26714F]' : 'bg-[#58665F]' }}"></span>
+                                                <span>{{ $candStatus->label() }}</span>
+                                            </span>
+                                        </div>
+                                        <h3 class="pt-1 truncate text-[11px] font-semibold leading-[15px] text-[#09090B]">
+                                            {{ $result->candidateReport->title }}
+                                        </h3>
+                                    </div>
                                 </div>
-                                <p class="text-xs text-label leading-relaxed max-w-md">
-                                    Dihitung dari judul, deskripsi, dan konteks visual screenshot bila tersedia.
-                                </p>
-                                <p class="text-xs text-label">
-                                    @if ($selectedResult->image_score !== null)
-                                        Skor kemiripan gambar: {{ number_format((float) $selectedResult->image_score * 100, 1) }}%
-                                    @else
-                                        Skor kemiripan gambar: tidak tersedia
-                                    @endif
-                                </p>
-                            </div>
-                        </div>
 
-                        <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-                            {{-- Source report --}}
-                            <div class="space-y-3.5">
-                                <div class="rounded-xl border border-emerald-200/80 bg-emerald-50/50 p-3.5">
-                                    <div class="flex items-center gap-2 mb-2.5">
-                                        <x-auth.icon name="bug" class="size-3.5 text-emerald-800" />
-                                        <span class="text-xs font-bold text-emerald-950 uppercase tracking-wider">Laporan Sumber</span>
+                                {{-- 3 Score Bars --}}
+                                <div class="grid grid-cols-3 gap-[14px] lg:w-[420px] shrink-0">
+                                    <div>
+                                        <p class="text-[8.5px] leading-[13px] text-[#67736D]">Text</p>
+                                        <div class="mt-1 flex items-center gap-[9px]">
+                                            <div class="h-[6px] flex-1 overflow-hidden rounded-full bg-[#E9EEEB]">
+                                                <div class="h-full rounded-full {{ $textPct >= 80 ? 'bg-[#2C795A]' : 'bg-[#BE8C32]' }}" style="width: {{ $textPct }}%"></div>
+                                            </div>
+                                            <span class="w-7 text-[10px] font-bold leading-[15px] text-[#34413B]">{{ $textPct }}%</span>
+                                        </div>
                                     </div>
-                                    <dl class="space-y-1.5 text-xs">
-                                        <div class="flex justify-between border-b border-emerald-100 pb-1">
-                                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Judul</dt>
-                                            <dd class="font-semibold text-ink truncate max-w-xs text-right">{{ $bugReport->title }}</dd>
+                                    <div>
+                                        <p class="text-[8.5px] leading-[13px] text-[#67736D]">Image</p>
+                                        <div class="mt-1 flex items-center gap-[9px]">
+                                            <div class="h-[6px] flex-1 overflow-hidden rounded-full bg-[#E9EEEB]">
+                                                <div class="h-full rounded-full {{ $imagePct >= 85 ? 'bg-[#2C795A]' : 'bg-[#BE8C32]' }}" style="width: {{ $imagePct }}%"></div>
+                                            </div>
+                                            <span class="w-7 text-[10px] font-bold leading-[15px] text-[#34413B]">{{ $result->image_score !== null ? $imagePct . '%' : '—' }}</span>
                                         </div>
-                                        <div class="flex justify-between border-b border-emerald-100 pb-1">
-                                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Modul</dt>
-                                            <dd class="font-mono text-ink">{{ $bugReport->module ?? 'Lainnya' }}</dd>
-                                        </div>
-                                        <div class="flex justify-between border-b border-emerald-100 pb-1">
-                                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Keparahan</dt>
-                                            <dd>
-                                                <span class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold {{ $bugReport->severity->badgeClasses() }}">
-                                                    {{ $bugReport->severity->label() }}
-                                                </span>
-                                            </dd>
-                                        </div>
-                                        <div class="flex justify-between border-b border-emerald-100 pb-1">
-                                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Status</dt>
-                                            <dd class="font-semibold text-ink">{{ $bugReport->status->label() }}</dd>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Tanggal</dt>
-                                            <dd class="text-ink">{{ $bugReport->created_at->format('d M Y H:i') }}</dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                                <div class="rounded-xl border border-divider/70 bg-input/30 p-3.5">
-                                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Deskripsi Sumber</dt>
-                                    <dd class="mt-1.5 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $bugReport->description }}</dd>
-                                </div>
-                                <div class="rounded-xl border border-divider/70 bg-white p-3.5 shadow-2xs">
-                                    <div class="flex items-center justify-between gap-2">
-                                        <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Screenshot</dt>
-                                        @if ($bugReport->hasScreenshot())
-                                            <a
-                                                href="{{ asset('storage/' . $bugReport->screenshot_path) }}"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                class="inline-flex items-center gap-1 text-[11px] font-semibold text-sage-700 transition hover:text-sage-800"
-                                            >
-                                                <x-auth.icon name="eye" class="size-3" />
-                                                <span>Buka Penuh</span>
-                                            </a>
-                                        @endif
                                     </div>
-                                    @if ($bugReport->hasScreenshot())
-                                        <a
-                                            href="{{ asset('storage/' . $bugReport->screenshot_path) }}"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="mt-2 block overflow-hidden rounded-xl border border-divider/80 bg-slate-100"
-                                        >
-                                            <img
-                                                src="{{ asset('storage/' . $bugReport->screenshot_path) }}"
-                                                alt="Screenshot laporan sumber {{ $bugReport->title }}"
-                                                class="max-h-60 w-full object-contain"
-                                            >
-                                        </a>
-                                    @else
-                                        <p class="mt-2 rounded-xl border border-dashed border-divider bg-input/40 px-4 py-6 text-center text-xs text-label">Tidak ada screenshot</p>
-                                    @endif
+                                    <div>
+                                        <p class="text-[8.5px] leading-[13px] text-[#67736D]">Final</p>
+                                        <div class="mt-1 flex items-center gap-[9px]">
+                                            <div class="h-[6px] flex-1 overflow-hidden rounded-full bg-[#E9EEEB]">
+                                                <div class="h-full rounded-full {{ $finalPct >= 80 ? 'bg-[#2C795A]' : 'bg-[#BE8C32]' }}" style="width: {{ $finalPct }}%"></div>
+                                            </div>
+                                            <span class="w-7 text-[10px] font-bold leading-[15px] text-[#34413B]">{{ $finalPct }}%</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="rounded-xl border border-divider/70 bg-white p-3.5 shadow-2xs">
-                                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Analisis Visual Screenshot (AI)</dt>
-                                    @if ($bugReport->hasImageDescription())
-                                        <dd class="mt-1.5 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $bugReport->image_description }}</dd>
-                                        <p class="mt-2 text-[10px] text-label/60">Dihasilkan otomatis oleh LLM sebagai konteks tambahan untuk perbandingan.</p>
-                                    @elseif ($bugReport->hasScreenshot())
-                                        <dd class="mt-1.5 text-xs text-label">Belum ada analisis visual. Jalankan analisis ulang atau command backfill.</dd>
-                                    @else
-                                        <dd class="mt-1.5 text-xs text-label">Tidak ada screenshot untuk dianalisis.</dd>
-                                    @endif
-                                </div>
-                            </div>
 
-                            {{-- Candidate report --}}
-                            <div class="space-y-3.5">
-                                <div class="rounded-xl border border-slate-200/80 bg-slate-100/60 p-3.5">
-                                    <div class="flex items-center gap-2 mb-2.5">
-                                        <x-auth.icon name="eye" class="size-3.5 text-slate-800" />
-                                        <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">Kandidat Mirip</span>
-                                    </div>
-                                    <dl class="space-y-1.5 text-xs">
-                                        <div class="flex justify-between border-b border-slate-200 pb-1">
-                                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Judul</dt>
-                                            <dd class="font-semibold text-ink truncate max-w-xs text-right">{{ $selectedCandidate->title }}</dd>
-                                        </div>
-                                        <div class="flex justify-between border-b border-slate-200 pb-1">
-                                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Modul</dt>
-                                            <dd class="font-mono text-ink">{{ $selectedCandidate->module ?? 'Lainnya' }}</dd>
-                                        </div>
-                                        <div class="flex justify-between border-b border-slate-200 pb-1">
-                                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Keparahan</dt>
-                                            <dd>
-                                                <span class="inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold {{ $selectedCandidate->severity->badgeClasses() }}">
-                                                    {{ $selectedCandidate->severity->label() }}
-                                                </span>
-                                            </dd>
-                                        </div>
-                                        <div class="flex justify-between border-b border-slate-200 pb-1">
-                                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Status</dt>
-                                            <dd class="font-semibold text-ink">{{ $selectedCandidate->status->label() }}</dd>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Tanggal</dt>
-                                            <dd class="text-ink">{{ $selectedCandidate->created_at->format('d M Y H:i') }}</dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                                <div class="rounded-xl border border-divider/70 bg-input/30 p-3.5">
-                                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Deskripsi Kandidat</dt>
-                                    <dd class="mt-1.5 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $selectedCandidate->description }}</dd>
-                                </div>
-                                <div class="rounded-xl border border-divider/70 bg-white p-3.5 shadow-2xs">
-                                    <div class="flex items-center justify-between gap-2">
-                                        <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Screenshot</dt>
-                                        @if ($selectedCandidate->hasScreenshot())
-                                            <a
-                                                href="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                class="inline-flex items-center gap-1 text-[11px] font-semibold text-sage-700 transition hover:text-sage-800"
-                                            >
-                                                <x-auth.icon name="eye" class="size-3" />
-                                                <span>Buka Penuh</span>
-                                            </a>
-                                        @endif
-                                    </div>
-                                    @if ($selectedCandidate->hasScreenshot())
-                                        <a
-                                            href="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="mt-2 block overflow-hidden rounded-xl border border-divider/80 bg-slate-100"
-                                        >
-                                            <img
-                                                src="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}"
-                                                alt="Screenshot kandidat {{ $selectedCandidate->title }}"
-                                                class="max-h-60 w-full object-contain"
-                                            >
-                                        </a>
-                                    @else
-                                        <p class="mt-2 rounded-xl border border-dashed border-divider bg-input/40 px-4 py-6 text-center text-xs text-label">Tidak ada screenshot</p>
-                                    @endif
-                                </div>
-                                <div class="rounded-xl border border-divider/70 bg-white p-3.5 shadow-2xs">
-                                    <dt class="text-[10px] font-bold uppercase tracking-wider text-label">Analisis Visual Screenshot (AI)</dt>
-                                    @if ($selectedCandidate->hasImageDescription())
-                                        <dd class="mt-1.5 whitespace-pre-line text-xs sm:text-sm leading-relaxed text-body">{{ $selectedCandidate->image_description }}</dd>
-                                        <p class="mt-2 text-[10px] text-label/60">Dihasilkan otomatis oleh LLM sebagai konteks tambahan untuk perbandingan.</p>
-                                    @elseif ($selectedCandidate->hasScreenshot())
-                                        <dd class="mt-1.5 text-xs text-label">Belum ada analisis visual. Jalankan analisis ulang atau command backfill.</dd>
-                                    @else
-                                        <dd class="mt-1.5 text-xs text-label">Tidak ada screenshot untuk dianalisis.</dd>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
+                                <a href="{{ route('bug-reports.detection', ['bugReport' => $bugReport, 'candidate' => $result->candidate_report_id]) }}"
+                                    class="inline-flex h-[34px] shrink-0 items-center justify-center gap-[7px] rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[11px] text-[11px] font-semibold leading-4 text-[#35433C] transition hover:bg-[#F7F9F8]">
+                                    <span>View comparison</span>
+                                    <span aria-hidden="true">→</span>
+                                </a>
+                            </article>
+                        @endforeach
                     </div>
                 @endif
+            </section>
+
+            {{-- ======================== SIDE-BY-SIDE COMPARISON (WHEN CANDIDATE SELECTED) ======================== --}}
+            @if ($selectedCandidate && request()->has('candidate'))
+                <section class="rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-5">
+                    <div class="mb-4 flex items-center justify-between border-b-[0.8px] border-[#E9EEEB] pb-3">
+                        <div>
+                            <h2 class="text-[14px] font-semibold text-[#09090B]">Side-by-side comparison: BUG-{{ $bugReport->id }} vs BUG-{{ $selectedCandidate->id }}</h2>
+                            <p class="text-[11px] text-[#67736D]">Compare report descriptions and screenshots before making a triage decision.</p>
+                        </div>
+                        <a href="{{ route('report.detection_result', $bugReport) }}" class="text-[11px] font-semibold text-[#236B51] hover:underline">Close comparison</a>
+                    </div>
+                    <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                        <div class="rounded-[9px] border-[0.8px] border-[#E2E8E5] bg-[#FAFBFA] p-4 space-y-3">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-[#236B51]">Incoming: BUG-{{ $bugReport->id }}</p>
+                                <h3 class="mt-1 text-[13px] font-semibold text-[#09090B]">{{ $bugReport->title }}</h3>
+                                <p class="mt-2 whitespace-pre-line text-[11.5px] leading-5 text-[#536059]">{{ $bugReport->description }}</p>
+                            </div>
+                            <div class="rounded-[7px] border-[0.8px] border-[#E2E8E5] bg-white p-3">
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-[#67736D]">Screenshot</p>
+                                @if ($bugReport->hasScreenshot())
+                                    <a href="{{ asset('storage/' . $bugReport->screenshot_path) }}" target="_blank" rel="noopener noreferrer" class="mt-2 block overflow-hidden rounded-[6px] border-[0.8px] border-[#E2E8E5]">
+                                        <img src="{{ asset('storage/' . $bugReport->screenshot_path) }}" alt="Screenshot {{ $bugReport->title }}" class="max-h-56 w-full object-contain bg-[#F7F9F8]">
+                                    </a>
+                                @else
+                                    <p class="mt-2 text-[11px] text-[#84908A]">No screenshot attached</p>
+                                @endif
+                            </div>
+                            <div class="rounded-[7px] border-[0.8px] border-[#E2E8E5] bg-white p-3">
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-[#67736D]">Visual Screenshot Analysis (AI)</p>
+                                @if ($bugReport->hasImageDescription())
+                                    <p class="mt-1.5 whitespace-pre-line text-[11.5px] leading-5 text-[#536059]">{{ $bugReport->image_description }}</p>
+                                @elseif ($bugReport->hasScreenshot())
+                                    <p class="mt-1.5 text-[11px] text-[#84908A]">No visual analysis yet. Re-run analysis or run backfill command.</p>
+                                @else
+                                    <p class="mt-1.5 text-[11px] text-[#84908A]">No screenshot to analyze.</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="rounded-[9px] border-[0.8px] border-[#E2E8E5] bg-[#FAFBFA] p-4 space-y-3">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-[#236B51]">Candidate: BUG-{{ $selectedCandidate->id }}</p>
+                                <h3 class="mt-1 text-[13px] font-semibold text-[#09090B]">{{ $selectedCandidate->title }}</h3>
+                                <p class="mt-2 whitespace-pre-line text-[11.5px] leading-5 text-[#536059]">{{ $selectedCandidate->description }}</p>
+                            </div>
+                            <div class="rounded-[7px] border-[0.8px] border-[#E2E8E5] bg-white p-3">
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-[#67736D]">Screenshot</p>
+                                @if ($selectedCandidate->hasScreenshot())
+                                    <a href="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}" target="_blank" rel="noopener noreferrer" class="mt-2 block overflow-hidden rounded-[6px] border-[0.8px] border-[#E2E8E5]">
+                                        <img src="{{ asset('storage/' . $selectedCandidate->screenshot_path) }}" alt="Screenshot {{ $selectedCandidate->title }}" class="max-h-56 w-full object-contain bg-[#F7F9F8]">
+                                    </a>
+                                @else
+                                    <p class="mt-2 text-[11px] text-[#84908A]">No screenshot attached</p>
+                                @endif
+                            </div>
+                            <div class="rounded-[7px] border-[0.8px] border-[#E2E8E5] bg-white p-3">
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-[#67736D]">Visual Screenshot Analysis (AI)</p>
+                                @if ($selectedCandidate->hasImageDescription())
+                                    <p class="mt-1.5 whitespace-pre-line text-[11.5px] leading-5 text-[#536059]">{{ $selectedCandidate->image_description }}</p>
+                                @elseif ($selectedCandidate->hasScreenshot())
+                                    <p class="mt-1.5 text-[11px] text-[#84908A]">No visual analysis yet. Re-run analysis or run backfill command.</p>
+                                @else
+                                    <p class="mt-1.5 text-[11px] text-[#84908A]">No screenshot to analyze.</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </section>
             @endif
+        @endif
+
+        {{-- ======================== TRIAGE DECISION CARD ======================== --}}
+        <section class="rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-[20.8px]">
+            <form method="POST" action="{{ route('bug-reports.status.update', $bugReport) }}" class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                @csrf
+                @method('PATCH')
+                <input type="hidden" name="duplicate_of_id" value="{{ $selectedCandidate?->id }}">
+
+                <div class="flex-1 max-w-[680px]">
+                    <h2 class="text-[14px] font-normal leading-[21px] tracking-[-0.15px] text-[#09090B]">Triage decision</h2>
+                    <p class="pt-1 text-[11px] leading-4 text-[#67736D]">Add notes and choose the most accurate outcome after reviewing the evidence.</p>
+                    <textarea
+                        name="resolution_note"
+                        rows="3"
+                        placeholder="Add review notes for your team..."
+                        class="mt-[13px] min-h-[75px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-white px-[11px] py-[10px] text-[11.5px] leading-[18px] text-[#24322B] placeholder:text-[#A4ADA8] focus:border-[#236B51] focus:outline-none">{{ old('resolution_note', $bugReport->resolution_note) }}</textarea>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 shrink-0 lg:pt-1">
+                    <button type="submit" name="status" value="{{ $bugReport->status->value }}"
+                        class="inline-flex h-10 cursor-pointer items-center justify-center gap-[7px] rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]">
+                        <span>Save review notes</span>
+                    </button>
+                    <button type="submit" name="status" value="{{ App\Enums\BugStatus::InProgress->value }}"
+                        class="inline-flex h-10 cursor-pointer items-center justify-center gap-[7px] rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]">
+                        <span>Confirm as new bug</span>
+                    </button>
+                    <button type="submit" name="status" value="{{ App\Enums\BugStatus::Resolved->value }}"
+                        class="inline-flex h-10 cursor-pointer items-center justify-center gap-[7px] rounded-[8px] bg-[#A83A36] px-[15px] text-[12px] font-semibold leading-[18px] text-white transition hover:bg-[#8E2F2C]">
+                        <span>Mark as duplicate</span>
+                    </button>
+                </div>
+            </form>
+        </section>
         @endif
 
     </div>

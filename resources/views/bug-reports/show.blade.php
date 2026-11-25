@@ -1,6 +1,144 @@
 <x-layouts.app title="Detail Laporan Bug" meta-description="Detail lengkap laporan bug pada sistem TwinBug.">
 
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div class="workspace-report-detail-page mx-auto max-w-[1540px] p-8 space-y-6">
+
+        @if (in_array($report->detection_status, [App\Enums\DetectionStatus::Pending, App\Enums\DetectionStatus::Processing]))
+            {{-- ======================== PROCESSING STATUS VIEW ======================== --}}
+            <nav class="flex items-center gap-2 text-[11.5px] leading-[17px]" aria-label="Breadcrumb">
+                <a href="{{ route('dashboard') }}" class="text-[#83908A] transition hover:text-[#33423B]">Dashboard</a>
+                <span class="text-[#83908A]">›</span>
+                <a href="{{ route('bug-reports.index') }}" class="text-[#83908A] transition hover:text-[#33423B]">My Reports</a>
+                <span class="text-[#83908A]">›</span>
+                <span class="font-semibold text-[#33423B]">BUG-{{ $report->id }}</span>
+            </nav>
+
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-[10px] font-bold uppercase leading-[15px] tracking-[1px] text-[#236B51]">Report BUG-{{ $report->id }}</p>
+                    <h1 class="pt-[7px] text-[27px] font-bold leading-8 tracking-[-0.65px] text-[#142019]">Processing your bug report</h1>
+                    <p class="pt-[7px] text-[13px] leading-5 text-[#67736D]">{{ $report->title }}</p>
+                </div>
+                <span class="inline-flex h-[24.6px] shrink-0 items-center gap-[5px] rounded-full border-[0.8px] border-[#D9E9F2] bg-[#EEF5F9] px-[7px] text-[9.5px] font-semibold leading-[14px] text-[#356C8C]">
+                    <span class="size-[5px] rounded-full bg-[#356C8C]"></span>
+                    <span>Processing</span>
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                {{-- Left: Analysis Progress Pipeline --}}
+                <section class="rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-[22px] shadow-[0_1px_2px_rgba(12,35,25,0.024)] lg:col-span-8">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <h2 class="text-[14px] font-normal leading-[21px] text-[#09090B]">Analysis progress</h2>
+                            <p class="pt-1 text-[10.5px] leading-4 text-[#67736D]">TwinBug is comparing your report with historical reports.</p>
+                        </div>
+                        <span class="text-[11px] font-bold leading-4 text-[#668077]">Data pending</span>
+                    </div>
+
+                    <div class="mt-[18px] h-[7px] w-full overflow-hidden rounded-full bg-[#E9EEEB]">
+                        <div class="h-full w-[45%] rounded-full bg-[#236B51] transition-all"></div>
+                    </div>
+
+                    <div class="mt-[15px] flex items-start gap-[9px] rounded-[8px] border-[0.8px] border-[#E0EBE5] bg-[#F4F8F6] px-3 py-[10px]">
+                        <x-auth.icon name="alert" class="size-[17px] shrink-0 text-[#46745F]" />
+                        <div>
+                            <p class="text-[10px] font-bold leading-[15px] text-[#3C5147]">Progress is based on live processing status.</p>
+                            <p class="pt-[2px] text-[9px] leading-[14px] text-[#67736D]">No estimated completion time is available from the system.</p>
+                        </div>
+                    </div>
+
+                    @php
+                        $hasScreenshot = $report->hasScreenshot();
+                        $isProcessing = $report->detection_status === App\Enums\DetectionStatus::Processing;
+                        $pipelineSteps = [
+                            ['Report Validation', 'Checking required fields and file integrity.', 'completed'],
+                            ['Text Feature Extraction', config('services.ml.model', 'paraphrase-multilingual-MiniLM-L12-v2'), $isProcessing ? 'completed' : 'in_progress'],
+                            ['Image Feature Extraction', $hasScreenshot ? 'CLIP / OCR visual feature extraction' : 'CLIP ViT-B/32 · No screenshot provided', $hasScreenshot ? ($isProcessing ? 'in_progress' : 'pending') : 'skipped'],
+                            ['Historical Bug Search', 'FAISS vector similarity search', $isProcessing ? 'in_progress' : 'pending'],
+                            ['Similarity Scoring', 'Cosine Similarity', 'pending'],
+                            ['Multimodal Late Fusion', $hasScreenshot ? 'Combining text and visual scores' : 'Text-only fallback is active', $hasScreenshot ? 'pending' : 'skipped'],
+                            ['Detection Results Generation', 'Preparing ranked candidates', 'pending'],
+                        ];
+                    @endphp
+
+                    <div class="mt-5 pl-[7px]">
+                        @foreach ($pipelineSteps as $stepIndex => [$stepTitle, $stepSub, $stepState])
+                            <div class="relative flex min-h-[67px] items-start justify-between gap-4 pb-4">
+                                @if (! $loop->last)
+                                    <span class="absolute left-[13px] top-[27px] h-[40px] w-[1px] bg-[#DFE6E2]" aria-hidden="true"></span>
+                                @endif
+                                <div class="flex items-start gap-[14px]">
+                                    @if ($stepState === 'completed')
+                                        <span class="relative z-10 grid size-[27px] shrink-0 place-items-center rounded-full border-[0.8px] border-[#236B51] bg-[#236B51] text-white">
+                                            <x-auth.icon name="check" class="size-[15px]" />
+                                        </span>
+                                    @elseif ($stepState === 'in_progress')
+                                        <span class="relative z-10 grid size-[27px] shrink-0 place-items-center rounded-full border-[0.8px] border-[#CFE1EB] bg-[#EDF5F9] text-[#41718D]">
+                                            <x-auth.icon name="refresh" class="size-[15px]" />
+                                        </span>
+                                    @elseif ($stepState === 'skipped')
+                                        <span class="relative z-10 grid size-[27px] shrink-0 place-items-center rounded-full border-[0.8px] border-[#DCE3DF] bg-[#F3F5F4] text-[#89938E]">
+                                            <span class="text-[11px]">→</span>
+                                        </span>
+                                    @else
+                                        <span class="relative z-10 grid size-[27px] shrink-0 place-items-center rounded-full border-[0.8px] border-[#DCE3DF] bg-white text-[10px] font-semibold text-[#89938E]">
+                                            {{ $stepIndex + 1 }}
+                                        </span>
+                                    @endif
+
+                                    <div class="pt-[1px]">
+                                        <p class="text-[11px] font-bold leading-4 text-[#09090B]">{{ $stepTitle }}</p>
+                                        <p class="pt-1 text-[9.5px] leading-[14px] text-[#67736D]">{{ $stepSub }}</p>
+                                    </div>
+                                </div>
+
+                                @if ($stepState === 'completed')
+                                    <span class="inline-flex shrink-0 items-center gap-[5px] rounded-full border-[0.8px] border-[#D9EEE3] bg-[#EDF7F2] px-[7px] py-1 text-[9.5px] font-semibold leading-[14px] text-[#26714F]">
+                                        <span class="size-[5px] rounded-full bg-[#26714F]"></span>
+                                        <span>Completed</span>
+                                    </span>
+                                @elseif ($stepState === 'in_progress')
+                                    <span class="inline-flex shrink-0 items-center gap-[5px] rounded-full border-[0.8px] border-[#D9E9F2] bg-[#EEF5F9] px-[7px] py-1 text-[9.5px] font-semibold leading-[14px] text-[#356C8C]">
+                                        <span class="size-[5px] rounded-full bg-[#356C8C]"></span>
+                                        <span>In Progress</span>
+                                    </span>
+                                @elseif ($stepState === 'skipped')
+                                    <span class="inline-flex shrink-0 items-center gap-[5px] rounded-full border-[0.8px] border-[#E5E9E7] bg-[#F5F6F5] px-[7px] py-1 text-[9.5px] font-semibold leading-[14px] text-[#7D8782]">
+                                        <span class="size-[5px] rounded-full bg-[#7D8782]"></span>
+                                        <span>Skipped</span>
+                                    </span>
+                                @else
+                                    <span class="inline-flex shrink-0 items-center gap-[5px] rounded-full border-[0.8px] border-[#E5E9E7] bg-[#F5F6F5] px-[7px] py-1 text-[9.5px] font-semibold leading-[14px] text-[#7D8782]">
+                                        <span class="size-[5px] rounded-full bg-[#7D8782]"></span>
+                                        <span>Pending</span>
+                                    </span>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </section>
+
+                {{-- Right: You can leave this page --}}
+                <aside class="lg:col-span-4">
+                    <div class="rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-6 text-center shadow-[0_1px_2px_rgba(12,35,25,0.024)]">
+                        <div class="mx-auto grid size-12 place-items-center rounded-[12px] bg-[#EEF5F1] text-[#236B51]">
+                            <x-auth.icon name="sparkles" class="size-6" />
+                        </div>
+                        <h2 class="mt-4 text-[13px] font-bold text-[#09090B]">You can leave this page</h2>
+                        <p class="mt-1.5 text-[10.5px] leading-4 text-[#67736D]">
+                            Analysis continues securely in the background. We'll update the report as soon as results are available.
+                        </p>
+                        <a href="{{ route('bug-reports.index') }}"
+                            class="mt-5 inline-flex h-10 w-full items-center justify-center rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold text-[#35433C] transition hover:bg-[#F7F9F8]">
+                            View my reports
+                        </a>
+                        <p class="mt-4 text-[9px] leading-[14px] text-[#84908A]">
+                            You'll receive an in-app update when processing is complete.
+                        </p>
+                    </div>
+                </aside>
+            </div>
+        @endif
 
         {{-- ======================== BREADCRUMB ======================== --}}
         <nav class="flex items-center gap-2 text-xs" aria-label="Breadcrumb">
@@ -48,7 +186,7 @@
         @endif
 
         {{-- ======================== HEADER ======================== --}}
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div class="workspace-report-heading flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div class="max-w-3xl">
                 <div class="mb-2 flex flex-wrap items-center gap-2">
                     <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold {{ $report->severity->badgeClasses() }}">
@@ -95,7 +233,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="workspace-report-body grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="space-y-6 lg:col-span-2">
                 {{-- ======================== DESCRIPTION ======================== --}}
                 <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">

@@ -1,32 +1,12 @@
 @php
     $user = auth()->user();
 
-    // Role-aware configuration
-    $roleConfig = match ($user->role) {
-        \App\Enums\UserRole::Reporter => [
-            'badge_classes' => 'bg-sage-200 text-sage-700',
-            'avatar_classes' => 'bg-sage-500 text-white',
-            'icon' => 'bug',
-            'label' => 'Reporter',
-            'description' => 'Melaporkan bug dengan detail dan langkah reproduksi yang jelas.',
-        ],
-        \App\Enums\UserRole::Developer => [
-            'badge_classes' => 'bg-amber-100 text-amber-800',
-            'avatar_classes' => 'bg-amber-500 text-white',
-            'icon' => 'code',
-            'label' => 'Developer',
-            'description' => 'Menelusuri, memperbaiki, dan memverifikasi laporan bug.',
-        ],
-        \App\Enums\UserRole::Admin => [
-            'badge_classes' => 'bg-indigo-100 text-indigo-800',
-            'avatar_classes' => 'bg-indigo-500 text-white',
-            'icon' => 'sparkles',
-            'label' => 'Administrator',
-            'description' => 'Mengelola pengguna, memantau metrik sistem, dan mengawasi sprint.',
-        ],
+    $roleLabel = match ($user->role) {
+        \App\Enums\UserRole::Reporter => 'Reporter',
+        \App\Enums\UserRole::Developer => 'Developer',
+        \App\Enums\UserRole::Admin => 'Administrator',
     };
 
-    // Generate initials (max 2 chars)
     $nameParts = explode(' ', trim($user->name));
     $initials = mb_strtoupper(
         count($nameParts) >= 2
@@ -35,338 +15,256 @@
     );
 @endphp
 
-<x-layouts.app title="Profil Saya" meta-description="Kelola informasi akun dan keamanan profil TwinBug Anda.">
+<x-layouts.app title="My Profile" meta-description="Manage your personal information and account details on TwinBug.">
 
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div class="workspace-profile-page mx-auto max-w-[1540px] px-8 pt-8 pb-[54px] space-y-[18px]">
 
         {{-- ======================== BREADCRUMB ======================== --}}
-        <nav class="flex items-center gap-2 text-xs" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-1.5 text-label transition hover:text-ink">
-                <x-auth.icon name="bug" class="size-3 text-sage-600" />
-                <span class="font-medium">Dashboard</span>
-            </a>
-            <svg class="size-2.5 text-label/60" viewBox="0 0 6 10" fill="none" aria-hidden="true">
-                <path d="M1 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="rounded-md bg-input px-2 py-0.5 text-[11px] font-semibold text-ink">Profil Saya</span>
+        <nav class="flex items-center gap-2 text-[11.5px] leading-[17px]" aria-label="Breadcrumb">
+            <a href="{{ route('dashboard') }}" class="text-[#83908A] transition hover:text-[#33423B]">Dashboard</a>
+            <span class="text-[#83908A]">›</span>
+            <span class="font-semibold text-[#33423B]">My Profile</span>
         </nav>
 
-        {{-- ======================== PROFILE HERO ======================== --}}
-        <div class="relative overflow-hidden rounded-2xl bg-white p-6 sm:p-8 shadow-xs border border-divider/80">
-            {{-- Subtle decorative bg --}}
-            <div class="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full opacity-30 blur-[80px]
-                {{ $user->role === \App\Enums\UserRole::Reporter ? 'bg-sage-200' : ($user->role === \App\Enums\UserRole::Developer ? 'bg-amber-200' : 'bg-indigo-200') }}">
-            </div>
-
-            <div class="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center">
-                {{-- Avatar --}}
-                <div class="shrink-0">
-                    <div class="grid size-24 place-items-center rounded-2xl text-3xl font-bold shadow-card {{ $roleConfig['avatar_classes'] }}">
-                        {{ $initials }}
-                    </div>
-                </div>
-
-                {{-- Identity --}}
-                <div class="flex-1 min-w-0">
-                    <div class="mb-2 flex flex-wrap items-center gap-2">
-                        {{-- Role Badge --}}
-                        <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider {{ $roleConfig['badge_classes'] }}">
-                            <x-auth.icon :name="$roleConfig['icon']" class="size-3.5" />
-                            {{ $roleConfig['label'] }}
-                        </span>
-                        {{-- Verified Badge --}}
-                        @if ($user->email_verified_at)
-                            <span class="inline-flex items-center gap-1 rounded-full bg-sage-100 px-2.5 py-0.5 text-[11px] font-semibold text-sage-700">
-                                <x-auth.icon name="check" class="size-3" />
-                                Terverifikasi
-                            </span>
-                        @endif
-                    </div>
-                    <h1 class="font-serif text-3xl font-bold tracking-tight text-ink truncate" style="letter-spacing:-0.5px;">
-                        {{ $user->name }}
-                    </h1>
-                    <p class="mt-1 text-sm text-label">{{ $user->email }}</p>
-                    <p class="mt-0.5 text-xs text-label/70">
-                        Bergabung sejak {{ $user->created_at->format('d M Y') }} · {{ $user->created_at->diffForHumans() }}
-                    </p>
-                </div>
-
-                {{-- Role description chip --}}
-                <div class="shrink-0 hidden lg:block max-w-xs rounded-xl bg-input p-4">
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-label mb-1">Tanggung Jawab</p>
-                    <p class="text-xs leading-relaxed text-body">{{ $roleConfig['description'] }}</p>
-                </div>
-            </div>
+        {{-- ======================== PAGE HEADING ======================== --}}
+        <div>
+            <h1 class="text-[27px] font-bold leading-8 tracking-[-0.65px] text-[#142019]">My Profile</h1>
+            <p class="pt-[7px] text-[13px] leading-5 text-[#67736D]">
+                Manage your personal information and account details.
+            </p>
         </div>
 
-        {{-- ======================== STATS + SECURITY (2-col grid) ======================== --}}
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {{-- ======================== HERO BANNER (#0D2D22) ======================== --}}
+        <section class="mt-[26px] flex flex-col gap-6 rounded-[12px] bg-[#0D2D22] p-[23px] text-white lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex flex-col gap-[15px] sm:flex-row sm:items-center">
+                <div class="grid size-[76px] shrink-0 place-items-center rounded-full border-[0.8px] border-white/[0.14] bg-white/[0.09] text-[22px] font-bold text-[#A9C2B6]">
+                    {{ $initials }}
+                </div>
+                <div>
+                    <p class="text-[7.5px] font-bold uppercase leading-[11px] tracking-[0.675px] text-[#88B39E]">Account holder</p>
+                    <h2 class="pt-[5px] text-[18px] font-normal leading-[27px] text-white">{{ $user->name }}</h2>
+                    <p class="pt-[3px] text-[9.5px] leading-[14px] text-[#A6BBB1]">{{ $user->email }}</p>
+                    <div class="mt-[9px] flex flex-wrap items-center gap-[7px]">
+                        <span class="inline-flex items-center gap-[5px] rounded-full bg-[#E7F3ED] px-[7px] py-1 text-[8px] leading-3 text-[#236B4E]">
+                            <x-auth.icon name="user" class="size-[13px]" />
+                            <span>{{ $roleLabel }}</span>
+                        </span>
+                        <span class="inline-flex items-center gap-[5px] rounded-full bg-white/[0.08] px-[7px] py-1 text-[8px] leading-3 text-[#AEBFB7]">
+                            <span class="size-[5px] rounded-full {{ $user->email_verified_at ? 'bg-[#6ED4A0]' : 'bg-[#9BAAA3]' }}"></span>
+                            <span>{{ $user->email_verified_at ? 'Verified account' : 'Unverified' }}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
 
-            {{-- ---- STATISTICS (role-aware) ---- --}}
-            <div class="rounded-2xl border border-divider/80 bg-white p-6 sm:p-8 shadow-xs">
-                <div class="mb-5 flex items-center gap-2">
-                    <x-auth.icon :name="$roleConfig['icon']" class="size-4 text-label" />
-                    <h2 class="font-serif text-lg font-bold text-ink">
+            <div class="flex flex-wrap items-center gap-[30px]">
+                <div>
+                    <p class="text-[8px] leading-3 text-[#87A397]">Member since</p>
+                    <p class="pt-1 text-[10px] font-semibold leading-[15px] text-[#DBE7E1]">{{ $user->created_at->format('d M Y') }}</p>
+                </div>
+                <div>
+                    <p class="text-[8px] leading-3 text-[#87A397]">Work domain</p>
+                    <p class="pt-1 text-[10px] font-semibold leading-[15px] text-[#DBE7E1]">{{ $user->application?->name ?? 'Not provided' }}</p>
+                </div>
+                <a href="#personal-info-form"
+                    class="inline-flex h-10 items-center justify-center gap-[7px] rounded-[8px] bg-[#123C2E] px-[15px] text-[12px] font-semibold leading-[18px] text-white shadow-[0_3px_8px_rgba(18,60,46,0.16)] transition hover:bg-[#194E3C]">
+                    <x-auth.icon name="user" class="size-4" />
+                    <span>Edit profile</span>
+                </a>
+            </div>
+        </section>
+
+        {{-- ======================== 2-COLUMN MAIN GRID ======================== --}}
+        <div class="grid grid-cols-1 gap-[18px] lg:grid-cols-12">
+
+            {{-- Left Column (8 cols): Personal Information Form --}}
+            <section id="personal-info-form" class="overflow-hidden rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white lg:col-span-8">
+                <div class="flex items-center justify-between border-b-[0.8px] border-[#E2E8E5] px-[18px] py-4">
+                    <div>
+                        <h2 class="text-[13px] font-normal leading-5 text-[#09090B]">Personal information</h2>
+                        <p class="pt-1 text-[9.5px] leading-[14px] text-[#67736D]">Update your display name and review your workspace details.</p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('profile.update') }}" class="p-[18px] space-y-4">
+                    @csrf
+                    @method('PATCH')
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <label class="flex flex-col gap-[6px]">
+                            <span class="text-[10px] font-semibold leading-[15px] text-[#35423B]">Full name</span>
+                            <input
+                                type="text"
+                                name="name"
+                                value="{{ old('name', $user->name) }}"
+                                placeholder="Enter your full name"
+                                required
+                                class="h-[41px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-white px-[11px] text-[11.5px] text-[#24322B] placeholder:text-[#A4ADA8] focus:border-[#236B51] focus:outline-none">
+                            @error('name')
+                                <span class="text-[10px] text-danger">{{ $message }}</span>
+                            @enderror
+                        </label>
+
+                        <label class="flex flex-col gap-[6px]">
+                            <span class="text-[10px] font-semibold leading-[15px] text-[#35423B]">Email address</span>
+                            <input
+                                type="email"
+                                value="{{ $user->email }}"
+                                disabled
+                                class="h-[41px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-[#FAFBFA] px-[11px] text-[11.5px] text-[#67736D]">
+                            <span class="text-[8px] leading-3 text-[#8A958F]">Email address cannot be changed directly.</span>
+                        </label>
+
+                        <label class="flex flex-col gap-[6px]">
+                            <span class="text-[10px] font-semibold leading-[15px] text-[#35423B]">Role</span>
+                            <input
+                                type="text"
+                                value="{{ $roleLabel }}"
+                                disabled
+                                class="h-[41px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-[#FAFBFA] px-[11px] text-[11.5px] text-[#67736D]">
+                        </label>
+
+                        <label class="flex flex-col gap-[6px]">
+                            <span class="text-[10px] font-semibold leading-[15px] text-[#35423B]">Work domain</span>
+                            <input
+                                type="text"
+                                value="{{ $user->application?->name ?? 'Not assigned' }}"
+                                disabled
+                                class="h-[41px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-[#FAFBFA] px-[11px] text-[11.5px] text-[#67736D]">
+                        </label>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit"
+                            class="inline-flex h-10 cursor-pointer items-center justify-center rounded-[8px] bg-[#123C2E] px-[15px] text-[12px] font-semibold leading-[18px] text-white shadow-[0_3px_8px_rgba(18,60,46,0.16)] transition hover:bg-[#0D2D22]">
+                            Save changes
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            {{-- Right Column (4 cols): Overview Card --}}
+            <section class="overflow-hidden rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white lg:col-span-4">
+                <div class="border-b-[0.8px] border-[#E2E8E5] px-[18px] py-4">
+                    <h2 class="text-[13px] font-normal leading-5 text-[#09090B]">
                         @if ($stats['type'] === 'reporter') Statistik Laporan Saya
                         @elseif ($stats['type'] === 'developer') Statistik Bug Sistem
                         @else Statistik Platform
                         @endif
                     </h2>
+                    <p class="pt-1 text-[9.5px] leading-[14px] text-[#67736D]">Live summary from your TwinBug workspace.</p>
                 </div>
 
-                {{-- Reporter Stats --}}
-                @if ($stats['type'] === 'reporter')
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="col-span-2 rounded-2xl bg-sage-50 border border-sage-200/60 p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-sage-600">Total Laporan Dikirim</p>
-                            <p class="mt-1 font-serif text-4xl font-bold text-ink">{{ number_format($stats['total']) }}</p>
+                <div class="grid grid-cols-2 gap-2 p-[18px]">
+                    @if ($stats['type'] === 'reporter')
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">Total reports</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['total']) }}</p>
                         </div>
-                        <div class="rounded-2xl bg-input p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-label">Terbuka</p>
-                            <p class="mt-1 font-serif text-2xl font-bold text-sky-700">{{ $stats['open'] }}</p>
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">Open</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['open']) }}</p>
                         </div>
-                        <div class="rounded-2xl bg-input p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-label">Diproses</p>
-                            <p class="mt-1 font-serif text-2xl font-bold text-amber-700">{{ $stats['in_progress'] }}</p>
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">In progress</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['in_progress']) }}</p>
                         </div>
-                        <div class="rounded-2xl bg-input p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-label">Diselesaikan</p>
-                            <p class="mt-1 font-serif text-2xl font-bold text-sage-700">{{ $stats['resolved'] }}</p>
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">Resolved</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['resolved']) }}</p>
                         </div>
-                        <div class="rounded-2xl bg-input p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-label">Ditutup</p>
-                            <p class="mt-1 font-serif text-2xl font-bold text-label">{{ $stats['closed'] }}</p>
+                    @elseif ($stats['type'] === 'developer')
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">Total system bugs</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['total_system']) }}</p>
                         </div>
-                    </div>
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">Open</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['open']) }}</p>
+                        </div>
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">In progress</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['in_progress']) }}</p>
+                        </div>
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">Resolved</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['resolved']) }}</p>
+                        </div>
+                    @else
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">Total users</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['total_users']) }}</p>
+                        </div>
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">Total reports</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['total_bugs']) }}</p>
+                        </div>
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">Open bugs</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['open_bugs']) }}</p>
+                        </div>
+                        <div class="rounded-[8px] bg-[#F7F9F8] p-[11px]">
+                            <p class="text-[8px] leading-[11px] text-[#67736D]">Resolved bugs</p>
+                            <p class="pt-[5px] text-[17px] font-bold leading-[26px] text-[#09090B]">{{ number_format($stats['resolved_bugs']) }}</p>
+                        </div>
+                    @endif
+                </div>
 
-                {{-- Developer Stats --}}
-                @elseif ($stats['type'] === 'developer')
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="col-span-2 rounded-2xl bg-amber-50 border border-amber-200/60 p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-amber-700">Total Bug di Sistem</p>
-                            <p class="mt-1 font-serif text-4xl font-bold text-ink">{{ number_format($stats['total_system']) }}</p>
-                        </div>
-                        <div class="rounded-2xl bg-input p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-label">Open</p>
-                            <p class="mt-1 font-serif text-2xl font-bold text-sky-700">{{ $stats['open'] }}</p>
-                        </div>
-                        <div class="rounded-2xl bg-input p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-label">In Progress</p>
-                            <p class="mt-1 font-serif text-2xl font-bold text-amber-700">{{ $stats['in_progress'] }}</p>
-                        </div>
-                        <div class="col-span-2 rounded-2xl bg-input p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-label">Resolved / Ditutup</p>
-                            <p class="mt-1 font-serif text-2xl font-bold text-sage-700">{{ $stats['resolved'] }}</p>
-                        </div>
-                    </div>
+                <div class="flex flex-col items-center border-t-[0.8px] border-[#E2E8E5] px-[15px] py-[25px] text-center">
+                    <x-auth.icon name="sparkles" class="size-[23px] text-[#829089]" />
+                    <p class="pt-2 text-[11px] leading-4 text-[#46544D]">Recent triage activity</p>
+                    <p class="pt-1 text-[8.5px] leading-[13px] text-[#829089]">Joined {{ $user->created_at->diffForHumans() }}.</p>
+                </div>
+            </section>
+        </div>
 
-                {{-- Admin Stats --}}
-                @else
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="rounded-2xl bg-indigo-50 border border-indigo-200/60 p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-indigo-700">Total Pengguna</p>
-                            <p class="mt-1 font-serif text-4xl font-bold text-ink">{{ number_format($stats['total_users']) }}</p>
-                        </div>
-                        <div class="rounded-2xl bg-indigo-50 border border-indigo-200/60 p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-indigo-700">Total Bug</p>
-                            <p class="mt-1 font-serif text-4xl font-bold text-ink">{{ number_format($stats['total_bugs']) }}</p>
-                        </div>
-                        <div class="rounded-2xl bg-input p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-label">Bug Terbuka</p>
-                            <p class="mt-1 font-serif text-2xl font-bold text-sky-700">{{ $stats['open_bugs'] }}</p>
-                        </div>
-                        <div class="rounded-2xl bg-input p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-wider text-label">Bug Resolved</p>
-                            <p class="mt-1 font-serif text-2xl font-bold text-sage-700">{{ $stats['resolved_bugs'] }}</p>
-                        </div>
-                    </div>
-                @endif
+        {{-- ======================== ACCOUNT SECURITY ======================== --}}
+        <section class="overflow-hidden rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b-[0.8px] border-[#E2E8E5] px-[18px] py-4">
+                <div>
+                    <h2 class="text-[13px] font-normal leading-5 text-[#09090B]">Account security</h2>
+                    <p class="pt-1 text-[9.5px] leading-[14px] text-[#67736D]">Use a strong password that is unique to TwinBug.</p>
+                </div>
+                <button type="button"
+                    onclick="document.getElementById('password-form-panel').classList.toggle('hidden')"
+                    class="inline-flex h-10 cursor-pointer items-center justify-center gap-[7px] rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]">
+                    <x-auth.icon name="lock" class="size-4" />
+                    <span>Change password</span>
+                </button>
             </div>
 
-            {{-- ---- SECURITY ---- --}}
-            <div class="rounded-2xl border border-divider/80 bg-white p-6 sm:p-8 shadow-xs">
-                <div class="mb-5 flex items-center gap-2">
-                    <x-auth.icon name="logout" class="size-4 text-label" />
-                    <h2 class="font-serif text-lg font-bold text-ink">Keamanan Akun</h2>
-                </div>
-
-                <form id="form-password" method="POST" action="{{ route('profile.password') }}" class="space-y-4">
-                    @csrf
-                    @method('PATCH')
-
-                    {{-- Current Password --}}
-                    <div>
-                        <label for="current_password" class="block text-xs font-bold uppercase tracking-wider text-label mb-1.5">
-                            Kata Sandi Saat Ini
-                        </label>
-                        <input
-                            type="password"
-                            id="current_password"
-                            name="current_password"
-                            autocomplete="current-password"
-                            placeholder="••••••••"
-                            class="w-full rounded-xl border border-divider bg-input px-4 py-3 text-sm text-ink placeholder-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20
-                                {{ $errors->has('current_password') ? 'border-danger bg-danger/5' : '' }}"
-                        >
+            <form id="password-form-panel" method="POST" action="{{ route('profile.password') }}" class="{{ $errors->hasAny(['current_password', 'password']) ? '' : 'hidden' }} p-[18px] space-y-4">
+                @csrf
+                @method('PATCH')
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <label class="flex flex-col gap-[6px]">
+                        <span class="text-[10px] font-semibold leading-[15px] text-[#35423B]">Current password</span>
+                        <input type="password" name="current_password" required
+                            class="h-[41px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-white px-[11px] text-[11.5px] text-[#24322B] focus:border-[#236B51] focus:outline-none">
                         @error('current_password')
-                            <p class="mt-1.5 text-xs text-danger">{{ $message }}</p>
+                            <span class="text-[10px] text-danger">{{ $message }}</span>
                         @enderror
-                    </div>
-
-                    {{-- New Password --}}
-                    <div>
-                        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-label mb-1.5">
-                            Kata Sandi Baru
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            autocomplete="new-password"
-                            placeholder="Min. 8 karakter"
-                            class="w-full rounded-xl border border-divider bg-input px-4 py-3 text-sm text-ink placeholder-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20
-                                {{ $errors->has('password') ? 'border-danger bg-danger/5' : '' }}"
-                        >
+                    </label>
+                    <label class="flex flex-col gap-[6px]">
+                        <span class="text-[10px] font-semibold leading-[15px] text-[#35423B]">New password</span>
+                        <input type="password" name="password" required
+                            class="h-[41px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-white px-[11px] text-[11.5px] text-[#24322B] focus:border-[#236B51] focus:outline-none">
                         @error('password')
-                            <p class="mt-1.5 text-xs text-danger">{{ $message }}</p>
+                            <span class="text-[10px] text-danger">{{ $message }}</span>
                         @enderror
-                    </div>
-
-                    {{-- Confirm Password --}}
-                    <div>
-                        <label for="password_confirmation" class="block text-xs font-bold uppercase tracking-wider text-label mb-1.5">
-                            Konfirmasi Kata Sandi Baru
-                        </label>
-                        <input
-                            type="password"
-                            id="password_confirmation"
-                            name="password_confirmation"
-                            autocomplete="new-password"
-                            placeholder="Ulangi kata sandi baru"
-                            class="w-full rounded-xl border border-divider bg-input px-4 py-3 text-sm text-ink placeholder-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20"
-                        >
-                    </div>
-
-                    <button
-                        type="submit"
-                        id="btn-update-password"
-                        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-bold text-white transition hover:bg-ink/80 active:scale-95"
-                    >
-                        <x-auth.icon name="check" class="size-4" />
-                        Perbarui Kata Sandi
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        {{-- ======================== EDIT PROFILE ======================== --}}
-        <div class="rounded-2xl border border-divider/80 bg-white p-6 sm:p-8 shadow-xs">
-            <div class="mb-6 flex items-center gap-2">
-                <x-auth.icon name="user" class="size-4 text-label" />
-                <h2 class="font-serif text-lg font-bold text-ink">Informasi Profil</h2>
-            </div>
-
-            <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                {{-- Edit Form --}}
-                <form id="form-profile" method="POST" action="{{ route('profile.update') }}" class="space-y-4">
-                    @csrf
-                    @method('PATCH')
-
-                    {{-- Name --}}
-                    <div>
-                        <label for="name" class="block text-xs font-bold uppercase tracking-wider text-label mb-1.5">
-                            Nama Lengkap
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value="{{ old('name', $user->name) }}"
-                            autocomplete="name"
-                            class="w-full rounded-xl border border-divider bg-input px-4 py-3 text-sm text-ink transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20
-                                {{ $errors->has('name') ? 'border-danger bg-danger/5' : '' }}"
-                        >
-                        @error('name')
-                            <p class="mt-1.5 text-xs text-danger">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Email (read-only) --}}
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-label mb-1.5">
-                            Alamat Surel
-                        </label>
-                        <div class="relative">
-                            <input
-                                type="email"
-                                value="{{ $user->email }}"
-                                disabled
-                                class="w-full rounded-xl border border-divider bg-input/60 px-4 py-3 text-sm text-label cursor-not-allowed pr-24"
-                            >
-                            <span class="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 rounded-xl bg-sage-100 px-2.5 py-1 text-[10px] font-bold text-sage-700">
-                                <x-auth.icon name="check" class="size-3" />
-                                OTP Verified
-                            </span>
-                        </div>
-                        <p class="mt-1.5 text-[11px] text-label/70">
-                            Email tidak dapat diubah karena sudah terverifikasi melalui OTP.
-                        </p>
-                    </div>
-
-                    {{-- Role (read-only) --}}
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-label mb-1.5">
-                            Peran di Sistem
-                        </label>
-                        <div class="flex items-center gap-3 rounded-xl border border-divider bg-input/60 px-4 py-3">
-                            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider {{ $roleConfig['badge_classes'] }}">
-                                <x-auth.icon :name="$roleConfig['icon']" class="size-3" />
-                                {{ $roleConfig['label'] }}
-                            </span>
-                            <p class="text-xs text-label">Peran ditetapkan saat registrasi dan tidak dapat diubah sendiri.</p>
-                        </div>
-                    </div>
-
-                    <button
-                        type="submit"
-                        id="btn-update-profile"
-                        class="inline-flex items-center gap-2 rounded-xl bg-sage-500 px-6 py-3 text-sm font-bold text-white shadow-cta transition hover:bg-sage-600 active:scale-95"
-                    >
-                        <x-auth.icon name="check" class="size-4" />
-                        Simpan Perubahan
-                    </button>
-                </form>
-
-                {{-- Account info summary --}}
-                <div class="space-y-3">
-                    <p class="text-xs font-bold uppercase tracking-wider text-label">Ringkasan Akun</p>
-
-                    <dl class="space-y-2">
-                        <div class="flex items-center justify-between rounded-2xl bg-input px-4 py-3">
-                            <dt class="text-xs text-label">Status Akun</dt>
-                            <dd class="flex items-center gap-1.5 text-xs font-semibold text-success">
-                                <span class="size-2 rounded-full bg-success"></span>
-                                Aktif
-                            </dd>
-                        </div>
-                        <div class="flex items-center justify-between rounded-2xl bg-input px-4 py-3">
-                            <dt class="text-xs text-label">Verifikasi Email</dt>
-                            <dd class="text-xs font-semibold {{ $user->email_verified_at ? 'text-success' : 'text-warning' }}">
-                                {{ $user->email_verified_at ? 'Terverifikasi' : 'Belum Terverifikasi' }}
-                            </dd>
-                        </div>
-                        <div class="flex items-center justify-between rounded-2xl bg-input px-4 py-3">
-                            <dt class="text-xs text-label">Bergabung</dt>
-                            <dd class="text-xs font-semibold text-ink">{{ $user->created_at->format('d M Y') }}</dd>
-                        </div>
-                        <div class="flex items-center justify-between rounded-2xl bg-input px-4 py-3">
-                            <dt class="text-xs text-label">ID Pengguna</dt>
-                            <dd class="font-mono text-xs font-semibold text-label">#{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</dd>
-                        </div>
-                    </dl>
+                    </label>
+                    <label class="flex flex-col gap-[6px]">
+                        <span class="text-[10px] font-semibold leading-[15px] text-[#35423B]">Confirm new password</span>
+                        <input type="password" name="password_confirmation" required
+                            class="h-[41px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-white px-[11px] text-[11.5px] text-[#24322B] focus:border-[#236B51] focus:outline-none">
+                    </label>
                 </div>
-            </div>
-        </div>
+                <button type="submit"
+                    class="inline-flex h-10 cursor-pointer items-center justify-center rounded-[8px] bg-[#123C2E] px-[15px] text-[12px] font-semibold leading-[18px] text-white transition hover:bg-[#0D2D22]">
+                    Update password
+                </button>
+            </form>
+        </section>
 
     </div>
 

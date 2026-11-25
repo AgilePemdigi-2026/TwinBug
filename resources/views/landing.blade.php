@@ -1,221 +1,210 @@
-<x-layouts.landing title="Laporkan bug dan temukan duplikasi — TwinBug" meta-description="TwinBug membandingkan laporan baru dengan laporan sebelumnya dan menampilkan saran laporan serupa untuk ditinjau Developer. Sistem deteksi duplikasi bug untuk tim pengembang.">
+<x-layouts.landing title="Detect Duplicate Bugs. Simplify Bug Management." meta-description="TwinBug helps development teams identify similar bug reports using text and image analysis, reducing duplicate issues and supporting faster triage.">
 
     {{-- ======================== HERO SECTION ======================== --}}
-    <section class="relative pt-8 sm:pt-16 lg:pt-20 pb-16 sm:pb-24 overflow-hidden">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="home" class="w-full bg-gradient-to-b from-white to-[#FBFDFC] py-14 lg:py-0">
+        <div class="mx-auto flex min-h-[665px] max-w-[1528px] flex-col items-center justify-between gap-12 px-6 sm:px-10 lg:flex-row lg:px-[103.9px]">
 
-            {{-- Hero Header Content --}}
-            <div class="flex flex-col items-center text-center max-w-4xl mx-auto">
-                {{-- Release Badge --}}
-                <div class="inline-flex items-center gap-2 rounded-full border border-sage-200/80 bg-white/80 px-3.5 py-1.5 shadow-2xs backdrop-blur-sm transition hover:border-sage-300">
-                    <span class="flex size-2 rounded-full bg-sage-500 animate-pulse"></span>
-                    <span class="font-mono text-[11px] font-bold uppercase tracking-wider text-sage-800">TwinBug AI Engine</span>
-                    <span class="text-slate-300">•</span>
-                    <span class="text-xs font-medium text-label">Deteksi Duplikasi Multimodal</span>
-                    <span class="rounded-full bg-sage-100 px-2 py-0.5 text-[10px] font-bold text-sage-700">Beta</span>
+            {{-- Left Column --}}
+            <div class="flex w-full max-w-[541.29px] flex-col items-start">
+                {{-- Eyebrow --}}
+                <div class="flex items-center gap-[6px]">
+                    <x-auth.icon name="sparkles" class="size-[14px] text-[#236B51] stroke-[1.17]" />
+                    <span class="text-[9px] font-bold uppercase leading-[14px] tracking-[1.08px] text-[#236B51]">
+                        Multimodal duplicate detection
+                    </span>
                 </div>
 
-                {{-- Hero Headline --}}
-                <h1 class="mt-6 font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-ink leading-[1.18] sm:leading-[1.15]">
-                    Laporkan bug dan temukan duplikasi <br class="hidden sm:inline">
-                    <span class="text-transparent bg-clip-text bg-linear-to-r from-sage-600 via-emerald-600 to-teal-700">secara cerdas &amp; akurat.</span>
+                {{-- Heading 1 --}}
+                <h1 class="pt-[18px] text-[42px] font-normal leading-[1.05] tracking-[-2px] text-[#102018] sm:text-[56px] lg:text-[68px] lg:leading-[70px] lg:tracking-[-2.6px]">
+                    Detect Duplicate Bugs. Simplify Bug Management.
                 </h1>
 
-                {{-- Hero Subtitle --}}
-                <p class="mt-5 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-body">
-                    TwinBug membandingkan laporan baru dengan laporan sebelumnya dan menampilkan saran laporan serupa untuk ditinjau Developer. Mengurangi tiket kembar, mempercepat triase, dan menghemat waktu tim Anda.
+                {{-- Paragraph --}}
+                <p class="pt-[18px] max-w-[542px] text-[13.5px] font-normal leading-[24px] text-[#5D6B64]">
+                    TwinBug helps development teams identify similar bug reports through text and image analysis, reducing duplicate issues and supporting faster triage.
                 </p>
 
-                {{-- Primary CTA Buttons --}}
-                <div class="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    <a
-                        href="{{ route('register') }}"
-                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-sage-500 px-7 py-3.5 text-sm font-bold text-white shadow-cta transition-all duration-200 hover:bg-sage-600 hover:shadow-lg active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-500/40"
-                    >
-                        <x-auth.icon name="sparkles" class="size-4" />
-                        <span>Daftar Sekarang</span>
+                {{-- CTA Buttons --}}
+                <div class="flex flex-wrap items-center gap-[9px] pt-[29px]">
+                    <a href="{{ route('register') }}"
+                        class="inline-flex h-[46px] items-center justify-center gap-[7px] rounded-[8px] bg-[#123C2E] px-[15px] text-[12px] font-semibold leading-[18px] text-white shadow-[0_3px_8px_rgba(18,60,46,0.16)] transition hover:bg-[#0D2D22]">
+                        <span>Get Started</span>
+                        <svg class="size-[17px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14" />
+                            <path d="m12 5 7 7-7 7" />
+                        </svg>
                     </a>
-                    <a
-                        href="{{ route('login') }}"
-                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-divider/90 bg-white/90 px-7 py-3.5 text-sm font-bold text-ink shadow-2xs backdrop-blur-sm transition-all duration-200 hover:bg-input hover:border-slate-300 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-sage-500/40"
-                    >
-                        <span>Masuk</span>
+                    <a href="#about"
+                        class="inline-flex h-[46px] items-center justify-center rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]">
+                        Learn More
                     </a>
                 </div>
 
-                {{-- Micro Trust Indicators --}}
-                <div class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-label">
-                    <span class="inline-flex items-center gap-1.5">
-                        <x-auth.icon name="check" class="size-3.5 text-sage-600" />
-                        <span>Model Sentence-Transformers</span>
-                    </span>
-                    <span class="inline-flex items-center gap-1.5">
-                        <x-auth.icon name="check" class="size-3.5 text-sage-600" />
-                        <span>OCR Gambar Otomatis</span>
-                    </span>
-                    <span class="inline-flex items-center gap-1.5">
-                        <x-auth.icon name="check" class="size-3.5 text-sage-600" />
-                        <span>Multi-Aplikasi Terpisah</span>
+                {{-- Small Note --}}
+                <div class="flex items-center gap-[6px] pt-[15px]">
+                    <svg class="size-[14px] shrink-0 text-[#236B51]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="m9 12 2 2 4-4" />
+                    </svg>
+                    <span class="text-[9px] leading-[14px] text-[#75827B]">
+                        Smarter bug report analysis through text and image evidence
                     </span>
                 </div>
             </div>
 
-            {{-- ======================== INTERACTIVE HERO PREVIEW MOCKUP ======================== --}}
-            <div class="mt-12 sm:mt-16 relative mx-auto max-w-5xl reveal-on-scroll">
-                {{-- Decorative Glow behind mockup --}}
-                <div class="pointer-events-none absolute -inset-2 rounded-3xl bg-linear-to-r from-sage-300/30 via-emerald-200/20 to-teal-300/30 blur-2xl opacity-70"></div>
+            {{-- Right Column: Sample TwinBug Dashboard Preview --}}
+            <div class="w-full max-w-[689px] overflow-hidden rounded-[15px] border-[0.8px] border-[#D7E0DC] bg-white shadow-[0_26px_65px_rgba(14,49,34,0.13),0_3px_8px_rgba(14,49,34,0.05)]">
+                {{-- Window Chrome --}}
+                <div class="flex h-[33px] items-center justify-between border-b-[0.8px] border-[#E1E7E4] bg-[#F3F6F4] px-[11px]">
+                    <div class="flex items-center gap-[5px]">
+                        <span class="size-[6px] rounded-full bg-[#BDC7C2]"></span>
+                        <span class="size-[6px] rounded-full bg-[#BDC7C2]"></span>
+                        <span class="size-[6px] rounded-full bg-[#BDC7C2]"></span>
+                    </div>
+                    <span class="text-[7px] leading-[10px] text-[#829089]">Sample workspace preview</span>
+                </div>
 
-                <div class="relative rounded-2xl sm:rounded-3xl border border-divider/90 bg-white shadow-xl overflow-hidden backdrop-blur-xl">
-                    {{-- Mockup Window Chrome --}}
-                    <div class="flex items-center justify-between border-b border-divider/80 bg-input/40 px-4 py-3">
-                        <div class="flex items-center gap-2">
-                            <span class="size-3 rounded-full bg-rose-400"></span>
-                            <span class="size-3 rounded-full bg-amber-400"></span>
-                            <span class="size-3 rounded-full bg-emerald-400"></span>
-                            <span class="ml-2 font-mono text-[11px] font-semibold text-label">twinbug-duplication-inspector.ai</span>
+                {{-- Dashboard Body --}}
+                <div class="flex min-h-[420px]">
+                    {{-- Mini Sidebar --}}
+                    <div class="flex w-[54px] shrink-0 flex-col items-center gap-[15px] bg-[#0D2D22] px-[11px] py-[14px]">
+                        <div class="mb-[6px] grid size-[28px] place-items-center rounded-[7px] bg-white text-[#123C2E]">
+                            <x-auth.icon name="bug" class="size-[15px] stroke-[1.5]" />
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700">
-                                <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                Model Siap
+                        <span class="h-[5px] w-[23px] rounded-[3px] bg-white/15"></span>
+                        <span class="h-[5px] w-[23px] rounded-[3px] bg-white/15"></span>
+                        <span class="h-[5px] w-[23px] rounded-[3px] bg-white/15"></span>
+                        <span class="h-[5px] w-[23px] rounded-[3px] bg-white/15"></span>
+                    </div>
+
+                    {{-- Dashboard Main Content --}}
+                    <div class="flex flex-1 flex-col bg-[#F7F9F8] p-5">
+                        {{-- Top Header --}}
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-[6px] uppercase leading-[9px] tracking-[0.48px] text-[#236B51]">TRIAGE QUEUE</p>
+                                <p class="mt-1 text-[13px] font-bold leading-5 text-[#17201C]">Detection overview</p>
+                            </div>
+                            <div class="flex h-[26px] w-[125px] items-center gap-[5px] rounded-[5px] border-[0.8px] border-[#E0E6E3] bg-white px-2">
+                                <x-auth.icon name="search" class="size-[13px] text-[#9BA49F]" />
+                                <span class="text-[6.5px] leading-[10px] text-[#9BA49F]">Search reports</span>
+                            </div>
+                        </div>
+
+                        {{-- Summary Cards --}}
+                        <div class="mt-[15px] grid grid-cols-2 gap-[15px]">
+                            <div class="flex items-center gap-2 rounded-[7px] border-[0.8px] border-[#E2E8E5] bg-white p-[9px]">
+                                <div class="grid size-[25px] shrink-0 place-items-center rounded-[6px] bg-[#F2F8F5] text-[#236B51]">
+                                    <svg class="size-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                                        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                                        <path d="M10 9H8" />
+                                        <path d="M16 13H8" />
+                                        <path d="M16 17H8" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-[6px] leading-[9px] text-[#7D8983]">Reports</p>
+                                    <p class="mt-[2px] text-[8px] font-bold leading-3 text-[#17201C]">Sample data</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 rounded-[7px] border-[0.8px] border-[#E2E8E5] bg-white p-[9px]">
+                                <div class="grid size-[25px] shrink-0 place-items-center rounded-[6px] bg-[#F2F8F5] text-[#236B51]">
+                                    <svg class="size-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                                        <path d="M4.268 21a2 2 0 0 0 1.727 1H18a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3" />
+                                        <path d="m9 18-1.5-1.5" />
+                                        <circle cx="5" cy="14" r="3" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-[6px] leading-[9px] text-[#7D8983]">Analysis</p>
+                                    <p class="mt-[2px] text-[8px] font-bold leading-3 text-[#17201C]">Ready to review</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Reports Table --}}
+                        <div class="mt-[15px] overflow-hidden rounded-[7px] border-[0.8px] border-[#E0E6E3] bg-white">
+                            <div class="grid h-[25px] grid-cols-12 items-center border-b-[0.8px] border-[#E5E9E7] bg-[#FAFBFA] px-3 text-[6px] uppercase tracking-[0.24px] text-[#87918C]">
+                                <span class="col-span-5">Report</span>
+                                <span class="col-span-2">Module</span>
+                                <span class="col-span-3">Detection</span>
+                                <span class="col-span-2">Score</span>
+                            </div>
+
+                            {{-- Row 1 --}}
+                            <div class="grid min-h-[62px] grid-cols-12 items-center border-b-[0.8px] border-[#EDF0EE] px-3">
+                                <div class="col-span-5 pr-2">
+                                    <p class="text-[6.5px] font-bold leading-[10px] text-[#236B51]">BUG-1048</p>
+                                    <p class="mt-1 text-[7.5px] font-bold leading-[11px] text-[#33413A]">Checkout button is unresponsive</p>
+                                </div>
+                                <div class="col-span-2">
+                                    <span class="text-[7px] leading-[10px] text-[#65716A]">Checkout</span>
+                                </div>
+                                <div class="col-span-3">
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-[#FBF3E1] px-[5px] py-1">
+                                        <span class="size-1 rounded-full bg-[#8C661C]"></span>
+                                        <span class="text-[6px] leading-[9px] text-[#8C661C]">Potential Duplicate</span>
+                                    </span>
+                                </div>
+                                <div class="col-span-2">
+                                    <div class="h-1 w-full rounded bg-[#E8EDEB] overflow-hidden">
+                                        <div class="h-full w-[86%] rounded bg-[#2D795A]"></div>
+                                    </div>
+                                    <p class="mt-1 text-[6px] leading-[9px] text-[#66746C]">Sample 86%</p>
+                                </div>
+                            </div>
+
+                            {{-- Row 2 --}}
+                            <div class="grid min-h-[62px] grid-cols-12 items-center px-3">
+                                <div class="col-span-5 pr-2">
+                                    <p class="text-[6.5px] font-bold leading-[10px] text-[#236B51]">BUG-1044</p>
+                                    <p class="mt-1 text-[7.5px] font-bold leading-[11px] text-[#33413A]">Profile form validation issue</p>
+                                </div>
+                                <div class="col-span-2">
+                                    <span class="text-[7px] leading-[10px] text-[#65716A]">Account</span>
+                                </div>
+                                <div class="col-span-3">
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-[#EDF7F2] px-[5px] py-1">
+                                        <span class="size-1 rounded-full bg-[#2D7357]"></span>
+                                        <span class="text-[6px] leading-[9px] text-[#2D7357]">Unique Report</span>
+                                    </span>
+                                </div>
+                                <div class="col-span-2">
+                                    <div class="h-1 w-full rounded bg-[#E8EDEB] overflow-hidden">
+                                        <div class="h-full w-[41%] rounded bg-[#7093A5]"></div>
+                                    </div>
+                                    <p class="mt-1 text-[6px] leading-[9px] text-[#66746C]">Sample 41%</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Similarity Candidate Banner --}}
+                        <div class="mt-[11px] flex min-h-[50px] items-center justify-between gap-[7px] rounded-[7px] border-[0.8px] border-[#D7E6DE] bg-[#F2F8F5] p-2">
+                            <div class="flex items-center gap-[7px]">
+                                <div class="grid size-[26px] shrink-0 place-items-center rounded-[6px] bg-white text-[#236B51]">
+                                    <svg class="size-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <rect x="16" y="16" width="6" height="6" rx="1" />
+                                        <rect x="2" y="16" width="6" height="6" rx="1" />
+                                        <rect x="9" y="2" width="6" height="6" rx="1" />
+                                        <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" />
+                                        <path d="M12 12V8" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-[5.5px] leading-2 text-[#728079]">Example similarity candidate</p>
+                                    <p class="mt-[2px] text-[7px] font-bold leading-[10px] text-[#35443C]">BUG-0834 · Checkout CTA does not respond</p>
+                                </div>
+                            </div>
+                            <span class="inline-flex h-6 shrink-0 items-center gap-1 rounded-[5px] bg-[#123C2E] px-[7px] text-[6px] text-white">
+                                <span>Review comparison</span>
+                                <svg class="size-[11px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M5 12h14" />
+                                    <path d="m12 5 7 7-7 7" />
+                                </svg>
                             </span>
                         </div>
-                    </div>
-
-                    {{-- Mockup Body --}}
-                    <div class="p-4 sm:p-6 lg:p-8 bg-linear-to-b from-white to-slate-50/50">
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
-
-                            {{-- Incoming Bug Card (Left, 5 cols) --}}
-                            <div class="lg:col-span-5 rounded-2xl border border-divider bg-white p-4 sm:p-5 shadow-xs">
-                                <div class="flex items-center justify-between pb-3 border-b border-divider/60">
-                                    <div class="flex items-center gap-2">
-                                        <span class="grid size-6 place-items-center rounded-lg bg-sky-100 text-sky-700 font-mono text-xs font-bold">#</span>
-                                        <span class="text-xs font-bold text-ink">Laporan Masuk</span>
-                                    </div>
-                                    <span class="font-mono text-xs font-bold text-sky-700">#2041</span>
-                                </div>
-                                <div class="mt-3">
-                                    <h2 class="text-xs sm:text-sm font-bold text-ink leading-snug">
-                                        Tombol checkout QRIS tidak merespons di iOS Safari
-                                    </h2>
-                                    <p class="mt-1.5 text-xs text-label leading-relaxed line-clamp-2">
-                                        Setelah menekan konfirmasi pembayaran, indikator loading berputar terus tanpa menampilkan kode QR.
-                                    </p>
-                                </div>
-
-                                {{-- Simulated Screenshot with OCR detection chip --}}
-                                <div class="mt-3.5 rounded-xl border border-divider/80 bg-input/60 p-3">
-                                    <div class="flex items-center justify-between text-[11px] text-label mb-2">
-                                        <span class="flex items-center gap-1">
-                                            <x-auth.icon name="upload" class="size-3 text-sage-600" />
-                                            Screenshot Lampiran
-                                        </span>
-                                        <span class="rounded bg-sage-100 px-1.5 py-0.5 font-mono text-[9px] font-bold text-sage-800">OCR Aktif</span>
-                                    </div>
-                                    <div class="relative rounded-lg border border-divider bg-white p-2.5 shadow-2xs overflow-hidden">
-                                        <div class="flex items-center gap-2">
-                                            <span class="grid size-5 place-items-center rounded bg-rose-50 text-rose-600 text-[10px] font-bold">!</span>
-                                            <p class="font-mono text-[10px] text-rose-700 font-semibold truncate">Error 504 Gateway Timeout: Payment API</p>
-                                        </div>
-                                        <p class="mt-1 text-[10px] text-label/70 italic">
-                                            Teks error pada gambar terbaca otomatis dan dianalisis model.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Center AI Match Beam (2 cols) --}}
-                            <div class="lg:col-span-2 flex flex-col items-center justify-center py-2 lg:py-0">
-                                <div class="relative flex flex-col items-center">
-                                    {{-- Rotating Match Pulse --}}
-                                    <div class="grid size-12 place-items-center rounded-2xl bg-sage-500 text-white shadow-cta relative">
-                                        <x-auth.icon name="sparkles" class="size-6" />
-                                    </div>
-                                    <div class="mt-2 text-center">
-                                        <span class="inline-flex items-center rounded-md bg-rose-50 border border-rose-200 px-2 py-0.5 text-[10px] font-bold text-rose-700">
-                                            Kemiripan Tinggi
-                                        </span>
-                                        <p class="mt-0.5 font-mono text-[10px] text-label">Kandidat Top 1</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- Matched Existing Bug Card (Right, 5 cols) --}}
-                            <div class="lg:col-span-5 rounded-2xl border border-emerald-200/80 bg-emerald-50/40 p-4 sm:p-5 shadow-xs">
-                                <div class="flex items-center justify-between pb-3 border-b border-emerald-200/60">
-                                    <div class="flex items-center gap-2">
-                                        <span class="grid size-6 place-items-center rounded-lg bg-emerald-100 text-emerald-800 font-mono text-xs font-bold">✓</span>
-                                        <span class="text-xs font-bold text-emerald-950">Bug Serupa di Database</span>
-                                    </div>
-                                    <span class="font-mono text-xs font-bold text-emerald-800">#1988</span>
-                                </div>
-                                <div class="mt-3">
-                                    <h2 class="text-xs sm:text-sm font-bold text-ink leading-snug">
-                                        Checkout macet pada halaman pembayaran QRIS
-                                    </h2>
-                                    <p class="mt-1.5 text-xs text-label leading-relaxed line-clamp-2">
-                                        Pelanggan melaporkan gateway timeout saat melakukan konfirmasi pesanan metode QRIS.
-                                    </p>
-                                </div>
-
-                                <div class="mt-3.5 rounded-xl border border-emerald-200/70 bg-white p-3 shadow-2xs">
-                                    <div class="flex items-center justify-between text-xs">
-                                        <span class="text-[11px] font-semibold text-emerald-900">Rekomendasi Sistem:</span>
-                                        <span class="inline-flex items-center gap-1 rounded bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
-                                            Potensi Duplikat
-                                        </span>
-                                    </div>
-                                    <p class="mt-1 text-[11px] text-label leading-relaxed">
-                                        Developer dapat menandai laporan #2041 sebagai duplikasi dari #1988 dalam satu klik.
-                                    </p>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- 4 Capability Highlights Bar --}}
-            <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 reveal-on-scroll">
-                <div class="rounded-2xl border border-divider/80 bg-white p-4 shadow-xs flex items-start gap-3 transition hover:border-slate-300">
-                    <span class="grid size-9 shrink-0 place-items-center rounded-xl bg-sage-100 text-sage-700">
-                        <x-auth.icon name="sparkles" class="size-4" />
-                    </span>
-                    <div>
-                        <h2 class="text-xs font-bold text-ink">Deteksi Semantik Cepat</h2>
-                        <p class="mt-0.5 text-[11px] leading-relaxed text-label">Memahami makna kalimat bahkan dengan pilihan kata berbeda.</p>
-                    </div>
-                </div>
-
-                <div class="rounded-2xl border border-divider/80 bg-white p-4 shadow-xs flex items-start gap-3 transition hover:border-slate-300">
-                    <span class="grid size-9 shrink-0 place-items-center rounded-xl bg-sky-100 text-sky-700">
-                        <x-auth.icon name="eye" class="size-4" />
-                    </span>
-                    <div>
-                        <h2 class="text-xs font-bold text-ink">Multimodal OCR</h2>
-                        <p class="mt-0.5 text-[11px] leading-relaxed text-label">Membaca teks error langsung dari gambar tangkapan layar.</p>
-                    </div>
-                </div>
-
-                <div class="rounded-2xl border border-divider/80 bg-white p-4 shadow-xs flex items-start gap-3 transition hover:border-slate-300">
-                    <span class="grid size-9 shrink-0 place-items-center rounded-xl bg-amber-100 text-amber-700">
-                        <x-auth.icon name="code" class="size-4" />
-                    </span>
-                    <div>
-                        <h2 class="text-xs font-bold text-ink">Rekomendasi Top-K</h2>
-                        <p class="mt-0.5 text-[11px] leading-relaxed text-label">Daftar kandidat paling relevan untuk diputuskan developer.</p>
-                    </div>
-                </div>
-
-                <div class="rounded-2xl border border-divider/80 bg-white p-4 shadow-xs flex items-start gap-3 transition hover:border-slate-300">
-                    <span class="grid size-9 shrink-0 place-items-center rounded-xl bg-indigo-100 text-indigo-700">
-                        <x-auth.icon name="shield" class="size-4" />
-                    </span>
-                    <div>
-                        <h2 class="text-xs font-bold text-ink">Multi-Tenant Terisolasi</h2>
-                        <p class="mt-0.5 text-[11px] leading-relaxed text-label">Setiap aplikasi memiliki antrean tiket yang aman dan terpisah.</p>
                     </div>
                 </div>
             </div>
@@ -223,449 +212,632 @@
         </div>
     </section>
 
-    {{-- ======================== MASALAH YANG KAMI ATASI ======================== --}}
-    <section id="masalah" class="py-16 sm:py-20 lg:py-24 border-y border-divider/80 bg-white/70">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="max-w-2xl mx-auto text-center mb-12 sm:mb-16 reveal-on-scroll">
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-200 px-3 py-1 text-xs font-bold text-rose-700 uppercase tracking-wider">
-                    Tantangan Pengembang
+    {{-- ======================== THE CHALLENGE SECTION ======================== --}}
+    <section class="w-full bg-[#F7F9F8] py-[92px]">
+        <div class="mx-auto max-w-[1528px] px-6 sm:px-10 lg:px-[106.96px]">
+            <div class="mx-auto flex max-w-[740px] flex-col items-center text-center">
+                <span class="text-[9px] font-bold uppercase leading-[14px] tracking-[1.08px] text-[#236B51]">
+                    The challenge
                 </span>
-                <h2 class="mt-3 font-serif text-2xl sm:text-4xl font-bold tracking-tight text-ink">
-                    Masalah yang kami atasi
+                <h2 class="pt-[10px] text-[30px] font-normal leading-[1.16] tracking-[-1.3px] text-[#14221B] sm:text-[43px] sm:leading-[50px]">
+                    Managing Duplicate Bug Reports Can Be Challenging
                 </h2>
-                <p class="mt-3 text-sm sm:text-base text-label leading-relaxed">
-                    Laporan duplikasi buang waktu dan menunda perbaikan. Inilah kendala yang sering terjadi di tim pengembang:
+                <p class="pt-[13px] text-[12px] leading-[21px] text-[#67736D]">
+                    Multiple users may report the same issue with different descriptions or screenshots, making manual comparison slow and inconsistent.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8">
-                {{-- Problem 1 --}}
-                <div class="rounded-2xl border border-divider bg-white p-6 sm:p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-rose-200 reveal-on-scroll reveal-delay-100">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="grid size-10 place-items-center rounded-xl bg-rose-50 text-rose-600">
-                            <x-auth.icon name="alert" class="size-5" />
-                        </span>
-                        <span class="rounded-md bg-input px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-label">Overload</span>
+            <div class="mx-auto mt-10 grid max-w-[1190px] grid-cols-1 gap-[15px] md:grid-cols-3">
+                {{-- Card 1 --}}
+                <article class="flex flex-col items-start rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-[22px]">
+                    <div class="grid size-[39px] place-items-center rounded-[9px] bg-[#F2F8F5] text-[#236B51]">
+                        <svg class="size-[21px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z" />
+                            <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65" />
+                            <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65" />
+                        </svg>
                     </div>
-                    <h3 class="font-serif text-base sm:text-lg font-bold text-ink">Laporan ganda menumpuk</h3>
-                    <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed">
-                        Beberapa reporter melaporkan masalah yang sama secara terpisah, sehingga antrean penanganan menjadi berlebih dan membingungkan penanggung jawab modul.
+                    <h3 class="pt-[15px] text-[13px] font-normal leading-5 text-[#17201C]">Repetitive Bug Reports</h3>
+                    <p class="pt-[7px] text-[10px] leading-4 text-[#67736D]">
+                        Multiple reports may describe the same underlying issue across different users.
                     </p>
-                </div>
+                </article>
 
-                {{-- Problem 2 --}}
-                <div class="rounded-2xl border border-divider bg-white p-6 sm:p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-amber-200 reveal-on-scroll reveal-delay-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="grid size-10 place-items-center rounded-xl bg-amber-50 text-amber-600">
-                            <x-auth.icon name="refresh" class="size-5" />
-                        </span>
-                        <span class="rounded-md bg-input px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-label">Bottleneck</span>
+                {{-- Card 2 --}}
+                <article class="flex flex-col items-start rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-[22px]">
+                    <div class="grid size-[39px] place-items-center rounded-[9px] bg-[#F2F8F5] text-[#236B51]">
+                        <svg class="size-[21px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg>
                     </div>
-                    <h3 class="font-serif text-base sm:text-lg font-bold text-ink">Triage Developer lambat</h3>
-                    <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed">
-                        Tanpa indikator kemiripan, Developer harus membaca satu per satu untuk menentukan apakah dua laporan adalah masalah yang sama, menghabiskan waktu coding berharga.
+                    <h3 class="pt-[15px] text-[13px] font-normal leading-5 text-[#17201C]">Time-Consuming Review</h3>
+                    <p class="pt-[7px] text-[10px] leading-4 text-[#67736D]">
+                        Developers need to manually compare reports to identify duplicate submissions.
                     </p>
-                </div>
+                </article>
 
-                {{-- Problem 3 --}}
-                <div class="rounded-2xl border border-divider bg-white p-6 sm:p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-gold-200 reveal-on-scroll reveal-delay-300">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="grid size-10 place-items-center rounded-xl bg-gold-100 text-ochre">
-                            <x-auth.icon name="search" class="size-5" />
-                        </span>
-                        <span class="rounded-md bg-input px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-label">Fragmentasi</span>
+                {{-- Card 3 --}}
+                <article class="flex flex-col items-start rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-[22px]">
+                    <div class="grid size-[39px] place-items-center rounded-[9px] bg-[#F2F8F5] text-[#236B51]">
+                        <svg class="size-[21px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="8" x2="12" y2="12" />
+                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
                     </div>
-                    <h3 class="font-serif text-base sm:text-lg font-bold text-ink">Satu bug, banyak tempat</h3>
-                    <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed">
-                        Masalah yang sama dilaporkan di berbagai modul dan sulit dilacak karena tersebar di banyak tiket yang tidak terkait, memicu perbaikan parsial yang berulang.
+                    <h3 class="pt-[15px] text-[13px] font-normal leading-5 text-[#17201C]">Fragmented Information</h3>
+                    <p class="pt-[7px] text-[10px] leading-4 text-[#67736D]">
+                        Related bug reports may be scattered across different modules without clear links.
                     </p>
-                </div>
+                </article>
             </div>
         </div>
     </section>
 
-    {{-- ======================== BENTO GRID FITUR UNGGULAN ======================== --}}
-    <section id="fitur" class="py-16 sm:py-20 lg:py-24">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="max-w-2xl mx-auto text-center mb-12 sm:mb-16 reveal-on-scroll">
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-sage-100 border border-sage-200 px-3 py-1 text-xs font-bold text-sage-800 uppercase tracking-wider">
-                    Arsitektur Canggih
-                </span>
-                <h2 class="mt-3 font-serif text-2xl sm:text-4xl font-bold tracking-tight text-ink">
-                    Fitur
-                </h2>
-                <p class="mt-3 text-sm sm:text-base text-label leading-relaxed">
-                    Setiap fitur dirancang untuk mengurangi laporan duplikasi dan mempercepat penanganan bug dalam alur kerja tim Anda.
-                </p>
+    {{-- ======================== ABOUT THE PLATFORM SECTION ======================== --}}
+    <section id="about" class="w-full bg-white py-[92px]">
+        <div class="mx-auto grid max-w-[1528px] grid-cols-1 items-center gap-12 px-6 sm:px-10 lg:grid-cols-12 lg:px-[106.96px]">
+
+            {{-- Left Column: Text and Image Analysis Process Diagram --}}
+            <div class="lg:col-span-6">
+                <div class="relative mx-auto flex h-[360px] w-full max-w-[567.19px] flex-col items-center justify-center rounded-[14px] border-[0.8px] border-[#E2E8E5] bg-[#F7F9F8] p-5">
+                    {{-- Dashed Connector Lines (Desktop) --}}
+                    <svg class="pointer-events-none absolute inset-0 hidden size-full sm:block" viewBox="0 0 566 358" fill="none" aria-hidden="true">
+                        <path d="M165 78 H225 V165" stroke="#B8CBC1" stroke-width="1.5" stroke-dasharray="4 4" />
+                        <path d="M165 236 H225 V185" stroke="#B8CBC1" stroke-width="1.5" stroke-dasharray="4 4" />
+                        <path d="M343 166 H403" stroke="#B8CBC1" stroke-width="1.5" stroke-dasharray="4 4" />
+                    </svg>
+
+                    <div class="relative flex w-full flex-col items-center justify-between gap-4 sm:h-[260px] sm:flex-row">
+                        {{-- Left Inputs --}}
+                        <div class="flex flex-col gap-5 sm:gap-[97px]">
+                            {{-- Text Info Card --}}
+                            <div class="relative flex h-[60px] w-[145px] items-center gap-2 rounded-[9px] border-[0.8px] border-[#DCE4E0] bg-white p-[10px] shadow-[0_8px_20px_rgba(18,52,36,0.06)]">
+                                <div class="z-10">
+                                    <p class="text-[6.5px] leading-[10px] text-[#829089]">Text information</p>
+                                    <p class="mt-[3px] text-[8px] font-bold leading-3 text-[#35433C]">Title &amp; description</p>
+                                </div>
+                                <svg class="ml-auto size-7 text-[#B8CBC1]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2" aria-hidden="true">
+                                    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                                    <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                                </svg>
+                            </div>
+
+                            {{-- Visual Evidence Card --}}
+                            <div class="relative flex h-[60px] w-[145px] items-center gap-2 rounded-[9px] border-[0.8px] border-[#DCE4E0] bg-white p-[10px] shadow-[0_8px_20px_rgba(18,52,36,0.06)]">
+                                <div class="z-10">
+                                    <p class="text-[6.5px] leading-[10px] text-[#829089]">Visual evidence</p>
+                                    <p class="mt-[3px] text-[8px] font-bold leading-3 text-[#35433C]">Optional screenshot</p>
+                                </div>
+                                <svg class="ml-auto size-7 text-[#B8CBC1]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2" aria-hidden="true">
+                                    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                                    <circle cx="10" cy="12" r="2" />
+                                    <path d="m20 17-1.296-1.296a2.41 2.41 0 0 0-3.408 0L9 22" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {{-- Center Hub Circle --}}
+                        <div class="relative z-10 flex size-[120px] shrink-0 flex-col items-center justify-center rounded-full bg-[#0D2D22] text-center shadow-[0_0_0_14px_rgba(39,105,77,0.07),0_15px_35px_rgba(13,45,34,0.14)]">
+                            <x-auth.icon name="sparkles" class="size-7 text-[#B8CBC1]" />
+                            <p class="pt-[7px] text-[8.5px] font-bold leading-[13px] text-white">Combined analysis</p>
+                            <p class="pt-[3px] text-[6.5px] leading-[10px] text-[#8AA99A]">Similarity evidence</p>
+                        </div>
+
+                        {{-- Right Output Card --}}
+                        <div class="relative flex h-[60px] w-[145px] items-center gap-2 rounded-[9px] border-[0.8px] border-[#DCE4E0] bg-white p-[10px] shadow-[0_8px_20px_rgba(18,52,36,0.06)]">
+                            <div class="z-10">
+                                <p class="text-[6.5px] leading-[10px] text-[#829089]">Review output</p>
+                                <p class="mt-[3px] text-[8px] font-bold leading-3 text-[#35433C]">Ranked candidates</p>
+                            </div>
+                            <svg class="ml-auto size-7 text-[#B8CBC1]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 2" aria-hidden="true">
+                                <path d="m3 17 2 2 4-4" />
+                                <path d="m3 7 2 2 4-4" />
+                                <path d="M13 6h8" />
+                                <path d="M13 12h8" />
+                                <path d="M13 18h8" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    {{-- Bottom Pill --}}
+                    <div class="mt-6 flex items-center gap-[6px] rounded-full border-[0.8px] border-[#DFE6E2] bg-white px-[10px] py-[7px]">
+                        <x-auth.icon name="shield" class="size-[14px] text-[#236B51]" />
+                        <span class="text-[7px] leading-[10px] text-[#637169]">
+                            Text-only analysis remains available without a screenshot
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            {{-- Bento Grid --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {{-- Right Column: What is TwinBug? --}}
+            <div class="lg:col-span-6 flex w-full max-w-[600px] flex-col items-start">
+                <span class="text-[9px] font-bold uppercase leading-[14px] tracking-[1.08px] text-[#236B51]">
+                    About the platform
+                </span>
+                <h2 class="pt-[10px] text-[32px] font-normal leading-[1.16] tracking-[-1.3px] text-[#14221B] sm:text-[43px] sm:leading-[50px]">
+                    What is TwinBug?
+                </h2>
+                <p class="pt-[13px] text-[12px] leading-[21px] text-[#67736D]">
+                    TwinBug is a multimodal duplicate bug report detection platform designed to help teams identify similar reports through combined text and image analysis.
+                </p>
 
-                {{-- Feature 1: Large Bento Card (Span 2 cols on lg) --}}
-                <div class="lg:col-span-2 rounded-2xl border border-divider/90 bg-white p-6 sm:p-8 shadow-xs transition-all duration-300 hover:shadow-md flex flex-col justify-between reveal-on-scroll reveal-delay-100">
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="grid size-10 place-items-center rounded-xl bg-sage-100 text-sage-700">
-                                <x-auth.icon name="search" class="size-5" />
-                            </span>
-                            <span class="rounded-full bg-sage-50 border border-sage-200 px-2.5 py-0.5 text-[10px] font-bold text-sage-700">Multilingual</span>
+                <div class="mt-[27px] flex w-full flex-col gap-[10px]">
+                    {{-- Item 1 --}}
+                    <div class="flex items-start gap-[11px] rounded-[8px] border-[0.8px] border-[#E3E9E6] p-[11px]">
+                        <div class="grid size-[31px] shrink-0 place-items-center rounded-[7px] bg-[#F2F8F5] text-[#236B51]">
+                            <svg class="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                                <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                                <path d="M10 9H8" />
+                                <path d="M16 13H8" />
+                                <path d="M16 17H8" />
+                            </svg>
                         </div>
-                        <h3 class="font-serif text-lg sm:text-xl font-bold text-ink">Deteksi laporan serupa berbasis teks</h3>
-                        <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed max-w-xl">
-                            Sistem membandingkan judul dan deskripsi laporan baru dengan laporan sebelumnya, baik dalam Bahasa Indonesia maupun bahasa Inggris, menggunakan model representasi vektor MiniLM.
-                        </p>
-                    </div>
-
-                    {{-- Visual representation inside card --}}
-                    <div class="mt-6 rounded-xl border border-divider/80 bg-input/40 p-3.5 space-y-2">
-                        <div class="flex items-center justify-between text-xs bg-white rounded-lg p-2.5 border border-divider/70">
-                            <span class="text-ink font-medium">Input ID: "Tidak bisa login setelah pembaruan aplikasi"</span>
-                            <span class="text-sage-600 font-bold text-[11px]">Query Baru</span>
-                        </div>
-                        <div class="flex items-center justify-between text-xs bg-emerald-50 rounded-lg p-2.5 border border-emerald-200">
-                            <span class="text-emerald-950 font-medium">Target EN: "Users unable to authenticate on mobile app"</span>
-                            <span class="text-emerald-700 font-bold text-[11px]">Kandidat Cocok</span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Feature 2: OCR Card --}}
-                <div class="rounded-2xl border border-divider/90 bg-white p-6 sm:p-8 shadow-xs transition-all duration-300 hover:shadow-md flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="grid size-10 place-items-center rounded-xl bg-sky-100 text-sky-700">
-                                <x-auth.icon name="eye" class="size-5" />
-                            </span>
-                            <span class="rounded-full bg-sky-50 border border-sky-200 px-2.5 py-0.5 text-[10px] font-bold text-sky-700">OCR Engine</span>
-                        </div>
-                        <h3 class="font-serif text-lg font-bold text-ink">Teks pada screenshot dibaca otomatis (OCR)</h3>
-                        <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed">
-                            Teks yang ada pada screenshot diekstrak dan ikut dibandingkan dengan laporan lain untuk deteksi yang lebih akurat, menangkap pesan error konsol dan dialog modal.
-                        </p>
-                    </div>
-
-                    <div class="mt-6 rounded-xl border border-dashed border-sky-300 bg-sky-50/50 p-3 text-center">
-                        <span class="font-mono text-[11px] text-sky-800 font-semibold">RapidOCR Optical Scanner Active</span>
-                    </div>
-                </div>
-
-                {{-- Feature 3: Visual Hash --}}
-                <div class="rounded-2xl border border-divider/90 bg-white p-6 sm:p-8 shadow-xs transition-all duration-300 hover:shadow-md">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="grid size-10 place-items-center rounded-xl bg-amber-100 text-amber-700">
-                            <x-auth.icon name="filter" class="size-5" />
-                        </span>
-                        <span class="rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[10px] font-bold text-amber-700">Visual Hash</span>
-                    </div>
-                    <h3 class="font-serif text-base sm:text-lg font-bold text-ink">Screenshot hampir identik ditandai</h3>
-                    <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed">
-                        Laporan dengan screenshot visual yang hampir sama ditandai sebagai potensi duplikasi, bahkan jika teks laporan berbeda atau ditulis dengan redaksi lain.
-                    </p>
-                </div>
-
-                {{-- Feature 4: Top-K --}}
-                <div class="rounded-2xl border border-divider/90 bg-white p-6 sm:p-8 shadow-xs transition-all duration-300 hover:shadow-md">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="grid size-10 place-items-center rounded-xl bg-emerald-100 text-emerald-700">
-                            <x-auth.icon name="code" class="size-5" />
-                        </span>
-                        <span class="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700">Rekomendasi</span>
-                    </div>
-                    <h3 class="font-serif text-base sm:text-lg font-bold text-ink">Saran Top-K dengan skor kemiripan</h3>
-                    <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed">
-                        Hasil deteksi berupa daftar laporan serupa dengan skor kemiripan. Keputusan akhir apakah dua laporan adalah duplikasi tetap di tangan Developer.
-                    </p>
-                </div>
-
-                {{-- Feature 5: Multi-Tenant Data Isolation --}}
-                <div class="rounded-2xl border border-divider/90 bg-white p-6 sm:p-8 shadow-xs transition-all duration-300 hover:shadow-md">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="grid size-10 place-items-center rounded-xl bg-purple-100 text-purple-700">
-                            <x-auth.icon name="key" class="size-5" />
-                        </span>
-                        <span class="rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[10px] font-bold text-purple-700">Multi-Aplikasi</span>
-                    </div>
-                    <h3 class="font-serif text-base sm:text-lg font-bold text-ink">Data dipisah per aplikasi</h3>
-                    <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed">
-                        Setiap aplikasi memiliki antrean laporan sendiri, sehingga laporan dari satu aplikasi tidak bercampur dengan aplikasi lain. Terhubung dengan kode undangan unik.
-                    </p>
-                </div>
-
-                {{-- Feature 6: OTP Security (Span 3 cols or 1 col) --}}
-                <div class="md:col-span-2 lg:col-span-3 rounded-2xl border border-divider/90 bg-white p-6 sm:p-7 shadow-xs transition-all duration-300 hover:shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div class="flex items-start sm:items-center gap-4">
-                        <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-sage-500 text-white shadow-cta">
-                            <x-auth.icon name="check" class="size-5" />
-                        </span>
                         <div>
-                            <h3 class="font-serif text-base sm:text-lg font-bold text-ink">Verifikasi akun lewat OTP email</h3>
-                            <p class="mt-1 text-xs sm:text-sm text-label leading-relaxed">
-                                Setiap pendaftaran diverifikasi melalui kode OTP yang dikirim ke email, sehingga identitas Reporter terjamin dan mencegah spam tiket.
+                            <h3 class="text-[10px] font-bold leading-[15px] text-[#17201C]">Text Similarity</h3>
+                            <p class="pt-[3px] text-[8.5px] leading-[13px] text-[#67736D]">
+                                Compares descriptions and textual information provided in bug reports.
                             </p>
                         </div>
                     </div>
-                    <span class="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-sage-200 bg-sage-50 px-3 py-1.5 text-xs font-bold text-sage-800">
-                        <x-auth.icon name="shield" class="size-3.5 text-sage-600" />
-                        Otentikasi Aman
+
+                    {{-- Item 2 --}}
+                    <div class="flex items-start gap-[11px] rounded-[8px] border-[0.8px] border-[#E3E9E6] p-[11px]">
+                        <div class="grid size-[31px] shrink-0 place-items-center rounded-[7px] bg-[#F2F8F5] text-[#236B51]">
+                            <svg class="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                                <circle cx="9" cy="9" r="2" />
+                                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-[10px] font-bold leading-[15px] text-[#17201C]">Image Similarity</h3>
+                            <p class="pt-[3px] text-[8.5px] leading-[13px] text-[#67736D]">
+                                Analyzes visual similarities in attached screenshots when provided.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Item 3 --}}
+                    <div class="flex items-start gap-[11px] rounded-[8px] border-[0.8px] border-[#E3E9E6] p-[11px]">
+                        <div class="grid size-[31px] shrink-0 place-items-center rounded-[7px] bg-[#F2F8F5] text-[#236B51]">
+                            <svg class="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="16" y="16" width="6" height="6" rx="1" />
+                                <rect x="2" y="16" width="6" height="6" rx="1" />
+                                <rect x="9" y="2" width="6" height="6" rx="1" />
+                                <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" />
+                                <path d="M12 12V8" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-[10px] font-bold leading-[15px] text-[#17201C]">Combined Analysis</h3>
+                            <p class="pt-[3px] text-[8.5px] leading-[13px] text-[#67736D]">
+                                Brings text and image evidence together to surface potential duplicates.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    {{-- ======================== CORE CAPABILITIES SECTION ======================== --}}
+    <section id="features" class="w-full bg-[#0D2D22] py-[92px] text-white">
+        <div class="mx-auto max-w-[1528px] px-6 sm:px-10 lg:px-[106.96px]">
+            <div class="mx-auto flex max-w-[740px] flex-col items-center text-center">
+                <span class="text-[9px] font-bold uppercase leading-[14px] tracking-[1.08px] text-[#8BC2A8]">
+                    Core capabilities
+                </span>
+                <h2 class="pt-[10px] text-[30px] font-normal leading-[1.16] tracking-[-1.3px] text-white sm:text-[43px] sm:leading-[50px]">
+                    Features Designed for Smarter Bug Detection
+                </h2>
+                <p class="pt-[13px] max-w-[640px] text-[12px] leading-[21px] text-[#AEBFB7]">
+                    Focused tools help Reporters provide useful evidence and help Developers review candidate duplicates.
+                </p>
+            </div>
+
+            <div class="mx-auto mt-10 grid max-w-[1190px] grid-cols-1 gap-[15px] sm:grid-cols-2 lg:grid-cols-4">
+                {{-- Feature 1 --}}
+                <article class="flex flex-col items-start rounded-[11px] border-[0.8px] border-white/[0.11] bg-white/[0.055] p-[22px]">
+                    <div class="grid size-[39px] place-items-center rounded-[9px] bg-white/[0.09] text-[#9DCEB7]">
+                        <svg class="size-[21px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                            <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                            <path d="M10 9H8" />
+                            <path d="M16 13H8" />
+                            <path d="M16 17H8" />
+                        </svg>
+                    </div>
+                    <h3 class="pt-[15px] text-[13px] font-normal leading-5 text-white">Text-Based Similarity</h3>
+                    <p class="pt-[7px] text-[10px] leading-4 text-[#A6B9B0]">
+                        Analyze textual information from submitted bug reports to detect semantic overlap.
+                    </p>
+                </article>
+
+                {{-- Feature 2 --}}
+                <article class="flex flex-col items-start rounded-[11px] border-[0.8px] border-white/[0.11] bg-white/[0.055] p-[22px]">
+                    <div class="grid size-[39px] place-items-center rounded-[9px] bg-white/[0.09] text-[#9DCEB7]">
+                        <svg class="size-[21px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                            <circle cx="9" cy="9" r="2" />
+                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                        </svg>
+                    </div>
+                    <h3 class="pt-[15px] text-[13px] font-normal leading-5 text-white">Image-Based Similarity</h3>
+                    <p class="pt-[7px] text-[10px] leading-4 text-[#A6B9B0]">
+                        Compare screenshots to identify visual similarities and extracted error context.
+                    </p>
+                </article>
+
+                {{-- Feature 3 --}}
+                <article class="flex flex-col items-start rounded-[11px] border-[0.8px] border-white/[0.11] bg-white/[0.055] p-[22px]">
+                    <div class="grid size-[39px] place-items-center rounded-[9px] bg-white/[0.09] text-[#9DCEB7]">
+                        <svg class="size-[21px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 8V4H8" />
+                            <rect width="16" height="12" x="4" y="8" rx="2" />
+                            <path d="M2 14h2" />
+                            <path d="M20 14h2" />
+                            <path d="M15 13v2" />
+                            <path d="M9 13v2" />
+                        </svg>
+                    </div>
+                    <h3 class="pt-[15px] text-[13px] font-normal leading-5 text-white">Multimodal Detection</h3>
+                    <p class="pt-[7px] text-[10px] leading-4 text-[#A6B9B0]">
+                        Combine textual and visual similarity information for more reliable candidate ranking.
+                    </p>
+                </article>
+
+                {{-- Feature 4 --}}
+                <article class="flex flex-col items-start rounded-[11px] border-[0.8px] border-white/[0.11] bg-white/[0.055] p-[22px]">
+                    <div class="grid size-[39px] place-items-center rounded-[9px] bg-white/[0.09] text-[#9DCEB7]">
+                        <svg class="size-[21px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m3 17 2 2 4-4" />
+                            <path d="m3 7 2 2 4-4" />
+                            <path d="M13 6h8" />
+                            <path d="M13 12h8" />
+                            <path d="M13 18h8" />
+                        </svg>
+                    </div>
+                    <h3 class="pt-[15px] text-[13px] font-normal leading-5 text-white">Bug Report Management</h3>
+                    <p class="pt-[7px] text-[10px] leading-4 text-[#A6B9B0]">
+                        Organize submitted reports and help developers review and triage issues cleanly.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    {{-- ======================== HOW IT WORKS SECTION ======================== --}}
+    <section id="how-it-works" class="w-full bg-white py-[92px]">
+        <div class="mx-auto max-w-[1528px] px-6 sm:px-10 lg:px-[106.96px]">
+            <div class="mx-auto flex max-w-[740px] flex-col items-center text-center">
+                <span class="text-[9px] font-bold uppercase leading-[14px] tracking-[1.08px] text-[#236B51]">
+                    Simple workflow
+                </span>
+                <h2 class="pt-[10px] text-[32px] font-normal leading-[1.16] tracking-[-1.3px] text-[#14221B] sm:text-[43px] sm:leading-[50px]">
+                    How TwinBug Works
+                </h2>
+                <p class="pt-[13px] text-[12px] leading-[21px] text-[#67736D]">
+                    From submission to review, each stage keeps the available evidence clear.
+                </p>
+            </div>
+
+            <div class="relative mx-auto mt-10 max-w-[1200px]">
+                {{-- Horizontal Connecting Line --}}
+                <div class="pointer-events-none absolute top-[29px] left-[132px] right-[132px] hidden h-[1px] bg-[#CDDBD4] lg:block" aria-hidden="true"></div>
+
+                <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+                    {{-- Step 01 --}}
+                    <article class="flex flex-col items-center px-[19px] text-center">
+                        <div class="relative grid size-[59px] place-items-center rounded-full border-[0.8px] border-[#CFDCD5] bg-white text-[#236B51] shadow-[0_0_0_7px_#FFFFFF]">
+                            <x-auth.icon name="upload" class="size-[21px] stroke-[1.75]" />
+                            <span class="absolute -right-[2px] -top-[3px] grid size-5 place-items-center rounded-full bg-[#123C2E] text-[6px] font-bold leading-[9px] text-white">01</span>
+                        </div>
+                        <h3 class="pt-4 text-[11.5px] font-normal leading-[17px] text-[#17201C]">Submit Bug Report</h3>
+                        <p class="pt-[7px] text-[9px] leading-[14px] text-[#67736D]">
+                            Enter a title, description, and screenshot if one is available.
+                        </p>
+                    </article>
+
+                    {{-- Step 02 --}}
+                    <article class="flex flex-col items-center px-[19px] text-center">
+                        <div class="relative grid size-[59px] place-items-center rounded-full border-[0.8px] border-[#CFDCD5] bg-white text-[#236B51] shadow-[0_0_0_7px_#FFFFFF]">
+                            <x-auth.icon name="sparkles" class="size-[21px] stroke-[1.75]" />
+                            <span class="absolute -right-[2px] -top-[3px] grid size-5 place-items-center rounded-full bg-[#123C2E] text-[6px] font-bold leading-[9px] text-white">02</span>
+                        </div>
+                        <h3 class="pt-4 text-[11.5px] font-normal leading-[17px] text-[#17201C]">Analyze Report</h3>
+                        <p class="pt-[7px] text-[9px] leading-[14px] text-[#67736D]">
+                            TwinBug analyzes the available text and image information.
+                        </p>
+                    </article>
+
+                    {{-- Step 03 --}}
+                    <article class="flex flex-col items-center px-[19px] text-center">
+                        <div class="relative grid size-[59px] place-items-center rounded-full border-[0.8px] border-[#CFDCD5] bg-white text-[#236B51] shadow-[0_0_0_7px_#FFFFFF]">
+                            <svg class="size-[21px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="16" y="16" width="6" height="6" rx="1" />
+                                <rect x="2" y="16" width="6" height="6" rx="1" />
+                                <rect x="9" y="2" width="6" height="6" rx="1" />
+                                <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" />
+                                <path d="M12 12V8" />
+                            </svg>
+                            <span class="absolute -right-[2px] -top-[3px] grid size-5 place-items-center rounded-full bg-[#123C2E] text-[6px] font-bold leading-[9px] text-white">03</span>
+                        </div>
+                        <h3 class="pt-4 text-[11.5px] font-normal leading-[17px] text-[#17201C]">Similarity Comparison</h3>
+                        <p class="pt-[7px] text-[9px] leading-[14px] text-[#67736D]">
+                            The report is compared with historical reports to surface related candidates.
+                        </p>
+                    </article>
+
+                    {{-- Step 04 --}}
+                    <article class="flex flex-col items-center px-[19px] text-center">
+                        <div class="relative grid size-[59px] place-items-center rounded-full border-[0.8px] border-[#CFDCD5] bg-white text-[#236B51] shadow-[0_0_0_7px_#FFFFFF]">
+                            <svg class="size-[21px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="m3 17 2 2 4-4" />
+                                <path d="m3 7 2 2 4-4" />
+                                <path d="M13 6h8" />
+                                <path d="M13 12h8" />
+                                <path d="M13 18h8" />
+                            </svg>
+                            <span class="absolute -right-[2px] -top-[3px] grid size-5 place-items-center rounded-full bg-[#123C2E] text-[6px] font-bold leading-[9px] text-white">04</span>
+                        </div>
+                        <h3 class="pt-4 text-[11.5px] font-normal leading-[17px] text-[#17201C]">Review Detection Results</h3>
+                        <p class="pt-[7px] text-[9px] leading-[14px] text-[#67736D]">
+                            Developers review the evidence before deciding the next action.
+                        </p>
+                    </article>
+                </div>
+            </div>
+
+            {{-- Bottom Note Callout --}}
+            <div class="mx-auto mt-[37px] flex max-w-[630px] items-center gap-[9px] rounded-[8px] border-[0.8px] border-[#D9E8E0] bg-[#F2F8F5] px-[13px] py-[11px]">
+                <x-auth.icon name="shield" class="size-[18px] shrink-0 text-[#236B51]" />
+                <div>
+                    <p class="text-[9px] font-bold leading-[14px] text-[#3D4E45]">Screenshot optional</p>
+                    <p class="pt-[2px] text-[8px] leading-3 text-[#67736D]">
+                        Analysis can continue using textual information when no screenshot is attached.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ======================== ROLES SECTION ======================== --}}
+    <section id="roles" class="w-full bg-[#F7F9F8] py-[92px]">
+        <div class="mx-auto max-w-[1528px] px-6 sm:px-10 lg:px-[106.96px]">
+            <div class="mx-auto flex max-w-[740px] flex-col items-center text-center">
+                <span class="text-[9px] font-bold uppercase leading-[14px] tracking-[1.08px] text-[#236B51]">
+                    Role-focused experiences
+                </span>
+                <h2 class="pt-[10px] text-[30px] font-normal leading-[1.16] tracking-[-1.3px] text-[#14221B] sm:text-[43px] sm:leading-[50px]">
+                    Designed for Different Roles in Bug Management
+                </h2>
+                <p class="pt-[13px] text-[12px] leading-[21px] text-[#67736D]">
+                    Each workspace prioritizes the information and actions relevant to your role.
+                </p>
+            </div>
+
+            <div class="mx-auto mt-10 grid max-w-[900px] grid-cols-1 gap-[17px] md:grid-cols-2">
+                {{-- Reporter Card --}}
+                <article class="flex flex-col justify-between rounded-[12px] border-[0.8px] border-[#E2E8E5] bg-white p-[23px]">
+                    <div>
+                        <div class="flex items-center gap-[11px] border-b-[0.8px] border-[#E2E8E5] pb-4">
+                            <div class="grid size-[41px] place-items-center rounded-[9px] bg-[#F2F8F5] text-[#236B51]">
+                                <x-auth.icon name="user" class="size-[23px] stroke-[1.9]" />
+                            </div>
+                            <div>
+                                <p class="text-[8px] leading-3 text-[#67736D]">For issue contributors</p>
+                                <h3 class="pt-[2px] text-[15px] font-normal leading-[22px] text-[#17201C]">Reporter</h3>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-[10px] py-[17px]">
+                            @foreach (['Submit new bug reports', 'Provide descriptions and screenshots', 'Monitor submitted report status', 'View report history'] as $item)
+                                <li class="flex items-center gap-2">
+                                    <x-auth.icon name="check" class="size-[14px] shrink-0 text-[#236B51]" />
+                                    <span class="text-[9.5px] leading-[14px] text-[#56635C]">{{ $item }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+
+                    <a href="{{ route('register') }}"
+                        class="inline-flex h-10 w-full items-center justify-center gap-[7px] rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]">
+                        <span>Get Started as Reporter</span>
+                        <svg class="size-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14" />
+                            <path d="m12 5 7 7-7 7" />
+                        </svg>
+                    </a>
+                </article>
+
+                {{-- Developer Card --}}
+                <article class="flex flex-col justify-between rounded-[12px] border-[0.8px] border-[#E2E8E5] bg-white p-[23px]">
+                    <div>
+                        <div class="flex items-center gap-[11px] border-b-[0.8px] border-[#E2E8E5] pb-4">
+                            <div class="grid size-[41px] place-items-center rounded-[9px] bg-[#F2F8F5] text-[#236B51]">
+                                <x-auth.icon name="code" class="size-[23px] stroke-[1.9]" />
+                            </div>
+                            <div>
+                                <p class="text-[8px] leading-3 text-[#67736D]">For development teams</p>
+                                <h3 class="pt-[2px] text-[15px] font-normal leading-[22px] text-[#17201C]">Developer</h3>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-[10px] py-[17px]">
+                            @foreach (['Review submitted bug reports', 'Examine potential duplicate reports', 'Review similarity analysis results', 'Support bug report triage decisions'] as $item)
+                                <li class="flex items-center gap-2">
+                                    <x-auth.icon name="check" class="size-[14px] shrink-0 text-[#236B51]" />
+                                    <span class="text-[9.5px] leading-[14px] text-[#56635C]">{{ $item }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+
+                    <a href="{{ route('register') }}"
+                        class="inline-flex h-10 w-full items-center justify-center gap-[7px] rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]">
+                        <span>Get Started as Developer</span>
+                        <svg class="size-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14" />
+                            <path d="m12 5 7 7-7 7" />
+                        </svg>
+                    </a>
+                </article>
+            </div>
+
+            <div class="mt-[17px] flex items-center justify-center gap-[6px] text-[#7C8882]">
+                <svg class="size-[14px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                    <path d="M12 17h.01" />
+                </svg>
+                <span class="text-[8px] leading-3">
+                    Access depends on the role assigned or selected during onboarding.
+                </span>
+            </div>
+        </div>
+    </section>
+
+    {{-- ======================== CTA BANNER SECTION ======================== --}}
+    <section class="w-full bg-white pt-[75px]">
+        <div class="mx-auto max-w-[1528px] px-6 sm:px-10 lg:px-[106.96px]">
+            <div class="flex flex-col items-start justify-between gap-8 rounded-[16px] border-[0.8px] border-[#D5E7DD] bg-[#EAF4EF] px-6 py-10 sm:px-10 lg:flex-row lg:items-center lg:gap-[45px] lg:px-[65px] lg:py-[47px]">
+                <div class="max-w-[720px]">
+                    <span class="text-[9px] font-bold uppercase leading-[14px] tracking-[1.08px] text-[#236B51]">
+                        Start with clearer reports
                     </span>
+                    <h2 class="pt-[10px] text-[30px] font-normal leading-[1.16] tracking-[-1.3px] text-[#14221B] sm:text-[42px] sm:leading-[49px]">
+                        Ready to Make Bug Management More Efficient?
+                    </h2>
+                    <p class="pt-[13px] text-[11px] leading-[18px] text-[#5B6B63]">
+                        Start using TwinBug to organize bug reports and identify potential duplicates faster.
+                    </p>
                 </div>
 
+                <div class="flex shrink-0 flex-wrap items-center gap-2">
+                    <a href="{{ route('register') }}"
+                        class="inline-flex h-[46px] items-center justify-center gap-[7px] rounded-[8px] bg-[#123C2E] px-[15px] text-[12px] font-semibold leading-[18px] text-white shadow-[0_3px_8px_rgba(18,60,46,0.16)] transition hover:bg-[#0D2D22]">
+                        <span>Get Started</span>
+                        <svg class="size-[17px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14" />
+                            <path d="m12 5 7 7-7 7" />
+                        </svg>
+                    </a>
+                    <a href="#about"
+                        class="inline-flex h-[46px] items-center justify-center rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]">
+                        Explore TwinBug
+                    </a>
+                </div>
             </div>
         </div>
     </section>
 
-    {{-- ======================== CARA KERJA ======================== --}}
-    <section id="cara-kerja" class="py-16 sm:py-20 lg:py-24 border-y border-divider/80 bg-white/70">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="max-w-2xl mx-auto text-center mb-12 sm:mb-16 reveal-on-scroll">
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-sage-100 border border-sage-200 px-3 py-1 text-xs font-bold text-sage-800 uppercase tracking-wider">
-                    Alur 3 Langkah
+    {{-- ======================== FAQ SECTION ======================== --}}
+    <section id="faq" class="w-full bg-white pt-[75px] pb-[92px]">
+        <div class="mx-auto max-w-[1020px] px-6 sm:px-10 lg:px-[106.96px]">
+            <div class="mx-auto flex max-w-[740px] flex-col items-center text-center">
+                <span class="text-[9px] font-bold uppercase leading-[14px] tracking-[1.08px] text-[#236B51]">
+                    Quick answers
                 </span>
-                <h2 class="mt-3 font-serif text-2xl sm:text-4xl font-bold tracking-tight text-ink">
-                    Cara Kerja
+                <h2 class="pt-[10px] text-[32px] font-normal leading-[1.16] tracking-[-1.3px] text-[#14221B] sm:text-[43px] sm:leading-[50px]">
+                    Frequently Asked Questions
                 </h2>
-                <p class="mt-3 text-sm sm:text-base text-label leading-relaxed">
-                    Dari laporan hingga penanganan, dalam tiga langkah terstruktur.
+                <p class="pt-[13px] text-[12px] leading-[21px] text-[#67736D]">
+                    Understand the core workflow before getting started.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            @php
+                $landingFaqs = [
+                    [
+                        'question' => 'What is TwinBug?',
+                        'answer' => 'TwinBug is a multimodal platform that helps teams detect duplicate bug reports using both text and image similarity analysis.',
+                    ],
+                    [
+                        'question' => 'How does TwinBug detect duplicate bug reports?',
+                        'answer' => 'TwinBug combines semantic text comparison with visual and OCR screenshot analysis to rank historical reports that are most similar to a newly submitted issue.',
+                    ],
+                    [
+                        'question' => 'Can I submit a bug report without a screenshot?',
+                        'answer' => 'Yes. Attaching a screenshot is optional, and TwinBug will still analyze the report title and description to find potential duplicates.',
+                    ],
+                    [
+                        'question' => 'Who can use TwinBug?',
+                        'answer' => 'Development teams and issue contributors can use TwinBug. Each workspace separates applications cleanly for teams managing software products.',
+                    ],
+                    [
+                        'question' => 'What is the difference between Reporter and Developer?',
+                        'answer' => 'Reporters submit bug reports, attach evidence, and track status updates, while Developers review incoming reports, inspect similarity scores, and make triage decisions.',
+                    ],
+                    [
+                        'question' => 'Does TwinBug automatically classify every report as duplicate?',
+                        'answer' => 'No. TwinBug surfaces ranked similarity candidates and evidence, while Developers make the final decision on whether a report is a duplicate.',
+                    ],
+                ];
+            @endphp
 
-                {{-- Step 1 --}}
-                <div class="relative rounded-2xl border border-divider bg-white p-6 sm:p-8 shadow-xs flex flex-col items-center text-center reveal-on-scroll reveal-delay-100">
-                    <div class="grid size-14 place-items-center rounded-2xl bg-sage-100 text-sage-700 font-serif text-xl font-bold mb-5 shadow-2xs">
-                        1
-                    </div>
-                    <h3 class="font-serif text-lg font-bold text-ink mb-2">Reporter membuat laporan</h3>
-                    <p class="text-xs sm:text-sm text-body leading-relaxed">
-                        Reporter mengisi judul, deskripsi, modul, dan opsional menyertakan screenshot hasil temuan bug pada aplikasi yang digunakan.
-                    </p>
-                    <div class="mt-5 w-full pt-4 border-t border-divider/60 text-[11px] font-semibold text-sage-700">
-                        Formulir Terstandarisasi
-                    </div>
-                </div>
-
-                {{-- Step 2 --}}
-                <div class="relative rounded-2xl border border-divider bg-white p-6 sm:p-8 shadow-xs flex flex-col items-center text-center reveal-on-scroll reveal-delay-200">
-                    <div class="grid size-14 place-items-center rounded-2xl bg-emerald-500 text-white font-serif text-xl font-bold mb-5 shadow-cta">
-                        2
-                    </div>
-                    <h3 class="font-serif text-lg font-bold text-ink mb-2">Sistem menganalisis</h3>
-                    <p class="text-xs sm:text-sm text-body leading-relaxed">
-                        Teks dan screenshot dianalisis untuk mencari laporan serupa yang sudah ada di sistem menggunakan model AI canggih dan OCR.
-                    </p>
-                    <div class="mt-5 w-full pt-4 border-t border-divider/60 text-[11px] font-semibold text-emerald-700">
-                        Pencocokan Vektor Otomatis
-                    </div>
-                </div>
-
-                {{-- Step 3 --}}
-                <div class="relative rounded-2xl border border-divider bg-white p-6 sm:p-8 shadow-xs flex flex-col items-center text-center reveal-on-scroll reveal-delay-300">
-                    <div class="grid size-14 place-items-center rounded-2xl bg-slate-900 text-white font-serif text-xl font-bold mb-5 shadow-xs">
-                        3
-                    </div>
-                    <h3 class="font-serif text-lg font-bold text-ink mb-2">Developer meninjau</h3>
-                    <p class="text-xs sm:text-sm text-body leading-relaxed">
-                        Developer melihat saran laporan serupa dengan skor kemiripan dan memutuskan apakah akan ditandai sebagai duplikasi.
-                    </p>
-                    <div class="mt-5 w-full pt-4 border-t border-divider/60 text-[11px] font-semibold text-slate-800">
-                        Keputusan Akhir Transparan
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    {{-- ======================== PERAN PENGGUNA ======================== --}}
-    <section id="peran" class="py-16 sm:py-20 lg:py-24">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="max-w-2xl mx-auto text-center mb-12 sm:mb-16 reveal-on-scroll">
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 border border-slate-200 px-3 py-1 text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    Kolaborasi Tim
-                </span>
-                <h2 class="mt-3 font-serif text-2xl sm:text-4xl font-bold tracking-tight text-ink">
-                    Peran dalam Sistem
-                </h2>
-                <p class="mt-3 text-sm sm:text-base text-label leading-relaxed">
-                    Setiap peran memiliki tampilan dan tanggung jawab yang disesuaikan untuk efisiensi maksimal.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {{-- Reporter Role Card --}}
-                <div class="rounded-3xl border border-sage-200/90 bg-white p-7 sm:p-9 shadow-sm flex flex-col justify-between reveal-on-scroll reveal-delay-100">
-                    <div>
-                        <div class="flex items-center gap-3 mb-5">
-                            <span class="grid size-12 place-items-center rounded-2xl bg-sage-100 text-sage-700 shadow-2xs">
-                                <x-auth.icon name="bug" class="size-6" />
+            <div class="mt-10 flex flex-col gap-2" data-landing-faq>
+                @foreach ($landingFaqs as $index => $faq)
+                    @php $isOpen = $index === 0; @endphp
+                    <article
+                        class="overflow-hidden rounded-[9px] border-[0.8px] transition-colors {{ $isOpen ? 'border-[#CDDBD4] bg-[#FBFDFC]' : 'border-[#E2E8E5] bg-white' }}"
+                        data-faq-item
+                        data-open="{{ $isOpen ? 'true' : 'false' }}">
+                        <button
+                            type="button"
+                            class="flex min-h-[61px] w-full cursor-pointer items-center justify-between gap-4 px-[17px] text-left"
+                            aria-expanded="{{ $isOpen ? 'true' : 'false' }}"
+                            data-faq-trigger>
+                            <span class="text-[10.5px] font-bold leading-4 text-[#17201C]">{{ $faq['question'] }}</span>
+                            <span class="grid size-[25px] shrink-0 place-items-center rounded-full bg-[#F2F5F3] text-[16px] leading-6 text-[#236B51]" data-faq-symbol>
+                                {{ $isOpen ? '−' : '+' }}
                             </span>
-                            <div>
-                                <h3 class="font-serif text-xl font-bold text-ink">Reporter</h3>
-                                <p class="text-xs text-label">Pelapor Kendala &amp; Penguji Aplikasi</p>
-                            </div>
+                        </button>
+                        <div class="{{ $isOpen ? '' : 'hidden' }} px-[17px] pb-4" data-faq-panel>
+                            <p class="text-[9.5px] leading-4 text-[#67736D]">{{ $faq['answer'] }}</p>
                         </div>
-
-                        <p class="text-xs sm:text-sm text-body leading-relaxed mb-6">
-                            Fokus pada pelaporan kendala secara cepat dan rinci tanpa perlu memikirkan apakah bug tersebut sudah pernah dilaporkan sebelumnya.
-                        </p>
-
-                        <ul class="space-y-3.5 text-xs sm:text-sm text-body">
-                            <li class="flex items-start gap-3">
-                                <span class="grid size-5 shrink-0 place-items-center rounded-full bg-sage-100 text-sage-700 text-xs mt-0.5">✓</span>
-                                <span>Melaporkan bug dengan judul, deskripsi, dan langkah reproduksi.</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="grid size-5 shrink-0 place-items-center rounded-full bg-sage-100 text-sage-700 text-xs mt-0.5">✓</span>
-                                <span>Mengunggah screenshot sebagai bukti visual untuk dianalisis OCR.</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="grid size-5 shrink-0 place-items-center rounded-full bg-sage-100 text-sage-700 text-xs mt-0.5">✓</span>
-                                <span>Memantau status laporan yang telah dikirim dan melihat hasil tindak lanjut.</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="mt-8 pt-6 border-t border-divider/70">
-                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 text-xs font-bold text-sage-600 transition hover:text-sage-700">
-                            <span>Daftar sebagai Reporter</span>
-                            <span class="text-sm">→</span>
-                        </a>
-                    </div>
-                </div>
-
-                {{-- Developer Role Card --}}
-                <div class="rounded-3xl border border-divider bg-white p-7 sm:p-9 shadow-sm flex flex-col justify-between reveal-on-scroll reveal-delay-200">
-                    <div>
-                        <div class="flex items-center gap-3 mb-5">
-                            <span class="grid size-12 place-items-center rounded-2xl bg-slate-100 text-slate-800 shadow-2xs">
-                                <x-auth.icon name="code" class="size-6" />
-                            </span>
-                            <div>
-                                <h3 class="font-serif text-xl font-bold text-ink">Developer</h3>
-                                <p class="text-xs text-label">Pengembang &amp; Triase Bug</p>
-                            </div>
-                        </div>
-
-                        <p class="text-xs sm:text-sm text-body leading-relaxed mb-6">
-                            Mendapatkan antrean bug yang rapi dengan indikator duplikasi cerdas untuk mempercepat verifikasi dan penyelesaian masalah.
-                        </p>
-
-                        <ul class="space-y-3.5 text-xs sm:text-sm text-body">
-                            <li class="flex items-start gap-3">
-                                <span class="grid size-5 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-800 text-xs mt-0.5">✓</span>
-                                <span>Meninjau saran laporan serupa dengan skor kemiripan secara berdampingan.</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="grid size-5 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-800 text-xs mt-0.5">✓</span>
-                                <span>Menandai laporan sebagai duplikasi jika memang sama dalam satu klik.</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <span class="grid size-5 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-800 text-xs mt-0.5">✓</span>
-                                <span>Memperbarui status penanganan laporan (Terbuka, Diproses, Selesai, Ditutup).</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="mt-8 pt-6 border-t border-divider/70">
-                        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-800 transition hover:text-ink">
-                            <span>Daftar sebagai Developer</span>
-                            <span class="text-sm">→</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ======================== INTERACTIVE FAQ TEASER ======================== --}}
-    <section class="py-16 sm:py-20 lg:py-24 border-t border-divider/80 bg-white/70">
-        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 sm:mb-16 reveal-on-scroll">
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-bold text-amber-800 uppercase tracking-wider">
-                    Pertanyaan Umum
-                </span>
-                <h2 class="mt-3 font-serif text-2xl sm:text-4xl font-bold tracking-tight text-ink">
-                    Pertanyaan yang Sering Diajukan
-                </h2>
-                <p class="mt-2 text-sm text-label">
-                    Jawaban cepat seputar cara kerja deteksi duplikasi TwinBug.
-                </p>
+                    </article>
+                @endforeach
             </div>
 
-            <div class="space-y-4">
-                <div class="rounded-2xl border border-divider/90 bg-white p-5 sm:p-6 shadow-xs reveal-on-scroll">
-                    <h3 class="text-sm sm:text-base font-bold text-ink">Bagaimana sistem mendeteksi bug duplikat?</h3>
-                    <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed">
-                        Sistem menggabungkan analisis kemiripan semantik teks (menggunakan model Sentence-Transformers MiniLM) dan ekstraksi teks visual dari screenshot (menggunakan Optical Character Recognition). Hasilnya dirangking berdasarkan skor kemiripan.
-                    </p>
-                </div>
-
-                <div class="rounded-2xl border border-divider/90 bg-white p-5 sm:p-6 shadow-xs reveal-on-scroll">
-                    <h3 class="text-sm sm:text-base font-bold text-ink">Apakah sistem langsung menutup laporan secara otomatis?</h3>
-                    <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed">
-                        Tidak. Hasil analisis sistem adalah rekomendasi cerdas. Keputusan akhir apakah dua laporan memang menduplikasi satu sama lain sepenuhnya berada di bawah kendali tim Developer.
-                    </p>
-                </div>
-
-                <div class="rounded-2xl border border-divider/90 bg-white p-5 sm:p-6 shadow-xs reveal-on-scroll">
-                    <h3 class="text-sm sm:text-base font-bold text-ink">Apakah screenshot wajib disertakan saat melapor?</h3>
-                    <p class="mt-2 text-xs sm:text-sm text-body leading-relaxed">
-                        Lampiran screenshot bersifat opsional. Namun, menyertakan tangkapan layar sangat disarankan karena sistem dapat mengekstrak teks error pada gambar untuk meningkatkan akurasi deteksi kemiripan.
-                    </p>
-                </div>
-            </div>
-
-            <div class="mt-8 text-center">
-                <a href="{{ route('faq') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-sage-600 hover:text-sage-700">
-                    <span>Lihat seluruh pertanyaan di Pusat Bantuan &amp; FAQ</span>
-                    <span class="text-sm">→</span>
+            <div class="mt-[22px]">
+                <a href="{{ route('faq') }}"
+                    class="inline-flex h-10 items-center justify-center gap-[7px] rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]">
+                    <span>View All FAQs</span>
+                    <svg class="size-[15px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                    </svg>
                 </a>
             </div>
         </div>
     </section>
 
-    {{-- ======================== FINAL CTA BANNER ======================== --}}
-    <section class="py-16 sm:py-20 lg:py-24">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-950 via-slate-900 to-emerald-950 p-8 sm:p-14 lg:p-16 text-center text-white shadow-xl reveal-on-scroll">
-                {{-- Decorative Glow inside banner --}}
-                <div class="pointer-events-none absolute -right-20 -top-20 size-80 rounded-full bg-emerald-500/20 blur-[90px]"></div>
-                <div class="pointer-events-none absolute -left-20 -bottom-20 size-80 rounded-full bg-sage-500/20 blur-[90px]"></div>
+    @push('scripts')
+        <script>
+            document.querySelectorAll('[data-landing-faq] [data-faq-trigger]').forEach((trigger) => {
+                trigger.addEventListener('click', () => {
+                    const item = trigger.closest('[data-faq-item]');
+                    const panel = item?.querySelector('[data-faq-panel]');
+                    const symbol = item?.querySelector('[data-faq-symbol]');
+                    if (!item || !panel || !symbol) return;
 
-                <div class="relative z-10 max-w-2xl mx-auto">
-                    <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-semibold text-emerald-300">
-                        <x-auth.icon name="sparkles" class="size-3.5" />
-                        <span>Mulai Sekarang</span>
-                    </span>
+                    const isOpen = item.dataset.open === 'true';
+                    item.dataset.open = isOpen ? 'false' : 'true';
+                    trigger.setAttribute('aria-expanded', String(!isOpen));
+                    panel.classList.toggle('hidden', isOpen);
+                    symbol.textContent = isOpen ? '+' : '−';
 
-                    <h2 class="mt-4 font-serif text-2xl sm:text-4xl font-bold tracking-tight text-white leading-tight">
-                        Mulai laporkan bug dengan lebih rapi
-                    </h2>
-
-                    <p class="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
-                        Buat akun dan mulai laporan bug yang akan dianalisis sistem TwinBug untuk deteksi duplikasi.
-                    </p>
-
-                    <div class="mt-8 flex flex-col sm:flex-row gap-3.5 justify-center">
-                        <a
-                            href="{{ route('register') }}"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-sage-500 px-7 py-3.5 text-sm font-bold text-white shadow-cta transition-all duration-200 hover:bg-sage-600 hover:shadow-lg active:scale-95"
-                        >
-                            <x-auth.icon name="sparkles" class="size-4" />
-                            <span>Daftar</span>
-                        </a>
-                        <a
-                            href="{{ route('login') }}"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-7 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20 active:scale-95"
-                        >
-                            <span>Masuk</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                    item.classList.toggle('border-[#CDDBD4]', !isOpen);
+                    item.classList.toggle('bg-[#FBFDFC]', !isOpen);
+                    item.classList.toggle('border-[#E2E8E5]', isOpen);
+                    item.classList.toggle('bg-white', isOpen);
+                });
+            });
+        </script>
+    @endpush
 
 </x-layouts.landing>

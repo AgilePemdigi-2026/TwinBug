@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DetectionController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Middleware\EnsureUserHasApplication;
 use Illuminate\Support\Facades\Route;
 
@@ -67,6 +68,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+        Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+        Route::patch('/settings', [SettingsController::class, 'update'])->name('settings.update');
+        Route::post('/settings/reset', [SettingsController::class, 'reset'])->name('settings.reset');
 
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

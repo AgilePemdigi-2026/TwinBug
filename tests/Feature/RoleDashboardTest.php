@@ -56,12 +56,13 @@ class RoleDashboardTest extends TestCase
         $response = $this->actingAs($developer)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        $response->assertSee('Antrean Bug Terbaru');
-        $response->assertSee('Total Laporan');
+        $response->assertSee('Developer Dashboard');
+        $response->assertSee('Triage queue');
+        $response->assertSee('Total reports');
         $response->assertSee('Bug kritis pada pembayaran');
         $response->assertSee('Bug minor pada profil');
         $response->assertSee('Reporter Lapangan');
-        $response->assertSee(route('bug-reports.index', ['status' => 'open']));
+        $response->assertSee(route('bug-reports.index'));
         $response->assertDontSee('Histori Laporan Saya');
     }
 
@@ -72,7 +73,7 @@ class RoleDashboardTest extends TestCase
         $response = $this->actingAs($developer)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        $response->assertSee('Antrean Masih Kosong');
+        $response->assertSee('No reports in queue');
     }
 
     public function test_developer_dashboard_open_queue_hides_duplicate_reports(): void

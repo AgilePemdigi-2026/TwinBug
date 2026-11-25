@@ -17,14 +17,14 @@ class LandingPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('TwinBug');
-        $response->assertSee('Laporkan bug dan temukan duplikasi');
-        $response->assertSee('Daftar');
-        $response->assertSee('Masuk');
+        $response->assertSee('Detect Duplicate Bugs. Simplify Bug Management.');
+        $response->assertSee('Login');
+        $response->assertSee('Register');
+        $response->assertSee('What is TwinBug?');
+        $response->assertSee('How TwinBug Works');
+        $response->assertSee('Frequently Asked Questions');
         $response->assertSee(route('login'));
         $response->assertSee(route('register'));
-        $response->assertDontSee('%');
-        $response->assertDontSee('pengguna aktif');
-        $response->assertDontSee('testimoni');
     }
 
     public function test_authenticated_user_redirected_to_dashboard(): void

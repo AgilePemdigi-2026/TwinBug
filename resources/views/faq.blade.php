@@ -1,5 +1,5 @@
-<x-layouts.app title="Pusat Bantuan & Tanya Jawab (FAQ)">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+<x-layouts.app title="Frequently Asked Questions" meta-description="Find answers to common questions about using TwinBug.">
+    <div class="workspace-faq-page mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
         {{-- ======================== BREADCRUMB ======================== --}}
         <nav class="flex items-center gap-2 text-xs" aria-label="Breadcrumb">
@@ -24,7 +24,7 @@
                     <div class="mb-2.5 flex flex-wrap items-center gap-2">
                         <span class="inline-flex items-center gap-1.5 rounded-md bg-sage-100 px-2.5 py-0.5 text-[11px] font-semibold text-sage-800">
                             <x-auth.icon name="sparkles" class="size-3 text-sage-600" />
-                            <span>Pusat Bantuan TwinBug</span>
+                        <span>Help Center</span>
                         </span>
                         <span class="text-xs text-label">•</span>
                         <span class="text-xs font-medium text-label">{{ count($faqs) }} Topik Panduan</span>
@@ -34,10 +34,10 @@
                         </span>
                     </div>
                     <h1 class="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
-                        Pertanyaan yang Sering Diajukan
+                        Frequently Asked Questions
                     </h1>
                     <p class="mt-1.5 text-xs sm:text-sm leading-relaxed text-body">
-                        Panduan terpadu mengenai alur registrasi OTP, cara pelaporan bug terstruktur, validasi tangkapan layar, dan deteksi duplikasi cerdas.
+                        Find answers to common questions about using TwinBug.
                     </p>
                 </div>
 
@@ -48,7 +48,7 @@
                         <input
                             type="text"
                             id="faq-search"
-                            placeholder="Cari topik atau kata kunci..."
+                            placeholder="Search for questions or topics..."
                             class="w-full rounded-2xl border border-divider/90 bg-white py-3 pl-10 pr-16 text-xs sm:text-sm text-ink shadow-xs transition placeholder:text-label/50 focus:border-sage-500 focus:outline-none focus:ring-2 focus:ring-sage-500/20"
                             autocomplete="off"
                         >
@@ -74,7 +74,7 @@
         </div>
 
         {{-- ======================== MOBILE CATEGORY BAR (HORIZONTAL CHIPS) ======================== --}}
-        <div class="block lg:hidden">
+        <div class="faq-categories block lg:hidden">
             <div class="flex items-center justify-between pb-2 text-[11px] font-semibold uppercase tracking-wider text-label">
                 <span>Filter Topik</span>
                 <span id="mobile-category-label" class="text-sage-700 normal-case font-bold">Semua Topik</span>
@@ -97,7 +97,7 @@
         </div>
 
         {{-- ======================== 2-COLUMN HELP CENTER GRID ======================== --}}
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <div class="faq-content grid grid-cols-1 gap-6 lg:grid-cols-12">
 
             {{-- =============== LEFT SIDEBAR (4 cols): Sticky Categories & Support =============== --}}
             <aside class="hidden lg:block lg:col-span-4 lg:sticky lg:top-20 lg:self-start space-y-5">

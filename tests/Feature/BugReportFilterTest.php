@@ -28,8 +28,8 @@ class BugReportFilterTest extends TestCase
         $response = $this->actingAs($user)->get(route('bug-reports.index'));
 
         $response->assertStatus(200);
-        $response->assertSee('Daftar &amp; Filter Laporan Bug', false);
-        $response->assertSee('Pusat Penelusuran');
+        $response->assertSee('My Bug Reports');
+        $response->assertSee('Create new report');
     }
 
     public function test_can_filter_bug_reports_by_search_query(): void
@@ -224,7 +224,7 @@ class BugReportFilterTest extends TestCase
         $response->assertStatus(200);
         $response->assertDontSee('onchange="this.form.submit()"', false);
         $response->assertSee('id="filter-submit-btn"', false);
-        $response->assertSee('Terapkan Filter');
+        $response->assertSee('Apply filter');
     }
 
     public function test_can_filter_bug_reports_by_multiple_criteria_simultaneously(): void

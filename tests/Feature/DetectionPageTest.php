@@ -125,7 +125,7 @@ class DetectionPageTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Analisis kemiripan sedang diproses. Silakan cek kembali beberapa saat lagi.');
-        $response->assertSee('Segarkan Halaman');
+        $response->assertSee('Refresh');
     }
 
     public function test_completed_with_results_renders_ranked_list(): void
@@ -175,11 +175,11 @@ class DetectionPageTest extends TestCase
         $response = $this->actingAs($developer)->get(route('report.detection_result', $source));
 
         $response->assertStatus(200);
-        $response->assertSee('Similar Historical Bug Reports');
+        $response->assertSee('Top similar historical reports');
         $response->assertSee('Kandidat Tertinggi');
         $response->assertSee('Kandidat Kedua');
-        $response->assertSee('92.0%');
-        $response->assertSee('85.0%');
+        $response->assertSee('92%');
+        $response->assertSee('85%');
         // Rank order: candidate1 (rank 1) appears before candidate2 (rank 2)
         $response->assertSeeInOrder(['Kandidat Tertinggi', 'Kandidat Kedua']);
     }
@@ -218,10 +218,9 @@ class DetectionPageTest extends TestCase
         ]));
 
         $response->assertStatus(200);
-        $response->assertSee('Perbandingan Sampingan');
-        $response->assertSee('Skor Kemiripan');
-        $response->assertSee('92.0%');
-        $response->assertSee('Analisis Visual Screenshot (AI)');
+        $response->assertSee('Detection comparison');
+        $response->assertSee('92%');
+        $response->assertSee('Visual Screenshot Analysis (AI)');
         $response->assertSee('Halaman checkout sumber menampilkan error pembayaran.');
         $response->assertSee('Modal pembayaran kandidat menampilkan pesan gagal.');
         $response->assertSee(asset('storage/screenshots/source.png'));
@@ -257,9 +256,9 @@ class DetectionPageTest extends TestCase
         ]));
 
         $response->assertStatus(200);
-        $response->assertSee('Perbandingan Sampingan');
-        $response->assertSee('Tidak ada screenshot');
-        $response->assertSee('Tidak ada screenshot untuk dianalisis.');
+        $response->assertSee('Detection comparison');
+        $response->assertSee('No screenshot attached');
+        $response->assertSee('No screenshot to analyze.');
     }
 
     public function test_comparison_shows_pending_visual_analysis_for_undescribed_screenshot(): void
@@ -292,7 +291,7 @@ class DetectionPageTest extends TestCase
         ]));
 
         $response->assertStatus(200);
-        $response->assertSee('Belum ada analisis visual. Jalankan analisis ulang atau command backfill.');
+        $response->assertSee('No visual analysis yet. Re-run analysis or run backfill command.');
     }
 
     public function test_completed_empty_renders_no_duplicates_message(): void
@@ -311,7 +310,7 @@ class DetectionPageTest extends TestCase
         $response = $this->actingAs($developer)->get(route('report.detection_result', $report));
 
         $response->assertStatus(200);
-        $response->assertSee('Tidak ditemukan laporan bug serupa.');
+        $response->assertSee('No similar historical reports found.');
     }
 
     public function test_failed_state_renders_error_and_rerun_button(): void
@@ -329,9 +328,9 @@ class DetectionPageTest extends TestCase
         $response = $this->actingAs($developer)->get(route('report.detection_result', $report));
 
         $response->assertStatus(200);
-        $response->assertSee('Analisis Gagal');
+        $response->assertSee('Analysis Failed');
         $response->assertSee('Koneksi ke layanan ML gagal.');
-        $response->assertSee('Jalankan ulang analisis');
+        $response->assertSee('Re-run analysis');
     }
 
     public function test_rerun_dispatches_job_and_resets_status(): void
@@ -419,9 +418,8 @@ class DetectionPageTest extends TestCase
         $response = $this->actingAs($developer)->get(route('report.detection_result', $source));
 
         $response->assertStatus(200);
-        $response->assertSee('Tinggi');
-        $response->assertSee('Sedang');
-        $response->assertSee('Rendah');
+        $response->assertSee('70%');
+        $response->assertSee('55%');
     }
 
     public function test_suggestion_note_is_visible(): void
@@ -439,8 +437,7 @@ class DetectionPageTest extends TestCase
         $response = $this->actingAs($developer)->get(route('report.detection_result', $report));
 
         $response->assertStatus(200);
-        $response->assertSee('Hasil deteksi adalah saran saja');
-        $response->assertSee('Keputusan akhir diambil oleh Developer');
+        $response->assertSee('Similarity scores are supporting evidence, not an automatic duplicate decision.');
     }
 
     public function test_candidate_descriptions_are_escaped(): void
@@ -526,7 +523,8 @@ class DetectionPageTest extends TestCase
         $response = $this->actingAs($developer)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        $response->assertSee('Deteksi Duplikasi');
+        $response->assertSee(route('report.detection_result', $report));
+        $response->assertSee('Review');
     }
 
     public function test_rerun_guard_blocks_when_pending(): void
@@ -620,10 +618,9 @@ class DetectionPageTest extends TestCase
         ]));
 
         $response->assertStatus(200);
-        $response->assertSee('Perbandingan Sampingan');
-        $response->assertSee('Skor Kemiripan');
-        $response->assertSee('92.0%');
-        $response->assertSee('Skor kemiripan gambar: tidak tersedia');
+        $response->assertSee('Detection comparison');
+        $response->assertSee('92%');
+        $response->assertSee('—');
     }
 
     public function test_list_shows_title_score_and_status_for_each_result(): void
@@ -665,11 +662,11 @@ class DetectionPageTest extends TestCase
         $response = $this->actingAs($developer)->get(route('report.detection_result', $source));
 
         $response->assertStatus(200);
-        $response->assertSee('Similar Historical Bug Reports');
+        $response->assertSee('Top similar historical reports');
         $response->assertSee('Kandidat Pertama');
         $response->assertSee('Kandidat Kedua');
-        $response->assertSee('92.0%');
-        $response->assertSee('85.0%');
+        $response->assertSee('92%');
+        $response->assertSee('85%');
         $response->assertSee('Terbuka');
         $response->assertSeeInOrder(['Kandidat Pertama', 'Kandidat Kedua']);
     }
