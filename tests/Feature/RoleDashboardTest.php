@@ -75,6 +75,26 @@ class RoleDashboardTest extends TestCase
         $response->assertSee('Antrean Masih Kosong');
     }
 
+    public function test_developer_dashboard_open_queue_hides_duplicate_reports(): void
+    {
+        $developer = User::factory()->create(['role' => UserRole::Developer]);
+        $reporter = User::factory()->create(['role' => UserRole::Reporter, 'application_id' => $developer->application_id]);
+
+        $primary = $this->createReport($reporter, 'Bug utama checkout', [
+            'application_id' => $developer->application_id,
+        ]);
+        $this->createReport($reporter, 'Bug duplikat checkout', [
+            'application_id' => $developer->application_id,
+            'duplicate_of_id' => $primary->id,
+        ]);
+
+        $response = $this->actingAs($developer)->get(route('dashboard'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Bug utama checkout');
+        $response->assertDontSee('Bug duplikat checkout');
+    }
+
     /**
      * @param  array<string, mixed>  $overrides
      */

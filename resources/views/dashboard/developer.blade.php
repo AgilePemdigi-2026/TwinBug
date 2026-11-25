@@ -43,50 +43,23 @@
             </div>
         </div>
 
+        @php
+            $selesai = $stats['resolved'] + $stats['closed'];
+            $queueTotal = max(1, $stats['open'] + $stats['in_progress'] + $selesai);
+            $openPct = round(($stats['open'] / $queueTotal) * 100);
+            $inProgressPct = round(($stats['in_progress'] / $queueTotal) * 100);
+            $resolvedPct = max(0, 100 - $openPct - $inProgressPct);
+        @endphp
+
         {{-- ======================== TOP STATS STRIP (4 METRICS) ======================== --}}
         <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <x-dashboard.metric-card
-                label="Total Laporan"
-                :value="number_format($stats['total'])"
-                description="Semua laporan tim"
-                icon="bug"
-                icon-classes="bg-sage-100 text-sage-700"
-                :href="route('bug-reports.index')"
-            />
-            <x-dashboard.metric-card
-                label="Terbuka"
-                :value="number_format($stats['open'])"
-                description="Menunggu review"
-                icon="alert"
-                icon-classes="bg-sky-100 text-sky-800"
-                :href="route('bug-reports.index', ['status' => 'open'])"
-            />
-            <x-dashboard.metric-card
-                label="Diproses"
-                :value="number_format($stats['in_progress'])"
-                description="Sedang dikerjakan"
-                icon="filter"
-                icon-classes="bg-amber-100 text-amber-800"
-                :href="route('bug-reports.index', ['status' => 'in_progress'])"
-            />
-            <x-dashboard.metric-card
-                label="Kritis"
-                :value="number_format($stats['critical'])"
-                description="Prioritas utama"
-                icon="shield"
-                icon-classes="bg-danger/10 text-danger"
-                :href="route('bug-reports.index', ['severity' => 'critical'])"
-            />
+            <x-dashboard.metric-card label="Total Laporan" :value="number_format($stats['total'])" description="Semua laporan tim" icon="bug" icon-classes="bg-sage-100 text-sage-700" :href="route('bug-reports.index')" />
+            <x-dashboard.metric-card label="Terbuka" :value="number_format($stats['open'])" description="Menunggu review" icon="alert" icon-classes="bg-sky-100 text-sky-800" :href="route('bug-reports.index', ['status' => 'open'])" />
+            <x-dashboard.metric-card label="Diproses" :value="number_format($stats['in_progress'])" description="Sedang dikerjakan" icon="filter" icon-classes="bg-amber-100 text-amber-800" :href="route('bug-reports.index', ['status' => 'in_progress'])" />
+            <x-dashboard.metric-card label="Selesai" :value="number_format($selesai)" description="Diselesaikan/ditutup" icon="check" icon-classes="bg-emerald-100 text-emerald-800" :href="route('bug-reports.index', ['status' => 'resolved'])" />
         </div>
 
         {{-- ======================== STATUS DISTRIBUTION PROGRESS STRIP ======================== --}}
-        @php
-            $totalReports = max(1, $stats['total']);
-            $openPercent = round(($stats['open'] / $totalReports) * 100);
-            $inProgressPercent = round(($stats['in_progress'] / $totalReports) * 100);
-            $resolvedCount = max(0, $stats['total'] - $stats['open'] - $stats['in_progress']);
-            $resolvedPercent = max(0, 100 - $openPercent - $inProgressPercent);
-        @endphp
         <div class="rounded-2xl border border-divider/80 bg-white p-4 sm:p-5 shadow-xs">
             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3">
                 <div class="flex items-center gap-2">
@@ -96,27 +69,16 @@
                     <h2 class="text-xs font-bold uppercase tracking-wider text-ink">Distribusi Status Antrean</h2>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 text-xs">
-                    <a href="{{ route('bug-reports.index', ['status' => 'open']) }}" class="flex items-center gap-1.5 font-medium text-sky-700 hover:underline">
-                        <span class="size-2 rounded-full bg-sky-500"></span>
-                        <span>{{ number_format($stats['open']) }} Terbuka</span>
-                    </a>
-                    <a href="{{ route('bug-reports.index', ['status' => 'in_progress']) }}" class="flex items-center gap-1.5 font-medium text-amber-700 hover:underline">
-                        <span class="size-2 rounded-full bg-amber-500"></span>
-                        <span>{{ number_format($stats['in_progress']) }} Diproses</span>
-                    </a>
-                    <a href="{{ route('bug-reports.index', ['status' => 'resolved']) }}" class="flex items-center gap-1.5 font-medium text-emerald-700 hover:underline">
-                        <span class="size-2 rounded-full bg-emerald-500"></span>
-                        <span>{{ number_format($resolvedCount) }} Selesai / Ditutup</span>
-                    </a>
+                    <a href="{{ route('bug-reports.index', ['status' => 'open']) }}" class="flex items-center gap-1.5 font-medium text-sky-700 hover:underline"><span class="size-2 rounded-full bg-sky-500"></span><span>{{ number_format($stats['open']) }} Terbuka</span></a>
+                    <a href="{{ route('bug-reports.index', ['status' => 'in_progress']) }}" class="flex items-center gap-1.5 font-medium text-amber-700 hover:underline"><span class="size-2 rounded-full bg-amber-500"></span><span>{{ number_format($stats['in_progress']) }} Diproses</span></a>
+                    <a href="{{ route('bug-reports.index', ['status' => 'resolved']) }}" class="flex items-center gap-1.5 font-medium text-emerald-700 hover:underline"><span class="size-2 rounded-full bg-emerald-500"></span><span>{{ number_format($selesai) }} Selesai / Ditutup</span></a>
                 </div>
             </div>
-
-            {{-- Segmented Progress Bar --}}
             <div class="flex h-2.5 w-full overflow-hidden rounded-full bg-input/80">
                 @if ($stats['total'] > 0)
-                    <div class="bg-sky-500 transition-all duration-500" style="width: {{ $openPercent }}%" title="Terbuka: {{ $openPercent }}%"></div>
-                    <div class="bg-amber-500 transition-all duration-500" style="width: {{ $inProgressPercent }}%" title="Diproses: {{ $inProgressPercent }}%"></div>
-                    <div class="bg-emerald-500 transition-all duration-500" style="width: {{ $resolvedPercent }}%" title="Selesai: {{ $resolvedPercent }}%"></div>
+                    <div class="bg-sky-500 transition-all duration-500" style="width: {{ $openPct }}%" title="Terbuka: {{ $openPct }}%"></div>
+                    <div class="bg-amber-500 transition-all duration-500" style="width: {{ $inProgressPct }}%" title="Diproses: {{ $inProgressPct }}%"></div>
+                    <div class="bg-emerald-500 transition-all duration-500" style="width: {{ $resolvedPct }}%" title="Selesai: {{ $resolvedPct }}%"></div>
                 @else
                     <div class="w-full bg-slate-200" title="Belum ada data"></div>
                 @endif

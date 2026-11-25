@@ -7,7 +7,9 @@ use App\Enums\BugStatus;
 use App\Enums\UserRole;
 use App\Models\BugReport;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -30,58 +32,63 @@ class DashboardController extends Controller
      */
     private function reporterDashboard(User $user): View
     {
-        $stats = [
-            'my_total' => BugReport::where('user_id', $user->id)->count(),
-            'my_open' => BugReport::where('user_id', $user->id)->where('status', BugStatus::Open)->count(),
-            'my_in_progress' => BugReport::where('user_id', $user->id)->where('status', BugStatus::InProgress)->count(),
-            'my_resolved' => BugReport::where('user_id', $user->id)->where('status', BugStatus::Resolved)->count(),
-        ];
+        $baseQuery = BugReport::where('user_id', $user->id);
 
-        $recentReports = BugReport::where('user_id', $user->id)
-            ->latest()
-            ->take(5)
-            ->get();
-
-        $topModules = BugReport::where('user_id', $user->id)
-            ->whereNotNull('module')
-            ->selectRaw('module, count(*) as count')
-            ->groupBy('module')
-            ->orderByDesc('count')
-            ->take(4)
-            ->get();
-
-        return view('dashboard.reporter', compact('user', 'stats', 'recentReports', 'topModules'));
+        return view('dashboard.reporter', [
+            'user' => $user,
+            'stats' => $this->statsFor($baseQuery),
+            'recentReports' => (clone $baseQuery)->with('user')->withCount('detectionResults')->latest()->take(6)->get(),
+            'topModules' => $this->topModulesFor($baseQuery),
+        ]);
     }
 
     /**
-     * Display the developer dashboard focused on the global bug queue.
+     * Display the developer dashboard focused on the application bug queue.
      */
     private function developerDashboard(User $user): View
     {
-        $applicationId = $user->application_id;
+        $baseQuery = BugReport::where('application_id', $user->application_id);
+        $queueQuery = (clone $baseQuery)->whereNull('duplicate_of_id');
 
-        $stats = [
-            'total' => BugReport::where('application_id', $applicationId)->count(),
-            'open' => BugReport::where('application_id', $applicationId)->where('status', BugStatus::Open)->count(),
-            'in_progress' => BugReport::where('application_id', $applicationId)->where('status', BugStatus::InProgress)->count(),
-            'critical' => BugReport::where('application_id', $applicationId)->where('severity', BugSeverity::Critical)->count(),
+        return view('dashboard.developer', [
+            'user' => $user,
+            'stats' => $this->statsFor($baseQuery, $queueQuery),
+            'recentReports' => (clone $queueQuery)->with('user')->withCount('detectionResults')->latest()->take(8)->get(),
+            'topModules' => $this->topModulesFor($baseQuery),
+        ]);
+    }
+
+    /**
+     * @param  Builder<BugReport>  $baseQuery
+     * @param  Builder<BugReport>|null  $queueQuery
+     * @return array<string, int>
+     */
+    private function statsFor($baseQuery, $queueQuery = null): array
+    {
+        $queueQuery ??= $baseQuery;
+
+        return [
+            'total' => (clone $baseQuery)->count(),
+            'open' => (clone $queueQuery)->where('status', BugStatus::Open)->count(),
+            'in_progress' => (clone $baseQuery)->where('status', BugStatus::InProgress)->count(),
+            'resolved' => (clone $baseQuery)->where('status', BugStatus::Resolved)->count(),
+            'closed' => (clone $baseQuery)->where('status', BugStatus::Closed)->count(),
+            'critical' => (clone $queueQuery)->where('status', BugStatus::Open)->where('severity', BugSeverity::Critical)->count(),
         ];
+    }
 
-        $recentReports = BugReport::where('application_id', $applicationId)
-            ->with('user')
-            ->withCount('detectionResults')
-            ->latest()
-            ->take(8)
-            ->get();
-
-        $topModules = BugReport::where('application_id', $applicationId)
+    /**
+     * @param  Builder<BugReport>  $baseQuery
+     * @return Collection<int, BugReport>
+     */
+    private function topModulesFor($baseQuery)
+    {
+        return (clone $baseQuery)
             ->whereNotNull('module')
             ->selectRaw('module, count(*) as count')
             ->groupBy('module')
             ->orderByDesc('count')
             ->take(4)
             ->get();
-
-        return view('dashboard.developer', compact('user', 'stats', 'recentReports', 'topModules'));
     }
 }
