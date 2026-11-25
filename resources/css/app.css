@@ -690,36 +690,89 @@ html.dark {
 }
 
 html.dark body {
-    background-color: #0b110e;
-    color: #e2ebe6;
+    background-color: #0b110e !important;
+    color: #e2ebe6 !important;
+}
+
+html.dark .workspace-shell > main,
+html.dark .developer-dashboard-main {
+    background-color: #0b110e !important;
 }
 
 html.dark .workspace-sidebar,
 html.dark .workspace-topbar,
 html.dark .developer-dashboard-sidebar,
 html.dark .developer-dashboard-topbar,
-html.dark header.fixed {
+html.dark header.fixed,
+html.dark header.sticky,
+html.dark header.auth-header {
     background-color: #111915 !important;
     border-color: #24322b !important;
-    color: #e2ebe6;
+    color: #e2ebe6 !important;
 }
 
 html.dark .bg-white,
 html.dark .bg-white\/96,
-html.dark .bg-white\/90 {
+html.dark .bg-white\/95,
+html.dark .bg-white\/90,
+html.dark .bg-white\/80 {
     background-color: #141e19 !important;
 }
 
 html.dark .bg-\[\#F7F9F8\],
 html.dark .bg-\[\#F5F8F6\],
-html.dark .bg-parchment {
+html.dark .bg-\[\#FAFBFA\],
+html.dark .bg-\[\#FAFCFB\],
+html.dark .bg-\[\#FBFDFC\],
+html.dark .bg-\[\#F3F6F4\],
+html.dark .bg-\[\#F1F5F3\],
+html.dark .bg-\[\#F8FAF9\],
+html.dark .bg-\[\#F2F7F4\],
+html.dark .bg-\[\#f4f7f5\],
+html.dark .bg-parchment,
+html.dark .bg-slate-50,
+html.dark .bg-slate-100,
+html.dark .bg-input,
+html.dark .bg-input\/60,
+html.dark .bg-input\/70,
+html.dark .bg-input\/80 {
     background-color: #0f1713 !important;
+}
+
+html.dark .hover\:bg-\[\#F7F9F8\]:hover,
+html.dark .hover\:bg-\[\#FAFBFA\]\/70:hover,
+html.dark .hover\:bg-\[\#FBFDFC\]:hover,
+html.dark .hover\:bg-input:hover,
+html.dark .group[open] .group-open\:bg-\[\#FBFDFC\] {
+    background-color: #18241e !important;
 }
 
 html.dark .bg-\[\#F2F8F5\],
 html.dark .bg-\[\#EBF5F0\],
-html.dark .bg-\[\#EEF7F2\] {
+html.dark .bg-\[\#EEF7F2\],
+html.dark .bg-\[\#E9F4EF\],
+html.dark .bg-\[\#EAF4EF\],
+html.dark .bg-\[\#E8F3EE\],
+html.dark .bg-\[\#E7F3ED\],
+html.dark .bg-\[\#DCECE4\],
+html.dark .bg-\[\#D7E6DE\],
+html.dark .bg-\[\#f0f7f3\],
+html.dark .bg-\[\#EDF7F2\] {
     background-color: #193127 !important;
+}
+
+html.dark .bg-\[\#FAF2DF\],
+html.dark .bg-\[\#FBF4E3\] {
+    background-color: #2c2414 !important;
+}
+
+html.dark .bg-\[\#E9F1F6\],
+html.dark .bg-\[\#EEF5F9\] {
+    background-color: #162632 !important;
+}
+
+html.dark .bg-\[\#F1F4F2\] {
+    background-color: #1b2621 !important;
 }
 
 html.dark .border-\[\#E2E8E5\],
@@ -727,33 +780,98 @@ html.dark .border-\[\#E5EBE8\],
 html.dark .border-\[\#DCE3DF\],
 html.dark .border-\[\#DFE6E2\],
 html.dark .border-\[\#EDF0EE\],
+html.dark .border-\[\#DBE2DE\],
+html.dark .border-\[\#D5DFDA\],
+html.dark .border-\[\#DCE4E0\],
+html.dark .border-\[\#E0E6E3\],
+html.dark .border-\[\#E0E5E2\],
+html.dark .border-\[\#E0E9E4\],
+html.dark .border-\[\#E9EEEB\],
+html.dark .border-\[\#CDDBD4\],
+html.dark .border-\[\#C8D5CF\],
+html.dark .border-\[\#e1e9e5\],
+html.dark .border-\[\#D9EEE3\],
+html.dark .border-\[\#D9E9F2\],
+html.dark .border-\[\#F2E4BD\],
+html.dark .border-divider,
+html.dark .border-divider\/80,
 html.dark .divide-\[\#E2E8E5\] > :not(:last-child) {
     border-color: #26352e !important;
 }
 
 html.dark .text-\[\#111915\],
 html.dark .text-\[\#142019\],
+html.dark .text-\[\#17201C\],
+html.dark .text-\[\#13241C\],
+html.dark .text-\[\#14231c\],
+html.dark .text-\[\#1d2c25\],
+html.dark .text-\[\#102018\],
 html.dark .text-\[\#09090B\],
 html.dark .text-\[\#0D2D22\],
+html.dark .text-\[\#0d2d22\],
 html.dark .text-\[\#24302A\],
+html.dark .text-\[\#24322B\],
+html.dark .text-\[\#26322C\],
+html.dark .text-\[\#26342D\],
+html.dark .text-\[\#29372F\],
+html.dark .text-\[\#303D36\],
+html.dark .text-\[\#35423B\],
+html.dark .text-\[\#35433C\],
+html.dark .text-\[\#35443C\],
+html.dark .text-\[\#435149\],
 html.dark .text-ink {
     color: #eef5f1 !important;
 }
 
 html.dark .text-\[\#34423B\],
+html.dark .text-\[\#526059\],
+html.dark .text-\[\#536059\],
+html.dark .text-\[\#53615A\],
+html.dark .text-\[\#58665F\],
+html.dark .text-\[\#5F6D66\],
+html.dark .text-\[\#617068\],
+html.dark .text-\[\#637069\],
 html.dark .text-\[\#65706B\],
+html.dark .text-\[\#65726B\],
+html.dark .text-\[\#65736C\],
 html.dark .text-\[\#67736D\],
+html.dark .text-\[\#68766f\],
 html.dark .text-\[\#59655F\],
 html.dark .text-\[\#718079\],
+html.dark .text-\[\#738078\],
+html.dark .text-\[\#77837D\],
+html.dark .text-\[\#7B8781\],
+html.dark .text-\[\#83908A\],
+html.dark .text-\[\#84908A\],
+html.dark .text-\[\#88928D\],
 html.dark .text-\[\#8A9590\],
+html.dark .text-\[\#929B96\],
+html.dark .text-\[\#98A19C\],
+html.dark .text-\[\#99A29E\],
 html.dark .text-body,
 html.dark .text-label {
     color: #9cb0a5 !important;
 }
 
 html.dark .text-\[\#236B51\],
-html.dark .text-\[\#19513D\] {
+html.dark .text-\[\#19513D\],
+html.dark .text-\[\#277253\],
+html.dark .text-\[\#2D795B\],
+html.dark .text-\[\#26714F\],
+html.dark .text-\[\#236B4E\],
+html.dark .text-\[\#398464\],
+html.dark .text-\[\#287755\] {
     color: #6ee7b7 !important;
+}
+
+html.dark .text-\[\#8B6418\],
+html.dark .text-\[\#997121\] {
+    color: #fbbf24 !important;
+}
+
+html.dark .text-\[\#356C8C\],
+html.dark .text-\[\#3D6E8D\] {
+    color: #7dd3fc !important;
 }
 
 html.dark input:not([type='checkbox']):not([type='radio']),

@@ -31,7 +31,7 @@
 <body @class([
     'min-h-full bg-parchment font-sans text-body antialiased',
     'developer-dashboard-layout' => request()->routeIs('dashboard') && auth()->user()?->role->value === 'developer',
-    'workspace-shell' => auth()->check() && (request()->routeIs('about') || request()->routeIs('faq') || request()->routeIs('profile') || request()->routeIs('settings') || request()->routeIs('bug-reports.*') || request()->routeIs('report.detection_result')),
+    'workspace-shell' => auth()->check() && ((request()->routeIs('dashboard') && auth()->user()?->role->value !== 'developer') || request()->routeIs('about') || request()->routeIs('faq') || request()->routeIs('profile') || request()->routeIs('settings') || request()->routeIs('bug-reports.*') || request()->routeIs('report.detection_result')),
 ])>
 
     {{-- Subtle ambient background glow --}}
@@ -45,23 +45,28 @@
     </div>
 
     @auth
-        @if (request()->routeIs('about') || request()->routeIs('faq') || request()->routeIs('profile') || request()->routeIs('settings') || request()->routeIs('bug-reports.*') || request()->routeIs('report.detection_result'))
+        @if ((request()->routeIs('dashboard') && auth()->user()?->role->value !== 'developer') || request()->routeIs('about') || request()->routeIs('faq') || request()->routeIs('profile') || request()->routeIs('settings') || request()->routeIs('bug-reports.*') || request()->routeIs('report.detection_result'))
             @php
+                $isReporter = auth()->user()?->role === \App\Enums\UserRole::Reporter;
                 $currentDetectionReport = request()->route('bugReport');
                 $detectionResultsUrl = request()->routeIs('report.detection_result') && $currentDetectionReport
                     ? route('report.detection_result', $currentDetectionReport)
                     : route('bug-reports.index');
-                $topbarTitle = request()->routeIs('report.detection_result')
-                    ? __('Detection Results')
-                    : (request()->routeIs('about')
-                        ? __('About Us')
-                        : (request()->routeIs('faq')
-                            ? __('FAQ')
-                            : (request()->routeIs('profile')
-                                ? __('My Profile')
-                                : (request()->routeIs('settings')
-                                    ? __('Manage Settings')
-                                    : __('Bug Reports')))));
+                $topbarTitle = request()->routeIs('dashboard')
+                    ? __('Reporter Dashboard')
+                    : (request()->routeIs('bug-reports.create')
+                        ? __('Create Bug Report')
+                        : (request()->routeIs('report.detection_result')
+                            ? __('Detection Results')
+                            : (request()->routeIs('about')
+                                ? __('About Us')
+                                : (request()->routeIs('faq')
+                                    ? __('FAQ')
+                                    : (request()->routeIs('profile')
+                                        ? __('My Profile')
+                                        : (request()->routeIs('settings')
+                                            ? __('Manage Settings')
+                                            : ($isReporter ? __('Report History') : __('Bug Reports'))))))));
             @endphp
             <aside class="workspace-sidebar flex flex-col justify-between bg-white px-[14px] pb-[14px] border-r-[0.8px] border-[#E2E8E5]" aria-label="Workspace navigation">
                 <div class="flex flex-col">
@@ -92,32 +97,64 @@
                                     <span class="h-[18px] w-[3px] rounded-[3px] bg-[#236B51]"></span>
                                 @endif
                             </a>
-                            <a href="{{ $detectionResultsUrl }}" @class([
-                                'flex h-[42px] items-center justify-between rounded-[8px] px-3 text-[13.5px] leading-5 transition',
-                                'bg-[#F2F8F5] font-semibold text-[#19513D]' => request()->routeIs('report.detection_result'),
-                                'font-medium text-[#65706B] hover:bg-[#F7F9F8]' => ! request()->routeIs('report.detection_result'),
-                            ])>
-                                <span class="flex items-center gap-[11px]">
-                                    <x-auth.icon name="search" class="size-[18px]" />
-                                    <span>{{ __('Detection Results') }}</span>
-                                </span>
-                                @if (request()->routeIs('report.detection_result'))
-                                    <span class="h-[18px] w-[3px] rounded-[3px] bg-[#236B51]"></span>
-                                @endif
-                            </a>
-                            <a href="{{ route('bug-reports.index') }}" @class([
-                                'flex h-[42px] items-center justify-between rounded-[8px] px-3 text-[13.5px] leading-5 transition',
-                                'bg-[#F2F8F5] font-semibold text-[#19513D]' => request()->routeIs('bug-reports.*'),
-                                'font-medium text-[#65706B] hover:bg-[#F7F9F8]' => ! request()->routeIs('bug-reports.*'),
-                            ])>
-                                <span class="flex items-center gap-[11px]">
-                                    <x-auth.icon name="filter" class="size-[18px]" />
-                                    <span>{{ __('Bug Reports') }}</span>
-                                </span>
-                                @if (request()->routeIs('bug-reports.*'))
-                                    <span class="h-[18px] w-[3px] rounded-[3px] bg-[#236B51]"></span>
-                                @endif
-                            </a>
+                            @if ($isReporter)
+                                <a href="{{ route('bug-reports.create') }}" @class([
+                                    'flex h-[42px] items-center justify-between rounded-[8px] px-3 text-[13.5px] leading-5 transition',
+                                    'bg-[#F2F8F5] font-semibold text-[#19513D]' => request()->routeIs('bug-reports.create'),
+                                    'font-medium text-[#65706B] hover:bg-[#F7F9F8]' => ! request()->routeIs('bug-reports.create'),
+                                ])>
+                                    <span class="flex items-center gap-[11px]">
+                                        <svg class="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M5 12h14" />
+                                            <path d="M12 5v14" />
+                                        </svg>
+                                        <span>{{ __('Create Bug Report') }}</span>
+                                    </span>
+                                    @if (request()->routeIs('bug-reports.create'))
+                                        <span class="h-[18px] w-[3px] rounded-[3px] bg-[#236B51]"></span>
+                                    @endif
+                                </a>
+                                <a href="{{ route('bug-reports.index') }}" @class([
+                                    'flex h-[42px] items-center justify-between rounded-[8px] px-3 text-[13.5px] leading-5 transition',
+                                    'bg-[#F2F8F5] font-semibold text-[#19513D]' => request()->routeIs('bug-reports.index') || request()->routeIs('bug-reports.show') || request()->routeIs('report.detection_result'),
+                                    'font-medium text-[#65706B] hover:bg-[#F7F9F8]' => ! (request()->routeIs('bug-reports.index') || request()->routeIs('bug-reports.show') || request()->routeIs('report.detection_result')),
+                                ])>
+                                    <span class="flex items-center gap-[11px]">
+                                        <x-auth.icon name="filter" class="size-[18px]" />
+                                        <span>{{ __('Report History') }}</span>
+                                    </span>
+                                    @if (request()->routeIs('bug-reports.index') || request()->routeIs('bug-reports.show') || request()->routeIs('report.detection_result'))
+                                        <span class="h-[18px] w-[3px] rounded-[3px] bg-[#236B51]"></span>
+                                    @endif
+                                </a>
+                            @else
+                                <a href="{{ $detectionResultsUrl }}" @class([
+                                    'flex h-[42px] items-center justify-between rounded-[8px] px-3 text-[13.5px] leading-5 transition',
+                                    'bg-[#F2F8F5] font-semibold text-[#19513D]' => request()->routeIs('report.detection_result'),
+                                    'font-medium text-[#65706B] hover:bg-[#F7F9F8]' => ! request()->routeIs('report.detection_result'),
+                                ])>
+                                    <span class="flex items-center gap-[11px]">
+                                        <x-auth.icon name="search" class="size-[18px]" />
+                                        <span>{{ __('Detection Results') }}</span>
+                                    </span>
+                                    @if (request()->routeIs('report.detection_result'))
+                                        <span class="h-[18px] w-[3px] rounded-[3px] bg-[#236B51]"></span>
+                                    @endif
+                                </a>
+                                <a href="{{ route('bug-reports.index') }}" @class([
+                                    'flex h-[42px] items-center justify-between rounded-[8px] px-3 text-[13.5px] leading-5 transition',
+                                    'bg-[#F2F8F5] font-semibold text-[#19513D]' => request()->routeIs('bug-reports.*'),
+                                    'font-medium text-[#65706B] hover:bg-[#F7F9F8]' => ! request()->routeIs('bug-reports.*'),
+                                ])>
+                                    <span class="flex items-center gap-[11px]">
+                                        <x-auth.icon name="filter" class="size-[18px]" />
+                                        <span>{{ __('Bug Reports') }}</span>
+                                    </span>
+                                    @if (request()->routeIs('bug-reports.*'))
+                                        <span class="h-[18px] w-[3px] rounded-[3px] bg-[#236B51]"></span>
+                                    @endif
+                                </a>
+                            @endif
                         </nav>
 
                         <p class="px-3 pt-[10px] text-[10px] font-bold uppercase leading-[15px] tracking-[1.1px] text-[#98A19C]">General</p>

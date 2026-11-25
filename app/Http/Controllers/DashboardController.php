@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\BugSeverity;
 use App\Enums\BugStatus;
+use App\Enums\DetectionStatus;
 use App\Enums\UserRole;
 use App\Models\BugReport;
 use App\Models\User;
@@ -38,11 +39,19 @@ class DashboardController extends Controller
         $stats['my_open'] = $stats['open'];
         $stats['my_in_progress'] = $stats['in_progress'];
         $stats['my_resolved'] = $stats['resolved'] + $stats['closed'];
+        $stats['my_this_month'] = (clone $baseQuery)->where('created_at', '>=', now()->startOfMonth())->count();
+        $stats['my_pending'] = (clone $baseQuery)->where('status', BugStatus::Open)->where('detection_status', DetectionStatus::Pending)->count();
+        $stats['my_duplicates'] = (clone $baseQuery)->whereNotNull('duplicate_of_id')->count();
 
         return view('dashboard.reporter', [
             'user' => $user,
             'stats' => $stats,
-            'recentReports' => (clone $baseQuery)->with('user')->withCount('detectionResults')->latest()->take(6)->get(),
+            'recentReports' => (clone $baseQuery)
+                ->with(['user', 'detectionResults' => fn ($query) => $query->orderBy('rank')])
+                ->withCount('detectionResults')
+                ->latest()
+                ->take(5)
+                ->get(),
             'topModules' => $this->topModulesFor($baseQuery),
         ]);
     }

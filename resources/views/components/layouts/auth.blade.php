@@ -1,11 +1,21 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full" data-theme="{{ auth()->check() ? (auth()->user()->theme ?? 'light') : 'light' }}">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'TwinBug' }} — TwinBug</title>
+    <script>
+        (function () {
+            var theme = document.documentElement.getAttribute('data-theme') || 'light';
+            var applyTheme = function (mode) {
+                var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.classList.toggle('dark', isDark);
+            };
+            applyTheme(theme);
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 

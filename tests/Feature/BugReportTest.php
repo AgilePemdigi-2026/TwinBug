@@ -22,7 +22,7 @@ class BugReportTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee(route('bug-reports.create'));
-        $response->assertSee('Buat Laporan Bug Baru');
+        $response->assertSee('Create new report');
     }
 
     public function test_guest_is_redirected_from_create_bug_report_page(): void
@@ -41,8 +41,8 @@ class BugReportTest extends TestCase
         $response = $this->actingAs($user)->get(route('bug-reports.create'));
 
         $response->assertStatus(200);
-        $response->assertSee('Formulir Pelaporan Bug');
-        $response->assertSee('Identitas Permasalahan');
+        $response->assertSee('Create New Bug Report');
+        $response->assertSee('Bug information');
     }
 
     public function test_authenticated_user_can_submit_bug_report(): void

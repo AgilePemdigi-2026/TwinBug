@@ -1,46 +1,30 @@
-<x-layouts.app title="Buat Laporan Bug" meta-description="Laporkan bug baru ke sistem TwinBug untuk dianalisis secara otomatis.">
+<x-layouts.app title="Create Bug Report" meta-description="Submit a new bug report to TwinBug for automatic multimodal duplicate analysis.">
 
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div class="mx-auto max-w-[1540px] p-8">
 
-        {{-- ======================== BREADCRUMB ======================== --}}
-        <nav class="flex items-center gap-2 text-xs" aria-label="Breadcrumb">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-1.5 text-label transition hover:text-ink">
-                <x-auth.icon name="bug" class="size-3 text-sage-600" />
-                <span class="font-medium">Dashboard</span>
-            </a>
-            <svg class="size-2.5 text-label/60" viewBox="0 0 6 10" fill="none" aria-hidden="true">
-                <path d="M1 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="rounded-md bg-input px-2 py-0.5 text-[11px] font-semibold text-ink">Buat Laporan Bug Baru</span>
+        {{-- Breadcrumb --}}
+        <nav class="flex items-center gap-2 text-[11.5px] leading-[17px]" aria-label="Breadcrumb">
+            <a href="{{ route('dashboard') }}" class="text-[#83908A] transition hover:text-[#33423B]">Dashboard</a>
+            <span class="text-[#83908A]" aria-hidden="true">›</span>
+            <span class="font-semibold text-[#33423B]">New Bug Report</span>
         </nav>
 
-        {{-- ======================== PAGE HEADER ======================== --}}
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <div class="mb-2 flex items-center gap-2">
-                    <span class="inline-flex items-center gap-1.5 rounded-md bg-sage-100 px-2.5 py-0.5 text-[11px] font-semibold text-sage-800">
-                        <x-auth.icon name="code" class="size-3 text-sage-700" />
-                        {{ $application->name }}
-                    </span>
-                    <span class="text-xs text-label">•</span>
-                    <span class="text-xs text-label">{{ number_format($totalReports) }} Laporan Tersinkronisasi</span>
-                </div>
-                <h1 class="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
-                    Formulir Pelaporan Bug
-                </h1>
-                <p class="mt-1 text-xs sm:text-sm text-label">
-                    Sistem multimodal TwinBug akan otomatis menganalisis kemiripan semantik teks dan visual screenshot dengan arsip historis.
-                </p>
-            </div>
+        {{-- Page Heading --}}
+        <div class="pt-[18px]">
+            <h1 class="text-[27px] font-bold leading-8 tracking-[-0.65px] text-[#142019]">Create New Bug Report</h1>
+            <p class="mt-[7px] text-[13px] leading-5 text-[#67736D]">
+                Give us clear, reproducible details. TwinBug will analyze your report for possible duplicates before review.
+            </p>
         </div>
 
-        {{-- ======================== FORM ======================== --}}
+        {{-- Form + Sticky Sidebar --}}
         <form
             id="bug-report-form"
             method="POST"
             action="{{ route('bug-reports.store') }}"
             enctype="multipart/form-data"
             novalidate
+            class="mt-[26px]"
         >
             @csrf
 
@@ -50,361 +34,301 @@
             <input type="hidden" name="device_metadata[screen]" id="meta_screen" value="">
             <input type="hidden" name="device_metadata[user_agent]" id="meta_user_agent" value="">
 
-            <div class="grid grid-cols-12 gap-6">
+            <div class="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,780px)_270px]">
 
-                {{-- =============== COLUMN LEFT (7 cols) =============== --}}
-                <div class="col-span-12 flex flex-col gap-5 lg:col-span-7">
+                {{-- Left Column: 3 Sections + Actions --}}
+                <div class="space-y-4">
 
-                    {{-- CARD 1: Primary Details --}}
-                    <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
-                        {{-- Card header --}}
-                        <div class="mb-5 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="grid size-6 place-items-center rounded-lg bg-slate-100 font-mono text-xs font-bold text-sage-600">01</span>
-                                <h2 class="font-serif text-base font-bold text-ink">Identitas Permasalahan</h2>
+                    {{-- Section 1: Bug information --}}
+                    <section class="rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-[22px]">
+                        <div class="flex items-start gap-3 border-b-[0.8px] border-[#E9EEEB] pb-[18px]">
+                            <span class="grid size-[26px] shrink-0 place-items-center rounded-[7px] bg-[#123C2E] text-[11px] font-bold leading-4 text-white">1</span>
+                            <div>
+                                <h2 class="text-[14px] font-normal leading-[21px] text-[#09090B]">Bug information</h2>
+                                <p class="pt-1 text-[10.5px] leading-4 text-[#67736D]">Start with a concise summary and where the issue happened.</p>
                             </div>
-                            <span class="flex items-center gap-1.5 text-[11px] font-semibold text-danger">
-                                <span class="size-1.5 rounded-full bg-danger"></span>
-                                Wajib diisi
-                            </span>
                         </div>
 
-                        {{-- Bug Title --}}
-                        <div class="mb-4">
-                            <label for="title" class="mb-1.5 block text-xs font-semibold text-ink">
-                                Judul Bug (Bug Title) <span class="text-danger">*</span>
-                            </label>
-                            <div class="relative">
+                        <div class="space-y-[17px] pt-[18px]">
+                            {{-- Bug title --}}
+                            <div class="flex flex-col gap-[6px]">
+                                <label for="title" class="text-[11.5px] font-semibold leading-[17px] text-[#303D36]">
+                                    Bug title <span class="font-black text-[#A84942]">*</span>
+                                </label>
                                 <input
                                     type="text"
                                     id="title"
                                     name="title"
                                     value="{{ old('title') }}"
-                                    placeholder='Tombol "Bayar Sekarang" tidak merespons di iOS Safari saat checkout'
+                                    placeholder="e.g. Checkout button becomes unresponsive"
                                     maxlength="255"
-                                    class="w-full rounded-xl border border-divider/70 bg-input/60 px-3.5 py-2.5 pr-10 text-xs sm:text-sm text-ink placeholder:text-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20 {{ $errors->has('title') ? 'border-danger ring-2 ring-danger/20' : '' }}"
-                                    aria-describedby="title-hint title-error"
                                     autocomplete="off"
+                                    aria-describedby="title-hint title-error"
+                                    class="h-[41px] w-full rounded-[7px] border-[0.8px] bg-white px-[11px] text-[11.5px] text-[#24322B] placeholder:text-[#A4ADA8] focus:border-[#236B51] focus:outline-none {{ $errors->has('title') ? 'border-danger' : 'border-[#DBE2DE]' }}"
                                 >
-                                <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-label/50">
-                                    <x-auth.icon name="code" class="size-3.5" />
-                                </span>
-                            </div>
-                            <p id="title-hint" class="mt-1 text-[11px] text-label">
-                                Sertakan komponen visual utama dan platform agar parser TwinBug mengenali konteks dengan presisi.
-                            </p>
-                            @error('title')
-                                <p id="title-error" class="mt-1 text-xs font-medium text-danger" role="alert">{{ $message }}</p>
-                            @enderror
+                                <p id="title-hint" class="text-[9.5px] leading-[13px] text-[#7B8781]">Summarize the issue in one clear sentence.</p>
+                                @error('title')
+                                    <p id="title-error" class="text-[10.5px] font-medium text-danger" role="alert">{{ $message }}</p>
+                                @enderror
 
-                            {{-- Real-time Duplicate Warning Box --}}
-                            <div id="duplicate-warning-box" class="mt-3 hidden rounded-xl border border-purple-200 bg-purple-50/90 p-3.5 transition">
-                                <div class="flex items-start gap-2.5">
-                                    <span class="grid size-6 shrink-0 place-items-center rounded-lg bg-purple-200 text-purple-700">
-                                        <x-auth.icon name="sparkles" class="size-3.5" />
-                                    </span>
-                                    <div class="flex-1">
-                                        <h3 class="text-xs font-bold text-purple-900">
-                                            TwinBug mendeteksi kemungkinan laporan serupa di aplikasi Anda:
-                                        </h3>
-                                        <ul id="duplicate-warning-list" class="mt-2 space-y-1.5 text-xs">
-                                            {{-- Dynamic items will be appended here --}}
-                                        </ul>
+                                {{-- Real-time Duplicate Warning Box --}}
+                                <div id="duplicate-warning-box" class="mt-2 hidden rounded-[8px] border-[0.8px] border-[#F2E4BD] bg-[#FBF4E3] p-3">
+                                    <div class="flex items-start gap-2.5">
+                                        <span class="grid size-6 shrink-0 place-items-center rounded-[6px] bg-[#F2E4BD] text-[#8B6418]">
+                                            <x-auth.icon name="sparkles" class="size-3.5" />
+                                        </span>
+                                        <div class="flex-1 min-w-0">
+                                            <h3 class="text-[11px] font-bold text-[#8B6418]">
+                                                TwinBug detected possible similar reports in your workspace:
+                                            </h3>
+                                            <ul id="duplicate-warning-list" class="mt-2 space-y-1.5 text-[11px]"></ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {{-- Two-column: Module + Severity --}}
-                        <div class="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-
-                            {{-- Module --}}
-                            <div>
-                                <label for="module" class="mb-1.5 block text-xs font-semibold text-ink">
-                                    Modul / Komponen Terkait <span class="text-danger">*</span>
-                                </label>
-                                <div class="relative">
+                            {{-- Module / Component + Severity --}}
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div class="flex flex-col gap-[6px]">
+                                    <label for="module" class="text-[11.5px] font-semibold leading-[17px] text-[#303D36]">
+                                        Module / Component <span class="font-black text-[#A84942]">*</span>
+                                    </label>
                                     <select
                                         id="module"
                                         name="module"
-                                        class="w-full appearance-none rounded-xl border border-divider/70 bg-input/60 px-3.5 py-2 text-xs sm:text-sm text-ink transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20 {{ $errors->has('module') ? 'border-danger ring-2 ring-danger/20' : '' }}"
                                         aria-describedby="module-error"
+                                        class="h-[41px] w-full rounded-[7px] border-[0.8px] bg-white px-[11px] text-[11.5px] text-[#24322B] focus:border-[#236B51] focus:outline-none {{ $errors->has('module') ? 'border-danger' : 'border-[#DBE2DE]' }}"
                                     >
-                                        <option value="" disabled {{ old('module') ? '' : 'selected' }}>Pilih modul aplikasi...</option>
+                                        <option value="" disabled {{ old('module') ? '' : 'selected' }}>Select a module</option>
                                         @foreach ($modules as $module)
-                                            <option value="{{ $module }}" {{ old('module') === $module ? 'selected' : '' }}>
-                                                {{ $module }}
-                                            </option>
+                                            <option value="{{ $module }}" {{ old('module') === $module ? 'selected' : '' }}>{{ $module }}</option>
                                         @endforeach
                                     </select>
-                                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-label/60">
-                                        <svg class="size-2.5" viewBox="0 0 10 6" fill="none" aria-hidden="true">
-                                            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </span>
+                                    <p class="text-[9.5px] leading-[13px] text-[#7B8781]">Select the product area where you found the issue.</p>
+                                    @error('module')
+                                        <p id="module-error" class="text-[10.5px] font-medium text-danger" role="alert">{{ $message }}</p>
+                                    @enderror
                                 </div>
-                                @error('module')
-                                    <p id="module-error" class="mt-1 text-xs font-medium text-danger" role="alert">{{ $message }}</p>
-                                @enderror
-                            </div>
 
-                            {{-- Severity --}}
-                            <div>
-                                <label for="severity" class="mb-1.5 block text-xs font-semibold text-ink">
-                                    Tingkat Keparahan <span class="text-danger">*</span>
-                                </label>
-                                <div class="relative">
+                                <div class="flex flex-col gap-[6px]">
+                                    <label for="severity" class="text-[11.5px] font-semibold leading-[17px] text-[#303D36]">
+                                        Severity <span class="font-black text-[#A84942]">*</span>
+                                    </label>
                                     <select
                                         id="severity"
                                         name="severity"
-                                        class="w-full appearance-none rounded-xl border border-divider/70 bg-input/60 px-3.5 py-2 text-xs sm:text-sm text-ink transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20 {{ $errors->has('severity') ? 'border-danger ring-2 ring-danger/20' : '' }}"
                                         aria-describedby="severity-error"
+                                        class="h-[41px] w-full rounded-[7px] border-[0.8px] bg-white px-[11px] text-[11.5px] text-[#24322B] focus:border-[#236B51] focus:outline-none {{ $errors->has('severity') ? 'border-danger' : 'border-[#DBE2DE]' }}"
                                     >
-                                        <option value="" disabled {{ old('severity') ? '' : 'selected' }}>Pilih keparahan...</option>
                                         @foreach ($severities as $severity)
-                                            <option value="{{ $severity->value }}" {{ old('severity') === $severity->value ? 'selected' : '' }}>
+                                            <option value="{{ $severity->value }}" {{ old('severity', 'medium') === $severity->value ? 'selected' : '' }}>
                                                 {{ $severity->label() }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-label/60">
-                                        <svg class="size-2.5" viewBox="0 0 10 6" fill="none" aria-hidden="true">
-                                            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </span>
+                                    <p class="text-[9.5px] leading-[13px] text-[#7B8781]">Indicate the impact of this issue.</p>
+                                    @error('severity')
+                                        <p id="severity-error" class="text-[10.5px] font-medium text-danger" role="alert">{{ $message }}</p>
+                                    @enderror
                                 </div>
-                                @error('severity')
-                                    <p id="severity-error" class="mt-1 text-xs font-medium text-danger" role="alert">{{ $message }}</p>
+                            </div>
+
+                            {{-- Bug description --}}
+                            <div class="flex flex-col gap-[6px]">
+                                <label for="description" class="text-[11.5px] font-semibold leading-[17px] text-[#303D36]">
+                                    Bug description <span class="font-black text-[#A84942]">*</span>
+                                </label>
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    rows="4"
+                                    maxlength="10000"
+                                    placeholder="Describe the issue you encountered..."
+                                    aria-describedby="description-hint description-error"
+                                    class="min-h-[90px] w-full rounded-[7px] border-[0.8px] bg-white px-[11px] py-[10px] text-[11.5px] leading-[18px] text-[#24322B] placeholder:text-[#A4ADA8] focus:border-[#236B51] focus:outline-none {{ $errors->has('description') ? 'border-danger' : 'border-[#DBE2DE]' }}"
+                                >{{ old('description') }}</textarea>
+                                <p id="description-hint" class="text-[9.5px] leading-[13px] text-[#7B8781]">Explain what went wrong and include any useful context.</p>
+                                @error('description')
+                                    <p id="description-error" class="text-[10.5px] font-medium text-danger" role="alert">{{ $message }}</p>
                                 @enderror
                             </div>
-
                         </div>
+                    </section>
 
-                        {{-- Two-column: Environment + URL --}}
-                        <div class="mt-3.5 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+                    {{-- Section 2: Reproduction details --}}
+                    <section class="rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-[22px]">
+                        <div class="flex items-start gap-3 border-b-[0.8px] border-[#E9EEEB] pb-[18px]">
+                            <span class="grid size-[26px] shrink-0 place-items-center rounded-[7px] bg-[#123C2E] text-[11px] font-bold leading-4 text-white">2</span>
                             <div>
-                                <label for="environment" class="mb-1.5 block text-xs font-semibold text-ink">
-                                    Environment / Lingkungan
-                                </label>
-                                <div class="relative">
-                                    <select
-                                        id="environment"
-                                        name="environment"
-                                        class="w-full appearance-none rounded-xl border border-divider/70 bg-input/60 px-3.5 py-2 text-xs sm:text-sm text-ink transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20"
-                                    >
-                                        <option value="production" {{ old('environment', 'production') === 'production' ? 'selected' : '' }}>Production (Live)</option>
-                                        <option value="staging" {{ old('environment') === 'staging' ? 'selected' : '' }}>Staging (UAT)</option>
-                                        <option value="testing" {{ old('environment') === 'testing' ? 'selected' : '' }}>Testing / QA</option>
-                                        <option value="local" {{ old('environment') === 'local' ? 'selected' : '' }}>Local / Dev</option>
-                                    </select>
-                                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-label/60">
-                                        <svg class="size-2.5" viewBox="0 0 10 6" fill="none" aria-hidden="true">
-                                            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="url" class="mb-1.5 block text-xs font-semibold text-ink">
-                                    URL Halaman Kejadian (Opsional)
-                                </label>
-                                <input
-                                    type="text"
-                                    id="url"
-                                    name="url"
-                                    value="{{ old('url') }}"
-                                    placeholder="https://app.example.com/checkout"
-                                    class="w-full rounded-xl border border-divider/70 bg-input/60 px-3.5 py-2 text-xs sm:text-sm text-ink placeholder:text-label/50 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20"
-                                >
+                                <h2 class="text-[14px] font-normal leading-[21px] text-[#09090B]">Reproduction details</h2>
+                                <p class="pt-1 text-[10.5px] leading-4 text-[#67736D]">Help the team reproduce and validate the issue.</p>
                             </div>
                         </div>
-                    </div>
 
-                    {{-- CARD 2: Structured Reproduction Details (Metadata) --}}
-                    <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
-                        <div class="mb-5 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="grid size-6 place-items-center rounded-lg bg-slate-100 font-mono text-xs font-bold text-sage-600">02</span>
-                                <h2 class="font-serif text-base font-bold text-ink">Metadata &amp; Langkah Reproduksi</h2>
-                            </div>
-                            <span class="text-[11px] font-semibold text-label">Sangat Disarankan</span>
-                        </div>
-
-                        <div class="space-y-3.5">
-                            <div>
-                                <label for="steps_to_reproduce" class="mb-1.5 block text-xs font-semibold text-ink">
-                                    Langkah-langkah Reproduksi (Steps to Reproduce)
+                        <div class="space-y-[17px] pt-[18px]">
+                            <div class="flex flex-col gap-[6px]">
+                                <label for="steps_to_reproduce" class="text-[11.5px] font-semibold leading-[17px] text-[#303D36]">
+                                    Steps to reproduce
                                 </label>
                                 <textarea
                                     id="steps_to_reproduce"
                                     name="steps_to_reproduce"
-                                    rows="3"
-                                    placeholder="1. Masuk ke keranjang belanja&#10;2. Pilih metode bayar QRIS&#10;3. Klik tombol konfirmasi bayar"
-                                    class="w-full rounded-xl border border-divider/70 bg-input/60 px-3.5 py-2 text-xs sm:text-sm leading-relaxed text-ink placeholder:text-label/40 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20"
+                                    rows="4"
+                                    placeholder="1. Open the checkout page&#10;2. Add an item to the cart&#10;3. Click &quot;Continue to payment&quot;"
+                                    class="min-h-[100px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-white px-[11px] py-[10px] text-[11.5px] leading-[18px] text-[#24322B] placeholder:text-[#A4ADA8] focus:border-[#236B51] focus:outline-none"
                                 >{{ old('steps_to_reproduce') }}</textarea>
+                                <p class="text-[9.5px] leading-[13px] text-[#7B8781]">Use a numbered list and include the exact actions you took.</p>
                             </div>
 
-                            <div class="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-                                <div>
-                                    <label for="expected_result" class="mb-1.5 block text-xs font-semibold text-ink">
-                                        Hasil yang Diharapkan
-                                    </label>
-                                    <textarea
-                                        id="expected_result"
-                                        name="expected_result"
-                                        rows="2"
-                                        placeholder="Kode QRIS muncul dan timer pembayaran berjalan."
-                                        class="w-full rounded-xl border border-divider/70 bg-input/60 px-3.5 py-2 text-xs sm:text-sm leading-relaxed text-ink placeholder:text-label/40 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20"
-                                    >{{ old('expected_result') }}</textarea>
-                                </div>
-
-                                <div>
-                                    <label for="actual_result" class="mb-1.5 block text-xs font-semibold text-ink">
-                                        Hasil Aktual (Yang Terjadi)
+                            <div class="grid grid-cols-1 gap-[15px] sm:grid-cols-2">
+                                <div class="flex flex-col gap-[6px]">
+                                    <label for="actual_result" class="text-[11.5px] font-semibold leading-[17px] text-[#303D36]">
+                                        Actual result
                                     </label>
                                     <textarea
                                         id="actual_result"
                                         name="actual_result"
-                                        rows="2"
-                                        placeholder="Layar blank putih dan tidak merespons klik."
-                                        class="w-full rounded-xl border border-divider/70 bg-input/60 px-3.5 py-2 text-xs sm:text-sm leading-relaxed text-ink placeholder:text-label/40 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20"
+                                        rows="3"
+                                        placeholder="Describe the behavior you observed..."
+                                        class="min-h-[90px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-white px-[11px] py-[10px] text-[11.5px] leading-[18px] text-[#24322B] placeholder:text-[#A4ADA8] focus:border-[#236B51] focus:outline-none"
                                     >{{ old('actual_result') }}</textarea>
+                                    <p class="text-[9.5px] leading-[13px] text-[#7B8781]">What happened instead?</p>
+                                </div>
+
+                                <div class="flex flex-col gap-[6px]">
+                                    <label for="expected_result" class="text-[11.5px] font-semibold leading-[17px] text-[#303D36]">
+                                        Expected result
+                                    </label>
+                                    <textarea
+                                        id="expected_result"
+                                        name="expected_result"
+                                        rows="3"
+                                        placeholder="Describe the intended behavior..."
+                                        class="min-h-[90px] w-full rounded-[7px] border-[0.8px] border-[#DBE2DE] bg-white px-[11px] py-[10px] text-[11.5px] leading-[18px] text-[#24322B] placeholder:text-[#A4ADA8] focus:border-[#236B51] focus:outline-none"
+                                    >{{ old('expected_result') }}</textarea>
+                                    <p class="text-[9.5px] leading-[13px] text-[#7B8781]">What should have happened?</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    {{-- CARD 3: Deep Bug Description --}}
-                    <div class="rounded-2xl border border-divider/80 bg-white p-5 sm:p-6 shadow-xs">
-                        <div class="mb-4 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="grid size-6 place-items-center rounded-lg bg-slate-100 font-mono text-xs font-bold text-sage-600">03</span>
-                                <h2 class="font-serif text-base font-bold text-ink">Deskripsi Lengkap Bug <span class="text-danger">*</span></h2>
+                    {{-- Section 3: Visual evidence --}}
+                    <section class="rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-[22px]">
+                        <div class="flex items-start gap-3 border-b-[0.8px] border-[#E9EEEB] pb-[18px]">
+                            <span class="grid size-[26px] shrink-0 place-items-center rounded-[7px] bg-[#123C2E] text-[11px] font-bold leading-4 text-white">3</span>
+                            <div>
+                                <h2 class="text-[14px] font-normal leading-[21px] text-[#09090B]">Visual evidence</h2>
+                                <p class="pt-1 text-[10.5px] leading-4 text-[#67736D]">Optional, but helpful for multimodal duplicate detection.</p>
                             </div>
                         </div>
 
-                        <div>
-                            <div class="mb-1.5 flex items-center justify-between">
-                                <p class="text-xs text-label">Uraikan kronologi, pesan error, atau catatan tambahan:</p>
-                                <span id="char-count" class="font-mono text-[10px] text-label">0 karakter</span>
+                        <div class="pt-[18px]">
+                            <div
+                                id="screenshot-dropzone"
+                                class="flex flex-col items-center rounded-[10px] border-[0.8px] border-dashed border-[#C8D5CF] bg-[#FAFCFB] p-[26px] text-center transition hover:border-[#236B51]"
+                            >
+                                <span class="grid size-[42px] place-items-center rounded-[10px] bg-[#EAF4EF] text-[#236B51]">
+                                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                        <polyline points="17 8 12 3 7 8" />
+                                        <line x1="12" y1="3" x2="12" y2="15" />
+                                    </svg>
+                                </span>
+
+                                <p class="mt-[10px] text-[12px] font-bold leading-[18px] text-[#09090B]">Drag and drop a screenshot here</p>
+                                <p class="mt-1 mb-[13px] text-[10.5px] leading-4 text-[#67736D]">or choose a file from your computer</p>
+
+                                <input type="file" id="screenshot" name="screenshot" accept="image/png,image/jpeg,image/gif,image/webp" class="hidden">
+                                <button
+                                    type="button"
+                                    onclick="document.getElementById('screenshot').click()"
+                                    class="inline-flex h-10 cursor-pointer items-center justify-center rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]"
+                                >
+                                    Browse files
+                                </button>
+
+                                <p id="screenshot-filename" class="mt-[11px] text-[9px] leading-[14px] text-[#88928D]">
+                                    PNG or JPG · Maximum 5 MB · Optional
+                                </p>
+
+                                @error('screenshot')
+                                    <p class="mt-2 text-[10.5px] font-medium text-danger" role="alert">{{ $message }}</p>
+                                @enderror
                             </div>
-
-                            <textarea
-                                id="description"
-                                name="description"
-                                rows="6"
-                                maxlength="10000"
-                                placeholder="Jelaskan detail kronologi kendala atau lampirkan informasi tambahan yang relevan."
-                                class="w-full resize-none overflow-y-auto rounded-xl border border-divider/70 bg-input/60 px-3.5 py-2.5 text-xs sm:text-sm leading-relaxed text-ink placeholder:text-label/40 transition focus:border-sage-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500/20 {{ $errors->has('description') ? 'border-danger ring-2 ring-danger/20' : '' }}"
-                                aria-describedby="description-hint description-error"
-                                oninput="document.getElementById('char-count').textContent = this.value.length + ' karakter'"
-                            >{{ old('description') }}</textarea>
-
-                            <p id="description-hint" class="mt-1 text-[11px] text-label">
-                                Minimal 20 karakter agar analisis semantik TwinBug optimal.
-                            </p>
-                            @error('description')
-                                <p id="description-error" class="mt-1 text-xs font-medium text-danger" role="alert">{{ $message }}</p>
-                            @enderror
                         </div>
-                    </div>
+                    </section>
 
-                </div>
-
-                {{-- =============== COLUMN RIGHT (5 cols) =============== --}}
-                <div class="col-span-12 flex flex-col gap-5 lg:col-span-5">
-
-                    @include('bug-reports.screenshot-uploader')
-
-                    {{-- Panduan Pelaporan Efektif --}}
-                    <div class="rounded-2xl border border-sage-200/80 bg-sage-50/60 p-5 shadow-xs">
-                        <div class="mb-3.5 flex items-center gap-2">
-                            <span class="grid size-6 place-items-center rounded-lg bg-sage-200 text-sage-800">
-                                <x-auth.icon name="sparkles" class="size-3" />
-                            </span>
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-sage-900">Panduan Laporan Efektif</h3>
-                        </div>
-
-                        <ul class="space-y-2.5">
-                            <li class="flex items-start gap-2.5">
-                                <span class="mt-0.5 grid size-4.5 shrink-0 place-items-center rounded-full bg-sage-200 text-[9px] font-bold text-sage-800">1</span>
-                                <div>
-                                    <p class="text-xs font-semibold text-ink">Judul yang spesifik</p>
-                                    <p class="mt-0.5 text-[11px] leading-relaxed text-label">Sebutkan komponen, platform, dan tindakan. Contoh: <span class="font-medium text-ink">"Tombol QRIS tidak merespons di iOS Safari"</span></p>
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-2.5">
-                                <span class="mt-0.5 grid size-4.5 shrink-0 place-items-center rounded-full bg-sage-200 text-[9px] font-bold text-sage-800">2</span>
-                                <div>
-                                    <p class="text-xs font-semibold text-ink">Pilih modul yang tepat</p>
-                                    <p class="mt-0.5 text-[11px] leading-relaxed text-label">Memudahkan developer menemukan lokasi kode dan mempercepat triase bug.</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-2.5">
-                                <span class="mt-0.5 grid size-4.5 shrink-0 place-items-center rounded-full bg-sage-200 text-[9px] font-bold text-sage-800">3</span>
-                                <div>
-                                    <p class="text-xs font-semibold text-ink">Langkah reproduksi rinci</p>
-                                    <p class="mt-0.5 text-[11px] leading-relaxed text-label">Tulis langkah-per-langkah. Bug yang bisa direproduksi lebih cepat diperbaiki.</p>
-                                </div>
-                            </li>
-                            <li class="flex items-start gap-2.5">
-                                <span class="mt-0.5 grid size-4.5 shrink-0 place-items-center rounded-full bg-sage-200 text-[9px] font-bold text-sage-800">4</span>
-                                <div>
-                                    <p class="text-xs font-semibold text-ink">Sertakan pesan error konsol</p>
-                                    <p class="mt-0.5 text-[11px] leading-relaxed text-label">Buka DevTools → Console, salin pesan error merah dan tempel di deskripsi.</p>
-                                </div>
-                            </li>
-                        </ul>
-
-                        <div class="mt-4 rounded-xl border border-sage-200/80 bg-white/80 p-2.5">
-                            <p class="flex items-center gap-1.5 text-[11px] font-semibold text-sage-800">
-                                <x-auth.icon name="shield" class="size-3 shrink-0 text-sage-600" />
-                                TwinBug mendeteksi laporan serupa secara otomatis — periksa peringatan yang muncul saat Anda mengetik judul.
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            {{-- ======================== STICKY ACTION BAR ======================== --}}
-            <div class="mt-6 rounded-2xl border border-divider/80 bg-white/95 p-4 shadow-xs backdrop-blur-sm">
-                <div class="flex items-center justify-between gap-4">
-
-                    {{-- Left: privacy note --}}
-                    <div class="flex items-center gap-2 text-label">
-                        <x-auth.icon name="shield" class="size-3.5 shrink-0 text-sage-600" />
-                        <p class="text-xs">
-                            Semua input dienkripsi dan diproses secara aman dalam klaster lokal.
-                        </p>
-                    </div>
-
-                    {{-- Right: buttons --}}
-                    <div class="flex items-center gap-2.5">
+                    {{-- Action Buttons --}}
+                    <div class="flex flex-wrap items-center gap-[9px] pt-1 pb-7">
                         <a
                             href="{{ route('dashboard') }}"
                             id="btn-cancel"
-                            class="rounded-xl border border-divider bg-input/60 px-4 py-2 text-xs font-semibold text-label transition hover:bg-input-hover hover:text-ink"
+                            class="inline-flex h-10 items-center justify-center rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-[15px] text-[12px] font-semibold leading-[18px] text-[#35433C] transition hover:bg-[#F7F9F8]"
                         >
-                            Batal
+                            Cancel
                         </a>
                         <button
                             type="submit"
                             id="btn-submit"
-                            class="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-sage-500 px-4.5 py-2 text-xs font-semibold text-white shadow-cta transition hover:bg-sage-600 active:scale-95 cursor-pointer"
+                            class="inline-flex h-10 cursor-pointer items-center justify-center gap-[7px] rounded-[8px] bg-[#123C2E] px-[15px] text-[12px] font-semibold leading-[18px] text-white shadow-[0_3px_8px_rgba(18,60,46,0.16)] transition hover:bg-[#194E3C]"
                         >
-                            <x-auth.icon name="sparkles" class="size-3.5 shrink-0" />
-                            <span>Kirim &amp; Analisis Duplikasi</span>
+                            <svg class="size-[17px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.42" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="m22 2-7 20-4-9-9-4Z" />
+                                <path d="M22 2 11 13" />
+                            </svg>
+                            <span>Submit &amp; analyze duplicates</span>
                         </button>
                     </div>
                 </div>
-            </div>
 
+                {{-- Right Column: Sticky Guide Sidebar --}}
+                <aside class="rounded-[11px] border-[0.8px] border-[#E2E8E5] bg-white p-[19px] xl:sticky xl:top-24">
+                    <div class="grid size-[38px] place-items-center rounded-[9px] bg-[#E8F3EE] text-[#236B51]">
+                        <svg class="size-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.83" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                            <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                            <path d="M12 18v-6" />
+                            <path d="m9 15 3 3 3-3" />
+                        </svg>
+                    </div>
+
+                    <h2 class="pt-[14px] text-[13px] font-normal leading-5 text-[#09090B]">Write a useful report</h2>
+                    <p class="pt-[5px] text-[10.5px] leading-4 text-[#67736D]">
+                        Clear reports help TwinBug find stronger matches and help developers resolve issues faster.
+                    </p>
+
+                    <ul class="mt-[14px] space-y-[10px] border-y-[0.8px] border-[#E2E8E5] py-[14px] text-[10.5px] leading-4 text-[#526059]">
+                        <li class="flex items-center gap-2">
+                            <x-auth.icon name="check" class="size-[15px] shrink-0 text-[#2D795B]" />
+                            <span>Use a specific, descriptive title</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <x-auth.icon name="check" class="size-[15px] shrink-0 text-[#2D795B]" />
+                            <span>List exact reproduction steps</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <x-auth.icon name="check" class="size-[15px] shrink-0 text-[#2D795B]" />
+                            <span>Separate actual and expected results</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <x-auth.icon name="check" class="size-[15px] shrink-0 text-[#2D795B]" />
+                            <span>Hide sensitive data in screenshots</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex items-start gap-2 pt-[14px]">
+                        <x-auth.icon name="shield" class="mt-0.5 size-[17px] shrink-0 text-[#236B51]" />
+                        <div>
+                            <p class="text-[9.5px] font-bold leading-[14px] text-[#435149]">Your report stays private</p>
+                            <p class="pt-[2px] text-[8.5px] leading-3 text-[#67736D]">Only authorized team members can access it.</p>
+                        </div>
+                    </div>
+                </aside>
+
+            </div>
         </form>
     </div>
 
-    {{-- Script for auto-capturing client metadata and real-time twin bug detection --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // 1. Capture Client Metadata
@@ -435,11 +359,40 @@
                 if (metaOs) metaOs.value = os;
                 if (metaScreen) metaScreen.value = screenDim;
                 if (metaUa) metaUa.value = ua;
-            } catch (e) {
-                // Ignore metadata capture errors gracefully
+            } catch (e) {}
+
+            // 2. Screenshot file selection & drag-and-drop
+            const fileInput = document.getElementById('screenshot');
+            const dropzone = document.getElementById('screenshot-dropzone');
+            const filenameLabel = document.getElementById('screenshot-filename');
+
+            if (fileInput && filenameLabel) {
+                fileInput.addEventListener('change', function () {
+                    if (this.files && this.files[0]) {
+                        filenameLabel.textContent = `Selected: ${this.files[0].name}`;
+                    }
+                });
             }
 
-            // 2. Real-time Duplicate Detection
+            if (dropzone && fileInput) {
+                dropzone.addEventListener('dragover', function (e) {
+                    e.preventDefault();
+                    dropzone.classList.add('border-[#236B51]', 'bg-[#F2F8F5]');
+                });
+                dropzone.addEventListener('dragleave', function () {
+                    dropzone.classList.remove('border-[#236B51]', 'bg-[#F2F8F5]');
+                });
+                dropzone.addEventListener('drop', function (e) {
+                    e.preventDefault();
+                    dropzone.classList.remove('border-[#236B51]', 'bg-[#F2F8F5]');
+                    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        fileInput.files = e.dataTransfer.files;
+                        fileInput.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            // 3. Real-time Duplicate Detection
             const titleInput = document.getElementById('title');
             const moduleSelect = document.getElementById('module');
             const warningBox = document.getElementById('duplicate-warning-box');
@@ -475,15 +428,15 @@
                     warningList.innerHTML = '';
                     data.similar.forEach(item => {
                         const li = document.createElement('li');
-                        li.className = 'flex items-center justify-between gap-2 rounded-lg bg-white/90 px-2.5 py-1.5 shadow-2xs';
+                        li.className = 'flex items-center justify-between gap-2 rounded-[6px] bg-white px-2.5 py-1.5';
                         li.innerHTML = `
                             <div class="flex items-center gap-2 truncate">
-                                <span class="font-mono font-bold text-purple-700">#${item.id}</span>
-                                <span class="truncate font-semibold text-ink">${item.title}</span>
+                                <span class="font-mono font-bold text-[#236B51]">BUG-${item.id}</span>
+                                <span class="truncate font-semibold text-[#26322C]">${item.title}</span>
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
-                                <span class="rounded-md px-1.5 py-0.5 text-[10px] font-bold ${item.status_classes}">${item.status_label}</span>
-                                <a href="${item.url}" target="_blank" class="text-[11px] font-bold text-purple-700 underline hover:text-purple-900">Buka &rarr;</a>
+                                <span class="rounded px-1.5 py-0.5 text-[10px] font-semibold ${item.status_classes}">${item.status_label}</span>
+                                <a href="${item.url}" target="_blank" class="text-[11px] font-semibold text-[#236B51] hover:underline">View &rarr;</a>
                             </div>
                         `;
                         warningList.appendChild(li);
@@ -491,9 +444,7 @@
 
                     if (warningBox) warningBox.classList.remove('hidden');
                 })
-                .catch(() => {
-                    // Silently fail on network issues
-                });
+                .catch(() => {});
             }
 
             if (titleInput) {

@@ -1,665 +1,199 @@
 <x-layouts.app title="Frequently Asked Questions" meta-description="Find answers to common questions about using TwinBug.">
-    <div class="workspace-faq-page mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
 
-        {{-- ======================== BREADCRUMB ======================== --}}
-        <nav class="flex items-center gap-2 text-xs" aria-label="Breadcrumb">
-            <a href="{{ auth()->check() ? route('dashboard') : url('/') }}" class="flex items-center gap-1.5 text-label transition hover:text-ink">
-                <x-auth.icon name="bug" class="size-3 text-sage-600" />
-                <span class="font-medium">Beranda</span>
-            </a>
-            <svg class="size-2.5 text-label/60" viewBox="0 0 6 10" fill="none" aria-hidden="true">
-                <path d="M1 1l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="rounded-md bg-input px-2 py-0.5 text-[11px] font-semibold text-ink">Bantuan &amp; FAQ</span>
-        </nav>
+    <div class="workspace-faq-page mx-auto max-w-[1540px] p-8">
 
-        {{-- ======================== HERO / HEADER ======================== --}}
-        <div class="relative overflow-hidden rounded-3xl border border-divider/80 bg-gradient-to-br from-white via-parchment to-sage-50/50 p-6 sm:p-8 shadow-xs">
-            {{-- Ambient Decorative Glow Orbs --}}
-            <div class="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-sage-200/40 blur-3xl" aria-hidden="true"></div>
-            <div class="pointer-events-none absolute -left-20 -bottom-20 size-72 rounded-full bg-amber-100/40 blur-3xl" aria-hidden="true"></div>
+        {{-- Hero Section --}}
+        <section class="border-b-[0.8px] border-[#E0E9E4] bg-[#F2F7F4] px-6 pt-[74px] pb-[64px] text-center">
+            <p class="text-[9.5px] font-bold uppercase leading-[14px] tracking-[1.235px] text-[#78B597]">
+                Help center
+            </p>
+            <h1 class="mx-auto mt-[15px] max-w-3xl text-[40px] font-normal leading-[1.08] tracking-[-2.2px] text-[#13241C] sm:text-[54px] sm:leading-[57px]">
+                Frequently Asked Questions
+            </h1>
+            <p class="mx-auto mt-[10px] max-w-xl text-[12.5px] leading-[19px] text-[#67736D]">
+                Find answers to common questions about using TwinBug.
+            </p>
 
-            <div class="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                <div class="max-w-2xl">
-                    <div class="mb-2.5 flex flex-wrap items-center gap-2">
-                        <span class="inline-flex items-center gap-1.5 rounded-md bg-sage-100 px-2.5 py-0.5 text-[11px] font-semibold text-sage-800">
-                            <x-auth.icon name="sparkles" class="size-3 text-sage-600" />
-                        <span>Help Center</span>
-                        </span>
-                        <span class="text-xs text-label">•</span>
-                        <span class="text-xs font-medium text-label">{{ count($faqs) }} Topik Panduan</span>
-                        <span class="text-xs text-label">•</span>
-                        <span class="inline-flex items-center gap-1 rounded bg-input px-1.5 py-0.5 text-[10px] font-mono text-label">
-                            <span>Pencarian Cepat</span>
-                        </span>
-                    </div>
-                    <h1 class="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
-                        Frequently Asked Questions
-                    </h1>
-                    <p class="mt-1.5 text-xs sm:text-sm leading-relaxed text-body">
-                        Find answers to common questions about using TwinBug.
-                    </p>
-                </div>
-
-                {{-- Kolom Pencarian Cepat --}}
-                <div class="w-full lg:w-96 shrink-0">
-                    <div class="relative">
-                        <label for="faq-search" class="sr-only">Cari pertanyaan</label>
-                        <input
-                            type="text"
-                            id="faq-search"
-                            placeholder="Search for questions or topics..."
-                            class="w-full rounded-2xl border border-divider/90 bg-white py-3 pl-10 pr-16 text-xs sm:text-sm text-ink shadow-xs transition placeholder:text-label/50 focus:border-sage-500 focus:outline-none focus:ring-2 focus:ring-sage-500/20"
-                            autocomplete="off"
-                        >
-                        <div class="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-label/60">
-                            <x-auth.icon name="search" class="size-4" />
-                        </div>
-                        <div class="absolute inset-y-0 right-3 flex items-center gap-1">
-                            <button
-                                type="button"
-                                id="faq-search-clear"
-                                class="hidden size-6 place-items-center rounded-lg text-label hover:bg-input hover:text-ink transition cursor-pointer"
-                                title="Hapus pencarian"
-                            >
-                                <x-auth.icon name="x" class="size-3.5" />
-                            </button>
-                            <kbd class="pointer-events-none hidden sm:inline-flex items-center justify-center rounded border border-divider bg-input/80 px-1.5 py-0.5 text-[10px] font-mono text-label/70">
-                                /
-                            </kbd>
-                        </div>
-                    </div>
-                </div>
+            {{-- Centered Search Box --}}
+            <div class="mx-auto mt-[28px] max-w-[660px]">
+                <label for="faq-search" class="flex h-[52px] w-full items-center gap-[10px] rounded-[10px] border-[0.8px] border-[#D5DFDA] bg-white px-[15px] shadow-[0_7px_22px_rgba(20,55,38,0.06)] focus-within:border-[#236B51]">
+                    <x-auth.icon name="search" class="size-5 shrink-0 text-[#738078]" />
+                    <input
+                        type="text"
+                        id="faq-search"
+                        placeholder="Search for questions or topics..."
+                        class="w-full bg-transparent text-[11.5px] text-[#24322B] placeholder:text-[#A4ADA8] focus:outline-none"
+                    >
+                </label>
             </div>
-        </div>
+        </section>
 
-        {{-- ======================== MOBILE CATEGORY BAR (HORIZONTAL CHIPS) ======================== --}}
-        <div class="faq-categories block lg:hidden">
-            <div class="flex items-center justify-between pb-2 text-[11px] font-semibold uppercase tracking-wider text-label">
-                <span>Filter Topik</span>
-                <span id="mobile-category-label" class="text-sage-700 normal-case font-bold">Semua Topik</span>
-            </div>
-            <div class="flex gap-2 overflow-x-auto no-scrollbar py-1 text-xs">
+        {{-- FAQ Content Section --}}
+        <section class="mx-auto max-w-[1030px] px-6 pt-[52px] pb-[70px]">
+
+            {{-- Category Filter Pills --}}
+            <div role="tablist" aria-label="FAQ categories" class="flex flex-wrap items-center gap-[7px] border-b-[0.8px] border-[#E2E8E5] pb-[25px]">
                 @foreach ($categories as $key => $label)
                     @php
-                        $count = $key === 'all' ? count($faqs) : collect($faqs)->where('category', $key)->count();
+                        $isAll = $key === 'all';
+                        $displayLabel = $isAll ? 'All Questions' : $label;
                     @endphp
                     <button
                         type="button"
+                        role="tab"
+                        aria-selected="{{ $isAll ? 'true' : 'false' }}"
                         data-category-filter="{{ $key }}"
-                        class="faq-filter-btn inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition cursor-pointer {{ $key === 'all' ? 'bg-sage-500 text-white shadow-cta' : 'bg-white border border-divider text-label hover:bg-input hover:text-ink' }}"
+                        data-category-title="{{ $displayLabel }}"
+                        @class([
+                            'faq-category-btn inline-flex h-[31.85px] cursor-pointer items-center justify-center rounded-full border-[0.8px] px-[11px] text-[9.5px] font-semibold leading-[14px] transition',
+                            'bg-[#123C2E] border-[#123C2E] text-white' => $isAll,
+                            'bg-white border-[#DCE4E0] text-[#65726B] hover:border-[#236B51]' => ! $isAll,
+                        ])
                     >
-                        <span>{{ $label }}</span>
-                        <span class="faq-count-pill rounded-md {{ $key === 'all' ? 'bg-white/20 text-white' : 'bg-input text-label' }} px-1.5 py-0.5 text-[10px] font-bold">{{ $count }}</span>
+                        {{ $displayLabel }}
                     </button>
                 @endforeach
             </div>
-        </div>
 
-        {{-- ======================== 2-COLUMN HELP CENTER GRID ======================== --}}
-        <div class="faq-content grid grid-cols-1 gap-6 lg:grid-cols-12">
-
-            {{-- =============== LEFT SIDEBAR (4 cols): Sticky Categories & Support =============== --}}
-            <aside class="hidden lg:block lg:col-span-4 lg:sticky lg:top-20 lg:self-start space-y-5">
-
-                {{-- Kategori Bantuan --}}
-                <div class="rounded-2xl border border-divider/80 bg-white p-5 shadow-xs">
-                    <div class="mb-3.5 flex items-center justify-between">
-                        <h2 class="font-serif text-sm font-bold text-ink">Kategori Bantuan</h2>
-                        <span class="text-[11px] text-label">Pilih topik</span>
-                    </div>
-
-                    <nav class="space-y-1.5" role="tablist" aria-label="Kategori FAQ">
-                        @foreach ($categories as $key => $label)
-                            @php
-                                $count = $key === 'all' ? count($faqs) : collect($faqs)->where('category', $key)->count();
-                            @endphp
-                            <button
-                                type="button"
-                                data-category-filter="{{ $key }}"
-                                class="faq-filter-btn flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-semibold transition text-left cursor-pointer {{ $key === 'all' ? 'bg-sage-500 text-white shadow-cta' : 'bg-input/60 text-label hover:bg-input hover:text-ink' }}"
-                            >
-                                <span>{{ $label }}</span>
-                                <span class="faq-count-pill rounded-md {{ $key === 'all' ? 'bg-white/20 text-white' : 'bg-black/10 text-label' }} px-1.5 py-0.5 text-[10px] font-bold">{{ $count }}</span>
-                            </button>
-                        @endforeach
-                    </nav>
-                </div>
-
-                {{-- Kartu Bantuan Lanjutan --}}
-                <div class="rounded-2xl border border-sage-200/80 bg-sage-50/60 p-5 shadow-xs">
-                    <span class="inline-flex items-center gap-1.5 rounded-md bg-sage-200/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sage-800">
-                        Dukungan Teknis
-                    </span>
-                    <h3 class="mt-2 font-serif text-base font-bold text-ink">
-                        Belum menemukan jawaban?
-                    </h3>
-                    <p class="mt-1 text-xs leading-relaxed text-label">
-                        Jika Anda mendapati kendala teknis pada sistem atau memerlukan bantuan, buat laporan baru atau hubungi tim pengembang secara langsung.
-                    </p>
-
-                    <div class="mt-4 flex flex-col gap-2">
-                        @auth
-                            <a
-                                href="{{ route('bug-reports.create') }}"
-                                class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-sage-500 px-3.5 py-2.5 text-xs font-semibold text-white shadow-cta transition hover:bg-sage-600 active:scale-95"
-                            >
-                                <x-auth.icon name="bug" class="size-3.5" />
-                                <span>+ Buat Laporan Bug</span>
-                            </a>
-                        @else
-                            <div class="grid grid-cols-2 gap-2">
-                                <a
-                                    href="{{ route('login') }}"
-                                    class="inline-flex items-center justify-center gap-1 rounded-xl bg-sage-500 px-3 py-2 text-xs font-semibold text-white shadow-cta transition hover:bg-sage-600"
-                                >
-                                    <span>Masuk</span>
-                                </a>
-                                <a
-                                    href="{{ route('register') }}"
-                                    class="inline-flex items-center justify-center gap-1 rounded-xl border border-divider bg-white px-3 py-2 text-xs font-semibold text-ink transition hover:bg-input"
-                                >
-                                    <span>Daftar</span>
-                                </a>
-                            </div>
-                        @endauth
-
-                        <a
-                            href="mailto:support@twinbug.local"
-                            class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-divider bg-white px-3.5 py-2 text-xs font-semibold text-label transition hover:border-slate-300 hover:bg-input hover:text-ink"
-                        >
-                            <x-auth.icon name="mail" class="size-3.5" />
-                            <span>Hubungi Tim Pengembang</span>
-                        </a>
-                    </div>
-                </div>
-
-                {{-- Tips Pintasan Keyboard --}}
-                <div class="rounded-2xl border border-divider/60 bg-white/60 p-4 text-[11px] text-label shadow-2xs">
-                    <div class="flex items-center gap-1.5 font-semibold text-ink mb-1">
-                        <x-auth.icon name="sparkles" class="size-3 text-sage-600" />
-                        <span>Pintasan Cepat</span>
-                    </div>
-                    <p class="leading-relaxed">
-                        Tekan tombol <kbd class="rounded border border-divider bg-input px-1 py-0.5 font-mono text-[10px] text-ink">/</kbd> di mana saja untuk langsung mencari topik panduan.
+            {{-- Active Category Heading --}}
+            <div class="flex items-center justify-between pt-[27px]">
+                <div>
+                    <h2 id="faq-active-heading" class="text-[19px] font-normal leading-7 tracking-[-0.7px] text-[#17201C]">
+                        All Questions
+                    </h2>
+                    <p id="faq-visible-count" class="pt-1 text-[9.5px] leading-[14px] text-[#67736D]">
+                        {{ count($faqs) }} answers available
                     </p>
                 </div>
-
-            </aside>
-
-            {{-- =============== RIGHT CONTENT (8 cols): FAQ Accordions & Toolbar =============== --}}
-            <div class="space-y-4 lg:col-span-8">
-
-                {{-- Smart Action Toolbar --}}
-                <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-divider/80 bg-white p-3.5 sm:px-4 text-xs text-label shadow-2xs">
-                    <div class="flex items-center gap-2">
-                        <span class="size-2 rounded-full bg-sage-500 animate-pulse"></span>
-                        <div id="faq-counter">
-                            Menampilkan <span id="faq-visible-count" class="font-bold text-ink">{{ count($faqs) }}</span> dari {{ count($faqs) }} topik
-                        </div>
-                        <span id="faq-active-filter-badge" class="hidden rounded-md bg-sage-100 px-2 py-0.5 text-[10px] font-semibold text-sage-800">
-                            Semua Topik
-                        </span>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <button
-                            type="button"
-                            id="faq-toggle-all-btn"
-                            class="inline-flex items-center gap-1.5 rounded-xl border border-divider bg-input/40 px-3 py-1.5 text-xs font-semibold text-ink hover:bg-input hover:border-slate-300 transition cursor-pointer active:scale-95"
-                        >
-                            <svg id="faq-toggle-icon" class="size-3.5 text-label transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                            <span id="faq-toggle-text">Buka Semua</span>
-                        </button>
-                    </div>
-                </div>
-
-                {{-- Accordion List --}}
-                <div class="space-y-3" id="faq-container">
-                    @foreach ($faqs as $faq)
-                        <details
-                            class="faq-item group rounded-2xl border border-divider/80 bg-white p-4.5 sm:p-5 shadow-xs transition-all duration-200 hover:border-sage-300 open:border-sage-400 open:ring-1 open:ring-sage-400/20 open:shadow-xs"
-                            data-category="{{ $faq['category'] }}"
-                            data-keywords="{{ strtolower($faq['question'] . ' ' . strip_tags($faq['answer']) . ' ' . $faq['keywords']) }}"
-                            id="{{ $faq['id'] }}"
-                        >
-                            <summary class="flex cursor-pointer list-none items-start justify-between gap-3 select-none">
-                                <div class="flex-1 pr-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="inline-block rounded-md bg-input/80 px-2 py-0.5 text-[10px] font-semibold text-label">
-                                            {{ $faq['category_label'] }}
-                                        </span>
-                                        <span class="text-[10px] font-mono text-label/50">#{{ $faq['id'] }}</span>
-                                    </div>
-                                    <h2 class="faq-question-text mt-1.5 font-serif text-sm sm:text-base font-semibold tracking-tight text-ink transition group-hover:text-sage-700">
-                                        {{ $faq['question'] }}
-                                    </h2>
-                                </div>
-                                <div class="flex items-center gap-1.5 shrink-0 mt-0.5">
-                                    <button
-                                        type="button"
-                                        class="faq-copy-link-btn grid size-7 place-items-center rounded-lg text-label/60 hover:bg-input hover:text-ink transition cursor-pointer"
-                                        data-faq-id="{{ $faq['id'] }}"
-                                        title="Salin tautan topik ini"
-                                    >
-                                        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                                        </svg>
-                                    </button>
-                                    <span class="grid size-7 place-items-center rounded-lg bg-input text-label transition-transform duration-300 group-open:rotate-180 group-open:bg-sage-100 group-open:text-sage-800">
-                                        <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </span>
-                                </div>
-                            </summary>
-
-                            <div class="mt-3.5 border-t border-divider/60 pt-3.5 text-xs sm:text-sm leading-relaxed text-body">
-                                <div class="faq-answer-text">
-                                    {!! $faq['answer'] !!}
-                                </div>
-
-                                {{-- Micro-Feedback Pill --}}
-                                <div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-divider/50 bg-parchment/60 px-3.5 py-2.5 text-xs">
-                                    <span class="text-label text-[11px] sm:text-xs">Apakah informasi panduan ini membantu Anda?</span>
-                                    <div class="faq-feedback-container flex items-center gap-1.5">
-                                        <button
-                                            type="button"
-                                            class="faq-feedback-btn inline-flex items-center gap-1 rounded-lg border border-divider bg-white px-2.5 py-1 text-[11px] font-semibold text-ink hover:border-sage-400 hover:bg-sage-50 transition cursor-pointer"
-                                            data-val="yes"
-                                        >
-                                            <span>👍</span>
-                                            <span>Ya</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            class="faq-feedback-btn inline-flex items-center gap-1 rounded-lg border border-divider bg-white px-2.5 py-1 text-[11px] font-semibold text-ink hover:border-amber-400 hover:bg-amber-50 transition cursor-pointer"
-                                            data-val="no"
-                                        >
-                                            <span>👎</span>
-                                            <span>Belum</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </details>
-                    @endforeach
-                </div>
-
-                {{-- State Pencarian Kosong --}}
-                <div id="faq-empty-state" class="hidden my-8 rounded-2xl border border-dashed border-divider bg-white/70 p-8 text-center shadow-xs">
-                    <span class="mx-auto grid size-12 place-items-center rounded-2xl bg-amber-100 text-amber-800">
-                        <x-auth.icon name="alert" class="size-6" />
-                    </span>
-                    <h3 class="mt-3.5 font-serif text-base font-bold text-ink">Tidak ada hasil ditemukan</h3>
-                    <p class="mt-1 text-xs sm:text-sm text-body max-w-md mx-auto">
-                        Tidak ada topik pertanyaan yang cocok dengan kata kunci atau filter yang Anda pilih.
-                    </p>
-                    <button
-                        type="button"
-                        id="faq-reset-btn"
-                        class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-sage-500 px-4 py-2 text-xs font-semibold text-white shadow-cta hover:bg-sage-600 transition cursor-pointer"
-                    >
-                        <x-auth.icon name="refresh" class="size-3.5" />
-                        <span>Reset Pencarian &amp; Filter</span>
-                    </button>
-                </div>
-
-                {{-- Mobile Escalation Card (Bawah Halaman Mobile) --}}
-                <div class="block lg:hidden rounded-2xl border border-sage-200/80 bg-sage-50/60 p-5 shadow-xs">
-                    <span class="inline-flex items-center gap-1.5 rounded-md bg-sage-200/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sage-800">
-                        Dukungan Teknis
-                    </span>
-                    <h3 class="mt-2 font-serif text-base font-bold text-ink">
-                        Belum menemukan jawaban?
-                    </h3>
-                    <p class="mt-1 text-xs leading-relaxed text-label">
-                        Jika Anda mendapati kendala teknis pada sistem atau memerlukan bantuan, buat laporan baru atau hubungi tim pengembang secara langsung.
-                    </p>
-
-                    <div class="mt-4 flex flex-col gap-2">
-                        @auth
-                            <a
-                                href="{{ route('bug-reports.create') }}"
-                                class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-sage-500 px-3.5 py-2.5 text-xs font-semibold text-white shadow-cta transition hover:bg-sage-600 active:scale-95"
-                            >
-                                <x-auth.icon name="bug" class="size-3.5" />
-                                <span>+ Buat Laporan Bug</span>
-                            </a>
-                        @else
-                            <div class="grid grid-cols-2 gap-2">
-                                <a
-                                    href="{{ route('login') }}"
-                                    class="inline-flex items-center justify-center gap-1 rounded-xl bg-sage-500 px-3 py-2 text-xs font-semibold text-white shadow-cta transition hover:bg-sage-600"
-                                >
-                                    <span>Masuk</span>
-                                </a>
-                                <a
-                                    href="{{ route('register') }}"
-                                    class="inline-flex items-center justify-center gap-1 rounded-xl border border-divider bg-white px-3 py-2 text-xs font-semibold text-ink transition hover:bg-input"
-                                >
-                                    <span>Daftar</span>
-                                </a>
-                            </div>
-                        @endauth
-
-                        <a
-                            href="mailto:support@twinbug.local"
-                            class="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-divider bg-white px-3.5 py-2 text-xs font-semibold text-label transition hover:border-slate-300 hover:bg-input hover:text-ink"
-                        >
-                            <x-auth.icon name="mail" class="size-3.5" />
-                            <span>Hubungi Tim Pengembang</span>
-                        </a>
-                    </div>
-                </div>
-
             </div>
 
-        </div>
+            {{-- Accordion Items --}}
+            <div id="faq-list" class="mt-[15px] space-y-[9px]">
+                @foreach ($faqs as $index => $faq)
+                    <details
+                        id="{{ $faq['id'] }}"
+                        data-category="{{ $faq['category'] }}"
+                        data-search="{{ mb_strtolower($faq['question'] . ' ' . strip_tags($faq['answer']) . ' ' . $faq['keywords'] . ' ' . $faq['category_label']) }}"
+                        @if ($index === 0) open @endif
+                        class="faq-item group overflow-hidden rounded-[10px] border-[0.8px] border-[#E2E8E5] bg-white transition open:border-[#CDDBD4] open:shadow-[0_4px_14px_rgba(13,45,34,0.035)]"
+                    >
+                        <summary class="flex min-h-[70px] cursor-pointer list-none items-center justify-between gap-4 px-[18px] py-[15px] transition hover:bg-[#FBFDFC] group-open:bg-[#FBFDFC] [&::-webkit-details-marker]:hidden">
+                            <div class="flex flex-col gap-[5px]">
+                                <span class="text-[7.5px] font-bold uppercase leading-[11px] tracking-[0.6px] text-[#236B51]">
+                                    {{ $faq['category_label'] }}
+                                </span>
+                                <span class="text-[11.5px] font-bold leading-[17px] text-[#29372F]">
+                                    {{ $faq['question'] }}
+                                </span>
+                            </div>
+
+                            <span class="grid size-[27px] shrink-0 place-items-center rounded-full bg-[#F1F5F3] text-[18px] leading-none text-[#236B51]" aria-hidden="true">
+                                <span class="group-open:hidden">+</span>
+                                <span class="hidden group-open:inline">−</span>
+                            </span>
+                        </summary>
+
+                        <div class="px-[18px] pb-[18px] text-[10.5px] leading-[17px] text-[#67736D]">
+                            {!! $faq['answer'] !!}
+                        </div>
+                    </details>
+                @endforeach
+            </div>
+
+            {{-- Empty Search State --}}
+            <div id="faq-empty-state" class="mt-6 hidden rounded-[10px] border-[0.8px] border-[#E2E8E5] bg-white px-6 py-10 text-center">
+                <p class="text-[13px] font-semibold text-[#142019]">No matching questions found</p>
+                <p class="mt-1 text-[11px] text-[#67736D]">Try another keyword or switch back to All Questions.</p>
+                <button
+                    type="button"
+                    id="faq-reset-btn"
+                    class="mt-4 inline-flex h-9 cursor-pointer items-center justify-center rounded-[8px] border-[0.8px] border-[#DCE3DF] bg-white px-4 text-[11.5px] font-semibold text-[#35433C] transition hover:bg-[#F7F9F8]"
+                >
+                    Reset filter
+                </button>
+            </div>
+
+        </section>
 
     </div>
 
-    {{-- Floating Toast Notification --}}
-    <div
-        id="faq-toast"
-        class="fixed bottom-6 right-6 z-50 hidden items-center gap-2 rounded-xl border border-sage-300 bg-white/95 px-4 py-2.5 text-xs font-semibold text-ink shadow-lg backdrop-blur-md transition-all duration-300"
-    >
-        <span class="grid size-5 place-items-center rounded-full bg-sage-100 text-sage-700">
-            <x-auth.icon name="check" class="size-3" />
-        </span>
-        <span id="faq-toast-msg">Tautan topik berhasil disalin!</span>
-    </div>
-
-    {{-- Script interaktif untuk pencarian, filter kategori, copy link, dan highlight --}}
-    @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.getElementById('faq-search');
-            const clearBtn = document.getElementById('faq-search-clear');
-            const filterButtons = document.querySelectorAll('.faq-filter-btn');
+            const filterButtons = document.querySelectorAll('.faq-category-btn');
             const faqItems = document.querySelectorAll('.faq-item');
+            const activeHeading = document.getElementById('faq-active-heading');
+            const visibleCount = document.getElementById('faq-visible-count');
             const emptyState = document.getElementById('faq-empty-state');
-            const visibleCountEl = document.getElementById('faq-visible-count');
             const resetBtn = document.getElementById('faq-reset-btn');
-            const toggleAllBtn = document.getElementById('faq-toggle-all-btn');
-            const toggleAllText = document.getElementById('faq-toggle-text');
-            const toggleAllIcon = document.getElementById('faq-toggle-icon');
-            const mobileCategoryLabel = document.getElementById('mobile-category-label');
-            const activeFilterBadge = document.getElementById('faq-active-filter-badge');
-            const copyButtons = document.querySelectorAll('.faq-copy-link-btn');
-            const toast = document.getElementById('faq-toast');
-            const toastMsg = document.getElementById('faq-toast-msg');
 
             let activeCategory = 'all';
             let searchQuery = '';
-            let allExpanded = false;
-            let toastTimeout = null;
 
-            // Simpan HTML asli pertanyaan & jawaban untuk fungsi highlight
-            faqItems.forEach(item => {
-                const qEl = item.querySelector('.faq-question-text');
-                const aEl = item.querySelector('.faq-answer-text');
-                if (qEl) qEl.dataset.originalHtml = qEl.innerHTML;
-                if (aEl) aEl.dataset.originalHtml = aEl.innerHTML;
-            });
-
-            // Tampilkan Toast
-            function showToast(message) {
-                if (!toast) return;
-                if (toastMsg) toastMsg.textContent = message;
-                toast.classList.remove('hidden');
-                toast.classList.add('flex');
-                if (toastTimeout) clearTimeout(toastTimeout);
-                toastTimeout = setTimeout(() => {
-                    toast.classList.add('hidden');
-                    toast.classList.remove('flex');
-                }, 2500);
-            }
-
-            // Fungsi Escape Regex
-            function escapeRegExp(string) {
-                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            }
-
-            // Terapkan Filter & Highlighting
             function applyFilter() {
-                let visibleCount = 0;
-                const query = searchQuery.trim().toLowerCase();
+                let count = 0;
+                const q = searchQuery.trim().toLowerCase();
 
-                faqItems.forEach(item => {
-                    const itemCategory = item.dataset.category;
-                    const keywords = item.dataset.keywords || '';
-
-                    const matchesCategory = (activeCategory === 'all' || itemCategory === activeCategory);
-                    const matchesSearch = query === '' || keywords.includes(query);
-
-                    const qEl = item.querySelector('.faq-question-text');
-                    const aEl = item.querySelector('.faq-answer-text');
+                faqItems.forEach(function (item) {
+                    const matchesCategory = activeCategory === 'all' || item.dataset.category === activeCategory;
+                    const matchesSearch = !q || (item.dataset.search || '').includes(q);
 
                     if (matchesCategory && matchesSearch) {
                         item.classList.remove('hidden');
-                        visibleCount++;
-
-                        // Jika ada query pencarian, beri highlight dan buka accordion
-                        if (query.length >= 2) {
-                            item.open = true;
-                            const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
-                            const highlightReplacer = '<mark class="bg-amber-200/90 text-ink rounded-xs px-0.5 font-medium">$1</mark>';
-
-                            if (qEl && qEl.dataset.originalHtml) {
-                                qEl.innerHTML = qEl.dataset.originalHtml.replace(regex, highlightReplacer);
-                            }
-                            if (aEl && aEl.dataset.originalHtml) {
-                                // Hanya highlight di luar tag HTML
-                                const parts = aEl.dataset.originalHtml.split(/(<[^>]+>)/g);
-                                const highlighted = parts.map(part => {
-                                    if (part.startsWith('<') && part.endsWith('>')) {
-                                        return part;
-                                    }
-                                    return part.replace(regex, highlightReplacer);
-                                }).join('');
-                                aEl.innerHTML = highlighted;
-                            }
-                        } else {
-                            if (qEl && qEl.dataset.originalHtml) qEl.innerHTML = qEl.dataset.originalHtml;
-                            if (aEl && aEl.dataset.originalHtml) aEl.innerHTML = aEl.dataset.originalHtml;
-                        }
+                        count++;
                     } else {
                         item.classList.add('hidden');
-                        if (qEl && qEl.dataset.originalHtml) qEl.innerHTML = qEl.dataset.originalHtml;
-                        if (aEl && aEl.dataset.originalHtml) aEl.innerHTML = aEl.dataset.originalHtml;
                     }
                 });
 
-                if (visibleCountEl) {
-                    visibleCountEl.textContent = visibleCount;
+                if (visibleCount) {
+                    visibleCount.textContent = `${count} ${count === 1 ? 'answer' : 'answers'} available`;
                 }
 
                 if (emptyState) {
-                    if (visibleCount === 0) {
-                        emptyState.classList.remove('hidden');
-                    } else {
-                        emptyState.classList.add('hidden');
-                    }
-                }
-
-                if (clearBtn) {
-                    if (query.length > 0) {
-                        clearBtn.classList.remove('hidden');
-                        clearBtn.classList.add('grid');
-                    } else {
-                        clearBtn.classList.add('hidden');
-                        clearBtn.classList.remove('grid');
-                    }
-                }
-
-                // Perbarui badge filter aktif
-                if (activeFilterBadge) {
-                    if (activeCategory !== 'all') {
-                        const activeBtn = document.querySelector(`.faq-filter-btn[data-category-filter="${activeCategory}"]`);
-                        const text = activeBtn ? activeBtn.querySelector('span:first-child').textContent.trim() : activeCategory;
-                        activeFilterBadge.textContent = text;
-                        activeFilterBadge.classList.remove('hidden');
-                    } else {
-                        activeFilterBadge.classList.add('hidden');
-                    }
+                    emptyState.classList.toggle('hidden', count > 0);
                 }
             }
 
-            // Update gaya tombol filter (Desktop & Mobile)
-            function updateFilterButtonStyles() {
-                filterButtons.forEach(btn => {
-                    const isSelected = btn.dataset.categoryFilter === activeCategory;
-                    const countPill = btn.querySelector('.faq-count-pill');
-
-                    if (isSelected) {
-                        btn.classList.remove('bg-input/60', 'text-label', 'bg-white', 'border-divider');
-                        btn.classList.add('bg-sage-500', 'text-white', 'shadow-cta');
-                        if (countPill) {
-                            countPill.classList.remove('bg-input', 'bg-black/10', 'text-label');
-                            countPill.classList.add('bg-white/20', 'text-white');
-                        }
-                        if (mobileCategoryLabel) {
-                            mobileCategoryLabel.textContent = btn.querySelector('span:first-child').textContent.trim();
-                        }
-                    } else {
-                        btn.classList.remove('bg-sage-500', 'text-white', 'shadow-cta');
-                        btn.classList.add(btn.closest('aside') ? 'bg-input/60' : 'bg-white', 'text-label');
-                        if (countPill) {
-                            countPill.classList.remove('bg-white/20', 'text-white');
-                            countPill.classList.add(btn.closest('aside') ? 'bg-black/10' : 'bg-input', 'text-label');
-                        }
+            filterButtons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    activeCategory = btn.dataset.categoryFilter || 'all';
+                    if (activeHeading && btn.dataset.categoryTitle) {
+                        activeHeading.textContent = btn.dataset.categoryTitle;
                     }
+
+                    filterButtons.forEach(function (other) {
+                        const isSelected = other === btn;
+                        other.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                        other.classList.toggle('bg-[#123C2E]', isSelected);
+                        other.classList.toggle('border-[#123C2E]', isSelected);
+                        other.classList.toggle('text-white', isSelected);
+                        other.classList.toggle('bg-white', !isSelected);
+                        other.classList.toggle('border-[#DCE4E0]', !isSelected);
+                        other.classList.toggle('text-[#65726B]', !isSelected);
+                    });
+
+                    applyFilter();
                 });
-            }
+            });
 
-            // Event listener pencarian
             if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
+                searchInput.addEventListener('input', function (e) {
                     searchQuery = e.target.value;
                     applyFilter();
                 });
             }
 
-            // Shortcut keyboard '/' untuk fokus pencarian
-            document.addEventListener('keydown', (e) => {
-                if (e.key === '/' && document.activeElement !== searchInput && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
-                    e.preventDefault();
-                    if (searchInput) {
-                        searchInput.focus();
-                        searchInput.select();
-                    }
-                }
-            });
-
-            // Tombol clear pencarian
-            if (clearBtn) {
-                clearBtn.addEventListener('click', () => {
-                    if (searchInput) {
-                        searchInput.value = '';
-                        searchQuery = '';
-                        searchInput.focus();
-                        applyFilter();
-                    }
-                });
-            }
-
-            // Event listener tombol kategori (Desktop & Mobile)
-            filterButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    activeCategory = btn.dataset.categoryFilter;
-                    updateFilterButtonStyles();
-                    applyFilter();
-                });
-            });
-
-            // Tombol Buka Semua / Tutup Semua
-            if (toggleAllBtn) {
-                toggleAllBtn.addEventListener('click', () => {
-                    allExpanded = !allExpanded;
-                    faqItems.forEach(item => {
-                        if (!item.classList.contains('hidden')) {
-                            item.open = allExpanded;
-                        }
-                    });
-
-                    if (toggleAllText) {
-                        toggleAllText.textContent = allExpanded ? 'Tutup Semua' : 'Buka Semua';
-                    }
-                    if (toggleAllIcon) {
-                        toggleAllIcon.style.transform = allExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
-                    }
-                });
-            }
-
-            // Tombol reset filter jika kosong
             if (resetBtn) {
-                resetBtn.addEventListener('click', () => {
+                resetBtn.addEventListener('click', function () {
                     if (searchInput) searchInput.value = '';
                     searchQuery = '';
-                    activeCategory = 'all';
-                    updateFilterButtonStyles();
-                    applyFilter();
+                    const allBtn = document.querySelector('.faq-category-btn[data-category-filter="all"]');
+                    if (allBtn) allBtn.click();
+                    else applyFilter();
                 });
-            }
-
-            // Tombol Salin Tautan Anchor FAQ
-            copyButtons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const faqId = btn.dataset.faqId;
-                    const url = `${window.location.origin}${window.location.pathname}#${faqId}`;
-
-                    if (navigator.clipboard && window.isSecureContext) {
-                        navigator.clipboard.writeText(url).then(() => {
-                            showToast('Tautan topik berhasil disalin!');
-                        });
-                    } else {
-                        // Fallback
-                        const input = document.createElement('input');
-                        input.value = url;
-                        document.body.appendChild(input);
-                        input.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(input);
-                        showToast('Tautan topik berhasil disalin!');
-                    }
-                });
-            });
-
-            // Micro-Feedback Tanggapan Panduan
-            document.querySelectorAll('.faq-feedback-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const container = this.closest('.faq-feedback-container');
-                    if (container) {
-                        container.innerHTML = `
-                            <span class="inline-flex items-center gap-1 font-semibold text-sage-700 text-[11px]">
-                                <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 6L9 17l-5-5"/>
-                                </svg>
-                                <span>Terima kasih atas tanggapan Anda!</span>
-                            </span>
-                        `;
-                    }
-                });
-            });
-
-            // Auto-expand & smooth scroll jika URL memiliki hash (#faq-x)
-            if (window.location.hash) {
-                const targetId = window.location.hash.substring(1);
-                const targetItem = document.getElementById(targetId);
-                if (targetItem && targetItem.classList.contains('faq-item')) {
-                    targetItem.open = true;
-                    setTimeout(() => {
-                        targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 200);
-                }
             }
         });
     </script>
-    @endpush
+
 </x-layouts.app>

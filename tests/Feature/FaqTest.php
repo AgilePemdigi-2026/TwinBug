@@ -16,9 +16,9 @@ class FaqTest extends TestCase
         $response = $this->get(route('faq'));
 
         $response->assertOk();
-        $response->assertSee('Pertanyaan yang Sering Diajukan');
-        $response->assertSee('Pusat Bantuan TwinBug');
-        $response->assertSee('Akun & OTP');
+        $response->assertSee('Frequently Asked Questions');
+        $response->assertSee('Help center');
+        $response->assertSee('Akun &amp; OTP', false);
         $response->assertSee('Pelaporan Bug');
         $response->assertSee('Deteksi Duplikasi');
         $response->assertSee('Masuk');
@@ -34,8 +34,8 @@ class FaqTest extends TestCase
         $response = $this->actingAs($reporter)->get(route('faq'));
 
         $response->assertOk();
-        $response->assertSee('Pertanyaan yang Sering Diajukan');
-        $response->assertSee('+ Buat Laporan');
+        $response->assertSee('Frequently Asked Questions');
+        $response->assertSee('All Questions');
         $response->assertSee($reporter->name);
     }
 

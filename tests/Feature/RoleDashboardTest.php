@@ -32,12 +32,14 @@ class RoleDashboardTest extends TestCase
         $response = $this->actingAs($reporter)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        $response->assertSee('Histori Laporan Saya');
-        $response->assertSee('Laporan Saya');
+        $response->assertSee('Welcome back');
+        $response->assertSee('Total reports');
+        $response->assertSee('Recent activity');
+        $response->assertSee('Status overview');
         $response->assertSee('Bug milik reporter utama');
         $response->assertDontSee('Bug milik reporter lain');
-        $response->assertDontSee('Antrean Bug Terbaru');
-        $response->assertSee('Buat Laporan Bug Baru');
+        $response->assertDontSee('Triage queue');
+        $response->assertSee('Create new report');
     }
 
     public function test_developer_dashboard_shows_global_bug_queue(): void
